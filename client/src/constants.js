@@ -114,7 +114,7 @@ export const NETWORKS_INGAME = {
   },
 };
 
-// Deprectated networks
+// Deprecated networks
 // status: {deprecated | deprecation-planned}
 export const NETWORKS_DEPRECATION = {
   GOERLI: {
