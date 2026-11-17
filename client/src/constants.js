@@ -145,7 +145,6 @@ export const Web3 = pkgWeb3;
 
 // Misc
 export const CLEAR_CONSOLE = !DEBUG;
-export const GOOGLE_ANALYTICS_ID = "UA-85043059-4";
 
 // Owner addresses
 export const ADDRESSES = {
