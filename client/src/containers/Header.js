@@ -179,11 +179,6 @@ class Header extends React.Component {
         newSecondary
       );
 
-      // Change OpenZeppelin logo
-      var theLogo = document.getElementById("logo");
-      if (theLogo && theLogo.style)
-        theLogo.style.filter = !this.state.dark ? svgFilter() : null;
-
       // // Change OpenZeppelin logo
       // var theChristmashat = document.getElementById("christmas-hat")
       // if (theChristmashat && theChristmashat.style) theChristmashat.style.filter = !this.state.dark
@@ -276,13 +271,11 @@ class Header extends React.Component {
                 </a>
               </li>
             </ul>
-            <a className="logo-container" href="https://openzeppelin.com">
-              <img
-                id="logo"
-                className="logo"
-                src="../../imgs/oz-logo.svg"
-                alt="logo"
-              />
+            <a
+              className="logo-container unofficial-fork"
+              href="https://github.com/OpenZeppelin/ethernaut"
+            >
+              Unofficial fork, not affiliated with OpenZeppelin.
             </a>
             {/* ---- Multi Dropdown Container */}
             <div

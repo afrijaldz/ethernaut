@@ -65,16 +65,6 @@ ul {
   padding-left: 0;
 }
 
-.logo {
-  color: var(--secondary-color);
-  cursor: pointer;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-  max-width: 80%;
-  padding-top: 10px;
-}
-
 /* .christmas-hat {
   color: var(--secondary-color);
   cursor: pointer;
@@ -751,6 +741,11 @@ footer {
 
 .logo-container {
   margin-left: -4em;
+}
+
+.unofficial-fork {
+  color: var(--secondary-color);
+  font-size: 14px;
 }
 
 /* --------- styles for multi dropdowns --------------*/
