@@ -1,0 +1,25 @@
+packages:
+  - client
+  - deps/hljs
+
+# react-scripts 4 expects a flat node_modules layout like Yarn 1 created.
+nodeLinker: hoisted
+
+overrides:
+  # An old transitive dependency pulls 0.6.8 from git; use the same version from npm.
+  ethereumjs-abi: 0.6.8
+
+# None of these install scripts are needed for the browser build:
+# the native addons have JavaScript fallbacks, the rest only print messages.
+allowBuilds:
+  bufferutil: false
+  core-js: false
+  ejs: false
+  es5-ext: false
+  fsevents: false
+  keccak: false
+  secp256k1: false
+  utf-8-validate: false
+  web3: false
+  web3-bzz: false
+  web3-shh: false

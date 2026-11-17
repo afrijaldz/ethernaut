@@ -29,7 +29,7 @@ All this process is required in order to avoid to the users to resolve both vers
 
 - run the tool:
 ```bash
-yarn run supersede:level
+pnpm run supersede:level
 ```
 
 The tool will guide the operator through the process. Operator is the account that will trigger the storage dump operations in the statistics contract. Operator address can be changed by editing script's `OPERATOR_ADDRESS` constant, although it is recommended that this be ethernaut's owner.
@@ -69,6 +69,6 @@ module.exports = {
 - Set script's `OPERATOR_ADDRESS` constant manually.
 - Run hardhat local node with forked network (command must be executed in `./contracts`, relative to project root):
 ```
-yarn hardhat --max-memory 8192  node --fork <provider api url>
+pnpm hardhat --max-memory 8192  node --fork <provider api url>
 ```
 - Run tool as testnet. 
