@@ -1,4 +1,4 @@
-import { useLocation, useNavigate, useParams } from "react-router";
+import { useLocation, useNavigate, useParams } from "../router";
 
 export const withRouter = (Component) => {
     const Wrapper = (props) =>{

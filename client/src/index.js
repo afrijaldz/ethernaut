@@ -3,7 +3,7 @@ import { createRoot } from "react-dom/client";
 import { Provider } from "react-redux";
 import { store, history } from "./store";
 import { syncHistoryWithStore } from "react-router-redux";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from "./router";
 import * as ethutil from "./utils/ethutil";
 import "bootstrap/dist/css/bootstrap.css";
 import "./styles/app.css";
