@@ -34,12 +34,6 @@ export const NETWORKS = {
     url: `${process.env.ARBITRUM_SEPOLIA_HOST}`,
     privKey: `${process.env.PRIV_KEY}`,
   },
-  HOLESKY: {
-    name: "holesky",
-    id: "17000",
-    url: `${process.env.HOLESKY_HOST}`,
-    privKey: `${process.env.PRIV_KEY}`,
-  },
   AMOY: {
     name: "amoy",
     id: "80002",
@@ -93,18 +87,6 @@ export const NETWORKS_INGAME = {
       apiHost: `https://api-sepolia.arbiscan.io`,
     },
   },
-  HOLESKY: {
-    name: "holesky",
-    id: "17000",
-    currencyName: "Holesky-ETH",
-    currencySymbol: "ETH",
-    rpcUrl: "https://ethereum-holesky.publicnode.com",
-    blockExplorer: "https://holesky.etherscan.io",
-    explorer: {
-      apiKey: `${process.env.REACT_APP_HOLESKY_EXPLORER_API_KEY}`,
-      apiHost: `https://api-holesky.etherscan.io`,
-    },
-  },
   AMOY: {
     name: "amoy",
     id: "80002",
@@ -154,7 +136,6 @@ export const ADDRESSES = {
     "0x09902A56d04a9446601a0d451E07459dC5aF0820",
   [NETWORKS.ARBITRUM_SEPOLIA.name]:
     "0x09902A56d04a9446601a0d451E07459dC5aF0820",
-  [NETWORKS.HOLESKY.name]: "0x09902A56d04a9446601a0d451E07459dC5aF0820",
   [NETWORKS.AMOY.name]: "0x09902A56d04a9446601a0d451E07459dC5aF0820",
 };
 
@@ -197,7 +178,6 @@ export const SHOW_VERSION = true;
 // export const ACTIVE_NETWORK = NETWORKS.SEPOLIA
 // export const ACTIVE_NETWORK = NETWORKS.OPTIMISM_SEPOLIA
 // export const ACTIVE_NETWORK = NETWORKS.ARBITRUM_SEPOLIA
-// export const ACTIVE_NETWORK = NETWORKS.HOLESKY
 // export const ACTIVE_NETWORK = NETWORKS.AMOY
 // export const ACTIVE_NETWORK = NETWORKS.LOCAL;
 
