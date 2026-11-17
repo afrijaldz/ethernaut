@@ -14,7 +14,6 @@
 - Better description for Denial level
 - Prevent double click on submitting or getting new level instances 
 - Reduced compiler warnings
-- Add Sentry for error tracking
 
 ## June 2021
 - Refactor project to use create-react-app

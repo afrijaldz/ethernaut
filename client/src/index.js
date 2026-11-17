@@ -10,8 +10,6 @@ import "./styles/app.css";
 import * as actions from "../src/actions";
 import * as constants from "../src/constants";
 import "./utils/^^";
-import * as Sentry from "@sentry/browser";
-import { Integrations } from "@sentry/tracing";
 import App from "./containers/App";
 import NotFound404 from "./components/not-found/NotFound404";
 import Header from "./containers/Header";
@@ -24,16 +22,6 @@ const Level = nonlazy(import("./containers/Level"));
 const Help = nonlazy(import("./containers/Help"));
 const Stats = nonlazy(import("./containers/Stats"));
 
-if (constants.SENTRY_DSN) {
-  Sentry.init({
-    dsn: constants.SENTRY_DSN,
-    debug: false,
-    tunnel: "/errors",
-    integrations: [new Integrations.BrowserTracing()],
-    tracesSampleRate: 1.0,
-    release: constants.VERSION,
-  });
-}
 // store.dispatch(actions.setNetworkId(id));
 store.dispatch(actions.connectWeb3(window.ethereum));
 const container = document.getElementById("root");
