@@ -1,0 +1,12 @@
+// Cloudflare Worker that serves the built client at ethernaut.afrijal.dev.
+// Workers Builds runs `pnpm run build:netlify`, then `npx wrangler deploy`.
+{
+  "name": "ethernaut",
+  "compatibility_date": "2026-11-17",
+  "assets": {
+    "directory": "./client/build",
+    // The client is a single-page app: unknown paths return index.html.
+    "not_found_handling": "single-page-application"
+  },
+  "routes": [{ "pattern": "ethernaut.afrijal.dev", "custom_domain": true }]
+}
