@@ -12,7 +12,7 @@
     "supersede:level": "pnpm compile:contracts && node --experimental-json-modules client/scripts/supersede_level.mjs",
     "network": "cd contracts && anvil --block-time 1 --auto-impersonate",
     "build:ethernaut": "pnpm compile:contracts && pnpm --dir client build",
-    "build:netlify": "pnpm --dir client build",
+    "build:netlify": "CI=false pnpm --dir client build",
     "start:ethernaut": "pnpm --dir client start",
     "leaderboard:oldCrawler": "node client/leaderboard/scripts/crawlers/crawlHistoricalData/index.cjs",
     "leaderboard:newCrawler": "node client/leaderboard/scripts/crawlers/crawlNewData/index.cjs",

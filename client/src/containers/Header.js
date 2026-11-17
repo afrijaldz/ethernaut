@@ -2,7 +2,7 @@ import React from "react";
 import onClickOutside from "react-onclickoutside";
 import { connect } from "react-redux";
 import { withRouter } from "../hoc/withRouter";
-import { Link} from "react-router-dom";
+import { Link} from "../router";
 import { bindActionCreators } from "redux";
 import * as actions from "../actions";
 import * as constants from "../constants";
