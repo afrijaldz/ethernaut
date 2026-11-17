@@ -5,7 +5,7 @@ const fs = require('fs');
 
 const dsn = process.env.REACT_APP_SENTRY_DSN;
 
-if (dsn === undefined) {
+if (!dsn) {
   if (process.env.NETLIFY === 'true') {
     throw new Error('Missing environment variable REACT_APP_SENTRY_DSN');
   } else {

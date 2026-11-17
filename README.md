@@ -1,4 +1,6 @@
 # Ethernaut
+
+> Unofficial fork, not affiliated with OpenZeppelin. The original project is [OpenZeppelin/ethernaut](https://github.com/OpenZeppelin/ethernaut).
  
 [![Twitter Follow](https://img.shields.io/twitter/follow/OpenZeppelin?style=plastic&logo=twitter)](https://twitter.com/OpenZeppelin)
 [![OpenZeppelin Forum](https://img.shields.io/badge/Ethernaut%20Forum%20-discuss-blue?style=plastic&logo=discourse)](https://forum.openzeppelin.com/tag/ethernaut)
