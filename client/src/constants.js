@@ -34,6 +34,12 @@ export const NETWORKS = {
     url: `${process.env.ARBITRUM_SEPOLIA_HOST}`,
     privKey: `${process.env.PRIV_KEY}`,
   },
+  BASE_SEPOLIA: {
+    name: "base-sepolia",
+    id: "84532",
+    url: `${process.env.BASE_SEPOLIA_HOST}`,
+    privKey: `${process.env.PRIV_KEY}`,
+  },
   AMOY: {
     name: "amoy",
     id: "80002",
@@ -85,6 +91,18 @@ export const NETWORKS_INGAME = {
     explorer: {
       apiKey: `${process.env.REACT_APP_ARBITRUM_SEPOLIA_EXPLORER_API_KEY}`,
       apiHost: `https://api-sepolia.arbiscan.io`,
+    },
+  },
+  BASE_SEPOLIA: {
+    name: "base-sepolia",
+    id: "84532",
+    currencyName: "Base-ETH",
+    currencySymbol: "ETH",
+    rpcUrl: `https://sepolia.base.org`,
+    blockExplorer: "https://sepolia.basescan.org",
+    explorer: {
+      apiKey: `${process.env.REACT_APP_BASE_SEPOLIA_EXPLORER_API_KEY}`,
+      apiHost: `https://api-sepolia.basescan.org`,
     },
   },
   AMOY: {
@@ -178,6 +196,7 @@ export const SHOW_VERSION = true;
 // export const ACTIVE_NETWORK = NETWORKS.SEPOLIA
 // export const ACTIVE_NETWORK = NETWORKS.OPTIMISM_SEPOLIA
 // export const ACTIVE_NETWORK = NETWORKS.ARBITRUM_SEPOLIA
+// export const ACTIVE_NETWORK = NETWORKS.BASE_SEPOLIA
 // export const ACTIVE_NETWORK = NETWORKS.AMOY
 // export const ACTIVE_NETWORK = NETWORKS.LOCAL;
 
