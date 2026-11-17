@@ -21,10 +21,11 @@ export const Footer = (props) => {
                     dangerouslySetInnerHTML={{ __html: strings.submitLevelFooter }}
                 ></footer>
                 :
-                <footer
-                    className="footer"
-                    dangerouslySetInnerHTML={{ __html: strings.footer }}
-                ></footer>
+                <footer className="footer">
+                    <span dangerouslySetInnerHTML={{ __html: strings.footer }}></span>
+                    {" · "}
+                    <a href="https://github.com/afrijaldz/ethernaut">Source code of this deployment</a>
+                </footer>
         )
     );
 };
