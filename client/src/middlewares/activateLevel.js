@@ -1,5 +1,4 @@
 import _ from 'lodash'
-import { push } from 'react-router-redux'
 import * as actions from '../actions';
 import * as constants from '../constants';
 
@@ -15,9 +14,8 @@ const activateLevel = store => next => action => {
   const state = store.getState()
   const network_id = state.network.networkId
 
-  if (
-    !state.gamedata.levels
-  ) return next(action)
+  // Gamedata is not loaded yet. Level retries once the levels arrive.
+  if (state.gamedata.levels.length === 0) return next(action)
 
   // Deactivate previous
   if (state.gamedata.activeLevel) {
@@ -56,9 +54,10 @@ const activateLevel = store => next => action => {
   window.contract = strings.notContractSetMessage
   window.instance = undefined
 
-  // -> 404
-  if (!activeLevel && !isLocalDeployed(network_id)) {
-    store.dispatch(push(constants.PATH_NOT_FOUND))
+  // -> 404, rendered by the Level container
+  if (!activeLevel) {
+    action.notFoundAddress = action.address
+    next(action)
     return
   }
 

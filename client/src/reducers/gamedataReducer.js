@@ -4,6 +4,7 @@ const initialState = {
   readOnly: false,
   ethernautAddress: undefined,
   activeLevel: undefined,
+  notFoundAddress: undefined,
   levels: []
 }
 
@@ -26,13 +27,15 @@ const gameDataReducer = function(state = initialState, action) {
     case actions.ACTIVATE_LEVEL:
       return {
         ...state,
-        activeLevel: action.activeLevel
+        activeLevel: action.activeLevel,
+        notFoundAddress: action.notFoundAddress
       }
 
     case actions.DEACTIVATE_LEVEL:
       return {
         ...state,
-        activeLevel: undefined
+        activeLevel: undefined,
+        notFoundAddress: undefined
       }
 
     default:
