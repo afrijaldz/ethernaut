@@ -72,12 +72,10 @@ function interceptConsole() {
       const color = rgbaString(rawColor)
       defaultConsole.info(
         `%c${msg1}`,
-        `color: rgba(0, 0, 0, 0);
+        `color: ${color};
          font-family: monospace;
          font-weight: bold;
-         font-size: ${Math.floor(20 * (c / m))}px;
-         -webkit-text-stroke-width: 1px;
-         -webkit-text-stroke-color: ${color};`)
+         font-size: ${Math.floor(20 * (c / m))}px;`)
       c++;
       if (c >= m) {
         clearInterval(interval)
