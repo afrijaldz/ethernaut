@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import CodeComponent from "../components/levels/Code";
 import Footer from "../components/common/Footer";
+import NotFound404 from "../components/not-found/NotFound404";
 import Author from "../components/levels/Author";
 import MarkdownComponent from "../components/common/Markdown";
 import * as actions from "../actions";
@@ -41,7 +42,10 @@ class Level extends React.Component {
 
   componentDidUpdate() {
     const key = getLevelKey(this.props.params.address);
-    if (this.props.level?.[key] !== this.props.params.address) {
+    if (
+      this.props.notFoundAddress !== this.props.params.address &&
+      this.props.level?.[key] !== this.props.params.address
+    ) {
       this.props.activateLevel(this.props.params.address);
     }
     var codeElement = document.getElementsByClassName("hljs")[0];
@@ -83,7 +87,7 @@ class Level extends React.Component {
   };
 
   handleClickOutside = (event) => {
-    if (this.containerRef && !this.containerRef.current.contains(event.target)) {
+    if (this.containerRef.current && !this.containerRef.current.contains(event.target)) {
       this.closeDropdown();
     }
   }
@@ -108,6 +112,9 @@ class Level extends React.Component {
     const { submittedIntance } = this.state;
     var [levelData, selectedLevel] = getlevelsdata(this.props, "levelPage");
 
+    if (this.props.notFoundAddress === this.props.params.address) {
+      return <NotFound404 />;
+    }
     if (!level) return null;
     const showCode = levelCompleted || level.revealCode;
     const showCompletedDescription =
@@ -350,6 +357,7 @@ function mapStateToProps(state) {
     networkId: state.network.networkId,
     level: level,
     activeLevel: level,
+    notFoundAddress: state.gamedata.notFoundAddress,
     player: state.player,
     levels: state.gamedata.levels,
     levelCompleted:
