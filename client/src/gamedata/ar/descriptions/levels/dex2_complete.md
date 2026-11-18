@@ -2,7 +2,7 @@
 
 مجرد أن يدعي العقد تنفيذ [مواصفات ERC20](https://eips.ethereum.org/EIPS/eip-20) لا يعني أنه جدير بالثقة.
 
-تتحرف بعض التوكنات عن معيار ERC20 بعدم إرجاع قيمة منطقية (boolean) من دوال الـ transfer الخاصة بها. [راجع خطأ فقدان قيمة الإرجاع - 130 توكن على الأقل تأثروا](https://medium.com/coinmonks/missing-return-value-bug-at-least-130-tokens-affected-d67bf08521ca).
+تتحرف بعض التوكنات عن معيار ERC20 بعدم إرجاع قيمة منطقية (boolean) من دوال الـ `transfer` الخاصة بها. [راجع خطأ فقدان قيمة الإرجاع - 130 توكن على الأقل تأثروا](https://medium.com/coinmonks/missing-return-value-bug-at-least-130-tokens-affected-d67bf08521ca).
 
 يمكن أن تتصرف توكنات ERC20 الأخرى، خاصة تلك المصممة من قبل الخصوم، بشكل أكثر خبثًا.
 

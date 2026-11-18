@@ -40,13 +40,14 @@ contract PriceConsumerV3 {
         (
             /* uint80 roundID */,
             int price,
-            /*uint256 startedAt*/,
-            /*uint256 timeStamp*/,
+            /*uint startedAt*/,
+            /*uint timeStamp*/,
             /*uint80 answeredInRound*/
         ) = priceFeed.latestRoundData();
         return price;
     }
 }
+
 ```
 [جربه على Remix](https://remix.ethereum.org/#url=https://docs.chain.link/samples/PriceFeeds/PriceConsumerV3.sol)
 

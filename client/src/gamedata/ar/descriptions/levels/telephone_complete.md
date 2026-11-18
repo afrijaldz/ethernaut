@@ -14,7 +14,7 @@ function transfer(address _to, uint _value) {
 2. يقوم المهاجم بجعل الضحية ترسل أموالاً إلى عقد خبيث يستدعي دالة التحويل (transfer) في عقد الرموز، على سبيل المثال:
 
 ```
-function() payable {
+function () payable {
   token.transfer(attackerAddress, 10000);
 }
 ```
