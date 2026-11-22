@@ -1,6 +1,6 @@
 Bu seviye, sabit bir gas miktarı belirtilmediğinde bilinmeyen dış kontrat çağrılarının hâlâ hizmet engelleme (DoS) saldırı vektörleri yaratabileceğini gösterir.
 
-Eğer bir dış çağrı revert ettiğinde işlem akışına devam etmek için low-level `call` kullanıyorsan, mutlaka sabit bir gas ödeneği (gas stipend) belirt. Örneğin: `call.gas(100000).value()`.
+Eğer bir dış çağrı revert ettiğinde işlem akışına devam etmek için low-level `call` kullanıyorsan, mutlaka sabit bir gas ödeneği (gas stipend) belirt. Örneğin: `<Address>.call{gas: <gasAmount>}(data)`.
 
 Genellikle re-entrancy saldırılarını önlemek için [checks-effects-interactions](http://solidity.readthedocs.io/en/latest/security-considerations.html#use-the-checks-effects-interactions-pattern) desenini izlemelisin, ancak fonksiyonun sonunda birden fazla dış çağrı yapılması gibi başka durumlarda da benzer sorunlar ortaya çıkabilir.
 
