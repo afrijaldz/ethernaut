@@ -10,6 +10,19 @@ import {DetectionBot} from "src/attacks/DetectionBot.sol";
 import {Level} from "src/levels/base/Level.sol";
 import {Ethernaut} from "src/Ethernaut.sol";
 
+/// @notice A bot that raises an alert on every transaction, so it blocks every delegateTransfer.
+contract AlwaysAlertBot {
+    Forta forta;
+
+    constructor(Forta _forta) {
+        forta = _forta;
+    }
+
+    function handleTransaction(address user, bytes calldata) external {
+        forta.raiseAlert(user);
+    }
+}
+
 contract TestDoubleEntryPoint is Test, Utils {
     Ethernaut ethernaut;
     DoubleEntryPoint instance;
@@ -56,10 +69,23 @@ contract TestDoubleEntryPoint is Test, Utils {
         vm.startPrank(player);
 
         Forta forta = instance.forta();
-        DetectionBot bot = new DetectionBot(address(forta));
+        address cryptoVault = instance.cryptoVault();
+        DetectionBot bot = new DetectionBot(address(forta), cryptoVault);
 
         forta.setDetectionBot(address(bot));
 
         assertTrue(submitLevelInstance(ethernaut, address(instance)));
+    }
+
+    /// @notice A bot that blocks every transfer, not only the sweep, must fail the level.
+    function testAlwaysAlertBotFails() public {
+        vm.startPrank(player);
+
+        Forta forta = instance.forta();
+        AlwaysAlertBot bot = new AlwaysAlertBot(forta);
+
+        forta.setDetectionBot(address(bot));
+
+        assertFalse(submitLevelInstance(ethernaut, address(instance)));
     }
 }
