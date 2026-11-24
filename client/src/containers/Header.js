@@ -263,16 +263,6 @@ class Header extends React.Component {
 
         <center>
           <header>
-            <ul className="header-ul">
-              <li key={"hiring"} className="nav-links">
-                <a
-                  className="buttons hiring-button"
-                  href="https://grnh.se/dd38880f3us"
-                >
-                  <button>{strings.hiring}</button>
-                </a>
-              </li>
-            </ul>
             <a
               className="logo-container unofficial-fork"
               href="https://github.com/OpenZeppelin/ethernaut"

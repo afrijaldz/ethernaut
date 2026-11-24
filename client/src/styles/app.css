@@ -169,33 +169,8 @@ header {
   margin-top: 1em;
 }
 
-.header-ul {
-  padding: 0px 0px;
-  margin-bottom: 0;
-}
-
-.hiring {
-  color: var(--primary-color);
-}
-
 nav li {
   list-style: none;
-}
-
-.nav-links {
-  display: inline-block;
-  padding: 0px;
-}
-
-.nav-links a {
-  color: var(--secondary-color);
-  text-decoration: none;
-  font-family: helvetica, sans-serif;
-}
-
-.nav-links button i:hover {
-  outline: none;
-  background: transparent;
 }
 
 .icon-buttons {
@@ -739,10 +714,6 @@ footer {
   height: 13px;
 }
 
-.logo-container {
-  margin-left: -4em;
-}
-
 .unofficial-fork {
   color: var(--secondary-color);
   font-size: 14px;
@@ -798,15 +769,8 @@ footer {
     padding: 4px 9px;
   }
 
-  .header-ul {
-    display: flex;
-    margin-right: 20px;
-  }
   .helpcontainer {
     width: calc(100vw - 40px);
-  }
-  .header-ul > .dropdown.chains {
-    display: none;
   }
 
   /* .toggle {
@@ -814,10 +778,6 @@ footer {
   } */
 
   .help-button {
-    display: none;
-  }
-
-  .hiring-button {
     display: none;
   }
 
