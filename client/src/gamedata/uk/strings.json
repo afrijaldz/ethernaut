@@ -1,7 +1,6 @@
 {
   "ethernaut": "Ethernaut",
   "title": "Ethernaut",
-  "hiring": "Ми наймаємо",
   "info": "<h2>Ethernaut це Web3/Solidity варгейм на базі Ethereum Virtual Machine, натхненний <a href='https://overthewire.org' target='_blank' rel='noopener noreferrer'>overthewire.org</a>. Кожен рівень є смарт-контрактом, який потрібно 'зламати'. Вихідний код гри повністю відкритий, а всі рівні створені іншими гравцями. У тебе є цікава ідея для нового рівня? <a href='https://github.com/OpenZeppelin/ethernaut'><button>Ласкаво просимо</button></a></h2>",
   "home": "Назад",
   "help": "Допомога",
