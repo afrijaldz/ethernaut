@@ -59,12 +59,12 @@ In order to install, build, and run Ethernaut locally, follow these instructions
     pnpm start:ethernaut
     ```
 
-### Running locally (sepolia network)
+### Running locally (Base Sepolia network)
 
 The same as using the local network but steps 2, 3 and 6 are not necessary.
 
 In this case, replace point 5 with:
-5. Set `client/src/constants.js` `ACTIVE_NETWORK` to `NETWORKS.SEPOLIA`
+5. Set `client/src/constants.js` `ACTIVE_NETWORK` to `NETWORKS.BASE_SEPOLIA`
 
 ### Running tests
 
@@ -82,7 +82,7 @@ pnpm build:ethernaut
 
 You will normally need to deploy it on a local network, for this you can just run `pnpm deploy:contracts` and all the contracts will be deployed on your local node running on `localhost:8545` and you will be able to check each level address in the `deploy.local.json` file.
 
-To deploy the contracts on Sepolia, first set the `ACTIVE_NETWORK` variable in `constants.js` and then edit `deploy.sepolia.json`. This file keeps a history of all level and contract instances. To deploy a new instance, add an "x" entry to the array, like so:
+To deploy the contracts on Base Sepolia, first set the `ACTIVE_NETWORK` variable in `constants.js` and then edit `deploy.base-sepolia.json`. This file keeps a history of all level and contract instances. To deploy a new instance, add an "x" entry to the array, like so:
 
 ```json
 {

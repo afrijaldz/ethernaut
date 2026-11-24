@@ -17,7 +17,7 @@ const levels = gamedata.levels;
 // For testing purposes in a local fork uncomment one of the following lines to get forked network deployment data.
 // const DEPLOY_DATA_PATH = `./client/src/gamedata/deploy.${constants.NETWORKS.GOERLI.name}.json`;
 // const DEPLOY_DATA_PATH = `./client/src/gamedata/deploy.${constants.NETWORKS.MUMBAI.name}.json`;
-// const DEPLOY_DATA_PATH = `./client/src/gamedata/deploy.${constants.NETWORKS.SEPOLIA.name}.json`;
+// const DEPLOY_DATA_PATH = `./client/src/gamedata/deploy.${constants.NETWORKS.BASE_SEPOLIA.name}.json`;
 // const DEPLOY_DATA_PATH = `./client/src/gamedata/deploy.${constants.NETWORKS.OPTIMISM_GOERLI.name}.json`;
 // const DEPLOY_DATA_PATH = `./client/src/gamedata/deploy.${constants.NETWORKS.ARBITRUM_GOERLI.name}.json`;
 // const DEPLOY_DATA_PATH = `./client/src/gamedata/deploy.local.json`;

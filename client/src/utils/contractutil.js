@@ -172,7 +172,7 @@ export const deployRemainingContracts = async () => {
 
 export const verifyContract = async (contractAddress, level, chainId) => {
   const network = getNetworkFromId(chainId);
-  if (!network.explorer || !level.verificationDetails)
+  if (!network?.explorer || !level.verificationDetails)
     return;
 
   const contractFile = await fetch(`../contracts/src/levels/${level.instanceContract}`);

@@ -111,13 +111,11 @@ class Header extends React.Component {
   }
 
   async changeNetwork(network) {
+    const chainId = await window.ethereum.request({ method: "eth_chainId" });
+    if (Number(chainId) === Number(network.id)) return;
     const elements = document.querySelectorAll(".progress-bar-wrapper");
     elements[0].style.display = "flex";
     try {
-      const chainId = await window.ethereum.request({ method: "eth_chainId" });
-      if (Number(chainId) === Number(network.id)) {
-        return;
-      }
       await window.ethereum.request({
         method: "wallet_switchEthereumChain",
         params: [
@@ -355,8 +353,8 @@ class Header extends React.Component {
                       {Object.values(constants.NETWORKS_INGAME).map(
                         (network, index) => {
                           if (network && network.name !== "local") {
-                            if (Number(network.id) === this.state.chainId)
-                              return false; // filter out current network
+                            const isCurrent =
+                              Number(network.id) === this.state.chainId;
                             return (
                               <div
                                 key={index}
@@ -370,8 +368,12 @@ class Header extends React.Component {
                                   id={network.name}
                                   key={network.name}
                                   href="/"
+                                  aria-current={isCurrent}
                                 >
                                   {network.name}
+                                  {isCurrent && (
+                                    <i className="fas fa-check ms-2"></i>
+                                  )}
                                 </a>
                               </div>
                             );

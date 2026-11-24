@@ -15,34 +15,10 @@ export const NETWORKS = {
     url: "http://localhost",
     port: 8545,
   },
-  SEPOLIA: {
-    name: "sepolia",
-    id: "11155111",
-    url: `${process.env.SEPOLIA_HOST}`,
-    privKey: `${process.env.PRIV_KEY}`,
-  },
-  OPTIMISM_SEPOLIA: {
-    name: "sepolia-optimism",
-    id: "11155420",
-    url: `${process.env.OPTIMISM_SEPOLIA_HOST}`,
-    privKey: `${process.env.PRIV_KEY}`,
-  },
-  ARBITRUM_SEPOLIA: {
-    name: "sepolia-arbitrum",
-    id: "421614",
-    url: `${process.env.ARBITRUM_SEPOLIA_HOST}`,
-    privKey: `${process.env.PRIV_KEY}`,
-  },
   BASE_SEPOLIA: {
     name: "base-sepolia",
     id: "84532",
     url: `${process.env.BASE_SEPOLIA_HOST}`,
-    privKey: `${process.env.PRIV_KEY}`,
-  },
-  AMOY: {
-    name: "amoy",
-    id: "80002",
-    url: `${process.env.AMOY_HOST}`,
     privKey: `${process.env.PRIV_KEY}`,
   },
 };
@@ -56,42 +32,6 @@ export const NETWORKS_INGAME = {
     url: "http://localhost",
     port: 8545,
   },
-  SEPOLIA: {
-    name: "sepolia",
-    id: "11155111",
-    currencyName: "Sepolia-ETH",
-    currencySymbol: "SEP",
-    rpcUrl: `https://ethereum-sepolia-rpc.publicnode.com`,
-    blockExplorer: "https://sepolia.etherscan.io",
-    explorer: {
-      apiKey: `${process.env.REACT_APP_SEPOLIA_EXPLORER_API_KEY}`,
-      apiHost: `https://api-sepolia.etherscan.io`,
-    },
-  },
-  OPTIMISM_SEPOLIA: {
-    name: "sepolia-optimism",
-    id: "11155420",
-    currencyName: "Optimism-ETH",
-    currencySymbol: "ETH",
-    rpcUrl: `https://sepolia.optimism.io`,
-    blockExplorer: "https://sepolia-optimism.etherscan.io",
-    explorer: {
-      apiKey: `${process.env.REACT_APP_OPTIMISM_SEPOLIA_EXPLORER_API_KEY}`,
-      apiHost: `https://api-sepolia-optimistic.etherscan.io`,
-    },
-  },
-  ARBITRUM_SEPOLIA: {
-    name: "sepolia-arbitrum",
-    id: "421614",
-    currencyName: "Arbitrum-ETH",
-    currencySymbol: "ETH",
-    rpcUrl: `https://sepolia-rollup.arbitrum.io/rpc`,
-    blockExplorer: "https://sepolia.arbiscan.io",
-    explorer: {
-      apiKey: `${process.env.REACT_APP_ARBITRUM_SEPOLIA_EXPLORER_API_KEY}`,
-      apiHost: `https://api-sepolia.arbiscan.io`,
-    },
-  },
   BASE_SEPOLIA: {
     name: "base-sepolia",
     id: "84532",
@@ -103,14 +43,6 @@ export const NETWORKS_INGAME = {
       apiKey: `${process.env.REACT_APP_BASE_SEPOLIA_EXPLORER_API_KEY}`,
       apiHost: `https://api-sepolia.basescan.org`,
     },
-  },
-  AMOY: {
-    name: "amoy",
-    id: "80002",
-    currencyName: "MATIC",
-    currencySymbol: "MATIC",
-    rpcUrl: `https://rpc-amoy.polygon.technology/`,
-    blockExplorer: "https://amoy.polygonscan.com/",
   },
 };
 
@@ -148,12 +80,6 @@ export const CLEAR_CONSOLE = !DEBUG;
 // Owner addresses
 export const ADDRESSES = {
   [NETWORKS.LOCAL.name]: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
-  [NETWORKS.SEPOLIA.name]: "0x09902A56d04a9446601a0d451E07459dC5aF0820",
-  [NETWORKS.OPTIMISM_SEPOLIA.name]:
-    "0x09902A56d04a9446601a0d451E07459dC5aF0820",
-  [NETWORKS.ARBITRUM_SEPOLIA.name]:
-    "0x09902A56d04a9446601a0d451E07459dC5aF0820",
-  [NETWORKS.AMOY.name]: "0x09902A56d04a9446601a0d451E07459dC5aF0820",
   [NETWORKS.BASE_SEPOLIA.name]: "0x467945D438E785e7eDC940717B550b762C45D361",
 };
 
@@ -161,7 +87,7 @@ export const ADDRESSES = {
 export const SUPPORTS_EIP_1559 = [
   "5", // NETWORKS.GOERLI.id
   "80001", // NETWORKS.MUMBAI.id
-  "11155111", // NETWORKS.SEPOLIA.id
+  "11155111", // Sepolia
 ];
 
 // Core contract keys
@@ -193,11 +119,7 @@ export const CUSTOM_LOGGING = true; /* TRUE on production */
 export const SHOW_ALL_COMPLETE_DESCRIPTIONS = false; /* FALSE on production */
 export const SHOW_VERSION = true;
 
-// export const ACTIVE_NETWORK = NETWORKS.SEPOLIA
-// export const ACTIVE_NETWORK = NETWORKS.OPTIMISM_SEPOLIA
-// export const ACTIVE_NETWORK = NETWORKS.ARBITRUM_SEPOLIA
 // export const ACTIVE_NETWORK = NETWORKS.BASE_SEPOLIA
-// export const ACTIVE_NETWORK = NETWORKS.AMOY
 // export const ACTIVE_NETWORK = NETWORKS.LOCAL;
 
 let id_to_network = {};

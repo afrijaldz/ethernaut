@@ -3,7 +3,7 @@ Bu seviye, oyunun nasıl oynanacağına dair temel bilgileri size öğretecek.
 &nbsp;
 #### 1. MetaMask’i Kurun
 Eğer hâlâ yüklemediyseniz, masaüstü tarayıcınızda (Chrome, Firefox, Brave veya Opera) [MetaMask eklentisini](https://metamask.io/) indirin ve kurun.
-Eklentinin cüzdanını oluşturun ve sol üstteki ağ seçicisinden istediğiniz ağa geçiş yapın. Alternatif olarak arayüzdeki butonu kullanarak ağlar arasında geçiş yapabilirsiniz. Eğer desteklenmeyen bir ağ seçerseniz, oyun size bildirim verecek ve varsayılan Sepolia test ağına yönlendirecektir.
+Eklentinin cüzdanını oluşturun ve sol üstteki ağ seçicisinden istediğiniz ağa geçiş yapın. Alternatif olarak arayüzdeki butonu kullanarak ağlar arasında geçiş yapabilirsiniz. Eğer desteklenmeyen bir ağ seçerseniz, oyun size bildirim verecek ve varsayılan Base Sepolia test ağına yönlendirecektir.
 
 #### 2. Tarayıcı konsolunu açın
 Tarayıcınızın konsolunu açın: `Araçlar (Tools) > Geliştirici Araçları (Developer Tools)`.

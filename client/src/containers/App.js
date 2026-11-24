@@ -92,8 +92,8 @@ class App extends React.Component {
       (key) => key !== "LOCAL" && key !== "UNDEFINED"
     );
 
-    // change the network to Sepolia network
-    async function switchToSepolia() {
+    // change the network to Base Sepolia
+    async function switchToBaseSepolia() {
       let elements = document.querySelectorAll(".progress-bar-wrapper");
       const deployWindow = document.querySelectorAll(".deploy-window-bg");
       try {
@@ -101,31 +101,31 @@ class App extends React.Component {
           method: "wallet_switchEthereumChain",
           params: [
             {
-              chainId: `0x${Number(constants.NETWORKS.SEPOLIA.id).toString(
-                16
-              )}`,
+              chainId: `0x${Number(
+                constants.NETWORKS.BASE_SEPOLIA.id
+              ).toString(16)}`,
             },
-          ], //if on wrong network giving option to switch to sepolia network.
+          ], //if on wrong network giving option to switch to Base Sepolia.
         });
         deployWindow[0].style.display = "none";
       } catch (switchError) {
         // This error code indicates that the chain has not been added to MetaMask.
         if (switchError.code === 4902) {
-          const sepolia = constants.NETWORKS_INGAME.SEPOLIA;
+          const baseSepolia = constants.NETWORKS_INGAME.BASE_SEPOLIA;
           try {
             await window.ethereum.request({
               method: "wallet_addEthereumChain",
               params: [
                 {
-                  chainId: `0x${Number(sepolia.id).toString(16)}`,
-                  chainName: sepolia.name,
-                  rpcUrls: [sepolia.rpcUrl],
+                  chainId: `0x${Number(baseSepolia.id).toString(16)}`,
+                  chainName: baseSepolia.name,
+                  rpcUrls: [baseSepolia.rpcUrl],
                   nativeCurrency: {
-                    name: sepolia.currencyName,
-                    symbol: sepolia.currencySymbol,
+                    name: baseSepolia.currencyName,
+                    symbol: baseSepolia.currencySymbol,
                     decimals: 18,
                   },
-                  blockExplorerUrls: [sepolia.blockExplorer],
+                  blockExplorerUrls: [baseSepolia.blockExplorer],
                 },
               ],
             });
@@ -220,8 +220,8 @@ class App extends React.Component {
                   <button className="buttons" onClick={deployAdminContracts}>
                     {strings.deployGame}
                   </button>
-                  <button className="buttons" onClick={switchToSepolia}>
-                    {strings.switchToSepolia}
+                  <button className="buttons" onClick={switchToBaseSepolia}>
+                    {strings.switchToBaseSepolia}
                   </button>
                 </div>
                 <p className="deploy-note">{strings.deployNote}</p>
@@ -239,8 +239,8 @@ class App extends React.Component {
                 {strings.deployMessage}
                 {supportedNetworksList(supportedNetworks)}
                 <div className="choice-buttons">
-                  <button className="buttons" onClick={switchToSepolia}>
-                    {strings.switchToSepolia}
+                  <button className="buttons" onClick={switchToBaseSepolia}>
+                    {strings.switchToBaseSepolia}
                   </button>
                   {!isDeprecatedNetwork(this.state.chainId) && (
                     <button className="buttons" onClick={this.continueAnyway}>
