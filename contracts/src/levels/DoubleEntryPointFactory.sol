@@ -50,8 +50,8 @@ contract DoubleEntryPointFactory is Level {
         // emulate a lambda transfer of a user
         try LegacyToken(instance.delegatedFrom()).transfer(address(cryptoVault), 0) {
         } catch {
-            // It mustn't revert, if so return true on failure
-            return (true, abi.encode(false));
+            // A normal transfer must not revert. A bot that blocks it fails the level.
+            return (false, abi.encode(false));
         }
 
         try cryptoVault.sweepToken(IERC20(instance.delegatedFrom())) {
