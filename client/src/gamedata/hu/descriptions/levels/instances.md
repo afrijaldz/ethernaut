@@ -3,7 +3,7 @@ Ez a szint végigvezet a játék alapjain.
 &nbsp;
 #### 1. MetaMask beállítása
 Ha még nincs meg, telepítsd a [MetaMask böngésző bővítményt](https://metamask.io/) (Chrome-ban, Firefox-ban, Brave-ben vagy Opera-ban asztali gépeden).
-Állítsd be a bővítmény tárcáját és használd a hálózat választót, hogy a preferált hálózatra mutathasson a bővítmény felületének bal felső sarkában. Alternatívaként használhatod a UI gombot a hálózatok közötti váltáshoz. Ha nem támogatott hálózatot választasz, a játék értesít és elvisz az alapértelmezett Sepolia testnet-re.
+Állítsd be a bővítmény tárcáját és használd a hálózat választót, hogy a preferált hálózatra mutathasson a bővítmény felületének bal felső sarkában. Alternatívaként használhatod a UI gombot a hálózatok közötti váltáshoz. Ha nem támogatott hálózatot választasz, a játék értesít és elvisz az alapértelmezett Base Sepolia testnet-re.
 
 #### 2. Nyisd meg a böngésző konzolját
 Nyisd meg a böngésző konzolját: `Eszközök > Fejlesztői eszközök`.

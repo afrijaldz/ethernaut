@@ -252,5 +252,5 @@ export const getNetworkFromId = (networkId) => {
 
 export const getNetworkNamefromId = (networkId) => {
   const network = getNetworkFromId(networkId);
-  return network.name
+  return network?.name
 }

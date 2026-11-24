@@ -33,6 +33,7 @@ export const getTotalPlayers = async (networkId) => {
         return
     }
     const proxyStatsAddress = getProxyStatsContractAddressInNetwork(networkId)
+    if (!proxyStatsAddress) return
     const statsContract = await getStatsContract(proxyStatsAddress)
     return await getTotalNumberOfPlayers(statsContract)
 }
@@ -42,6 +43,7 @@ export const getTotalFailures = async (networkId) => {
         return
     }
     const proxyStatsAddress = getProxyStatsContractAddressInNetwork(networkId)
+    if (!proxyStatsAddress) return
     const statsContract = await getStatsContract(proxyStatsAddress)
     return await getFailedSubmissions(statsContract)
 }
@@ -51,6 +53,7 @@ export const getTotalCompleted = async (networkId) => {
         return
     }
     const proxyStatsAddress = getProxyStatsContractAddressInNetwork(networkId)
+    if (!proxyStatsAddress) return
     const statsContract = await getStatsContract(proxyStatsAddress)
     return await getCompletedLevels(statsContract)
 }
@@ -60,6 +63,7 @@ export const getTotalCreated = async (networkId) => {
         return
     }
     const proxyStatsAddress = getProxyStatsContractAddressInNetwork(networkId)
+    if (!proxyStatsAddress) return
     const statsContract = await getStatsContract(proxyStatsAddress)
     return await getLevelsCreated(statsContract)
 }
@@ -69,6 +73,7 @@ export const checkIfPlayerExist = async (playerAddress, networkId) => {
         return
     }
     const proxyStatsAddress = getProxyStatsContractAddressInNetwork(networkId)
+    if (!proxyStatsAddress) return
     const statsContract = await getStatsContract(proxyStatsAddress, playerAddress)
     return await statsContract.doesPlayerExist(playerAddress)
 }

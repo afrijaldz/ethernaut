@@ -3,7 +3,7 @@ Cấp độ này sẽ hướng dẫn bạn những điều cơ bản về cách 
 &nbsp;
 #### 1. Thiết lập MetaMask
 Nếu bạn chưa có thì hãy cài đặt [tiện ích mở rộng trình duyệt MetaMask](https://metamask.io/) (trong Chrome, Firefox, Brave hoặc Opera trên máy tính để bàn của bạn).
-Thiết lập ví của tiện ích mở rộng và sử dụng bộ chọn mạng để trỏ đến mạng ưa thích ở phía trên bên trái giao diện của tiện ích mở rộng. Ngoài ra, bạn có thể sử dụng nút UI để chuyển đổi giữa các mạng. Nếu bạn chọn mạng không được hỗ trợ, trò chơi sẽ thông báo cho bạn và đưa bạn đến mạng thử nghiệm Sepolia mặc định.
+Thiết lập ví của tiện ích mở rộng và sử dụng bộ chọn mạng để trỏ đến mạng ưa thích ở phía trên bên trái giao diện của tiện ích mở rộng. Ngoài ra, bạn có thể sử dụng nút UI để chuyển đổi giữa các mạng. Nếu bạn chọn mạng không được hỗ trợ, trò chơi sẽ thông báo cho bạn và đưa bạn đến mạng thử nghiệm Base Sepolia mặc định.
 
 #### 2. Mở bảng điều khiển của trình duyệt
 Mở bảng điều khiển của trình duyệt của bạn: `Tools > Developer Tools`.
