@@ -7,9 +7,9 @@
   "scripts": {
     "test:contracts": "cd contracts && forge test",
     "compile:contracts": "cd contracts && forge build",
-    "deploy:contracts": "pnpm compile:contracts && node --experimental-json-modules client/scripts/deploy_contracts.mjs",
-    "upgrade:proxy": "pnpm compile:contracts && node --experimental-json-modules client/scripts/upgrade_proxy.mjs",
-    "supersede:level": "pnpm compile:contracts && node --experimental-json-modules client/scripts/supersede_level.mjs",
+    "deploy:contracts": "pnpm compile:contracts && node client/scripts/deploy_contracts.mjs",
+    "upgrade:proxy": "pnpm compile:contracts && node client/scripts/upgrade_proxy.mjs",
+    "supersede:level": "pnpm compile:contracts && node client/scripts/supersede_level.mjs",
     "network": "cd contracts && anvil --block-time 1 --auto-impersonate",
     "build:ethernaut": "pnpm compile:contracts && pnpm --dir client build",
     "build:netlify": "CI=false pnpm --dir client build",
@@ -18,5 +18,5 @@
     "leaderboard:newCrawler": "node client/leaderboard/scripts/crawlers/crawlNewData/index.cjs",
     "leaderboard:triggerNextCrawl": "node client/leaderboard/scripts/actuate/index.cjs"
   },
-  "packageManager": "pnpm@12.21.0"
+  "packageManager": "pnpm@12.23.0"
 }

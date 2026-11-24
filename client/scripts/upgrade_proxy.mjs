@@ -3,9 +3,9 @@ import Web3 from 'web3';
 import fs from 'fs';
 import * as ethutil from '../src/utils/ethutil.js';
 import * as constants from '../src/constants.js';
-import HDWalletProvider from '@truffle/hdwallet-provider';
-import * as ProxyAdminABI from '../src/contracts/out/ProxyAdmin.sol/ProxyAdmin.json' assert { type: 'json' };
-import * as ImplementationABI from '../src/contracts/out/Statistics.sol/Statistics.json' assert { type: 'json' };
+import { createSigningProvider } from './signing-provider.mjs';
+import * as ProxyAdminABI from '../src/contracts/out/ProxyAdmin.sol/ProxyAdmin.json' with { type: 'json' };
+import * as ImplementationABI from '../src/contracts/out/Statistics.sol/Statistics.json' with { type: 'json' };
 
 let web3;
 
@@ -90,9 +90,9 @@ function initWeb3() {
       console.log(colors.gray(`connecting web3 to '${providerUrl}'...`));
       provider = new Web3.providers.HttpProvider(providerUrl);
     } else {
-      provider = new HDWalletProvider(
-        constants.ACTIVE_NETWORK.privKey,
-        constants.ACTIVE_NETWORK.url
+      provider = createSigningProvider(
+        constants.ACTIVE_NETWORK.url,
+        constants.ACTIVE_NETWORK.privKey
       );
     }
 

@@ -5,12 +5,12 @@ import { ethers } from "ethers";
 import fs from "fs";
 import * as ethutil from "../src/utils/ethutil.js";
 import * as constants from "../src/constants.js";
-import HDWalletProvider from "@truffle/hdwallet-provider";
-import * as gamedata from "../src/gamedata/gamedata.json" assert { type: "json" };
-import * as EthernautABI from "../src/contracts/out/Ethernaut.sol/Ethernaut.json" assert { type: "json" };
-import * as ProxyAdminABI from "../src/contracts/out/ProxyAdmin.sol/ProxyAdmin.json" assert { type: "json" };
-import * as ImplementationABI from "../src/contracts/out/Statistics.sol/Statistics.json" assert { type: "json" };
-import * as ProxyStatsABI from "../src/contracts/out/ProxyStats.sol/ProxyStats.json" assert { type: "json" };
+import { createSigningProvider } from "./signing-provider.mjs";
+import * as gamedata from "../src/gamedata/gamedata.json" with { type: "json" };
+import * as EthernautABI from "../src/contracts/out/Ethernaut.sol/Ethernaut.json" with { type: "json" };
+import * as ProxyAdminABI from "../src/contracts/out/ProxyAdmin.sol/ProxyAdmin.json" with { type: "json" };
+import * as ImplementationABI from "../src/contracts/out/Statistics.sol/Statistics.json" with { type: "json" };
+import * as ProxyStatsABI from "../src/contracts/out/ProxyStats.sol/ProxyStats.json" with { type: "json" };
 
 let web3;
 let ethernaut;
@@ -115,48 +115,44 @@ async function deployContracts(deployData) {
   // set ProxyStats in Ethernaut
   await setStatProxy(from, props);
 
-  // Sweep levels
-  const promises = gamedata.default.levels.map(async (level) => {
-    // console.log('level: ', level);
-    return new Promise(async (resolve) => {
-      if (needsDeploy(deployData[level.deployId])) {
-        console.log(
-          `Deploying ${level.levelContract}, deployId: ${level.deployId}...`
-        );
+  // Sweep levels one at a time: every transaction comes from the same
+  // account, so parallel sends race for the same nonce.
+  for (const level of gamedata.default.levels) {
+    if (!needsDeploy(deployData[level.deployId])) {
+      console.log(`Using deployed ${level.levelContract}...`);
+      continue;
+    }
 
-        // Deploy contract
-        const LevelABI = JSON.parse(
-          fs.readFileSync(
-            `contracts/out/${
-              level.levelContract
-            }/${withoutExtension(level.levelContract)}.json`,
-            "utf-8"
-          )
-        );
-        const Contract = await ethutil.getTruffleContract(LevelABI, { from });
-        const contract = await Contract.new(...level.deployParams, props);
-        console.log(colors.yellow(`  ${level.name}: ${contract.address}`));
-        deployData[level.deployId] = contract.address;
-        console.log(
-          colors.gray(
-            `  storing deployed id: ${level.deployId} with address: ${contract.address}`
-          )
-        );
+    console.log(
+      `Deploying ${level.levelContract}, deployId: ${level.deployId}...`
+    );
 
-        // Register level in Ethernaut contract
-        console.log(
-          `  Registering level ${level.levelContract} in Ethernaut.sol...`
-        );
-        const tx = await ethernaut.registerLevel(contract.address, props);
-        console.log(`Registered ${level.levelContract}!`);
-      } else {
-        console.log(`Using deployed ${level.levelContract}...`);
-      }
-      resolve(level);
-    });
-  });
+    // Deploy contract
+    const LevelABI = JSON.parse(
+      fs.readFileSync(
+        `contracts/out/${
+          level.levelContract
+        }/${withoutExtension(level.levelContract)}.json`,
+        "utf-8"
+      )
+    );
+    const Contract = await ethutil.getTruffleContract(LevelABI, { from });
+    const contract = await Contract.new(...level.deployParams, props);
+    console.log(colors.yellow(`  ${level.name}: ${contract.address}`));
+    deployData[level.deployId] = contract.address;
+    console.log(
+      colors.gray(
+        `  storing deployed id: ${level.deployId} with address: ${contract.address}`
+      )
+    );
 
-  return Promise.all(promises);
+    // Register level in Ethernaut contract
+    console.log(
+      `  Registering level ${level.levelContract} in Ethernaut.sol...`
+    );
+    await ethernaut.registerLevel(contract.address, props);
+    console.log(`Registered ${level.levelContract}!`);
+  }
 }
 
 // ----------------------------------
@@ -265,9 +261,9 @@ function initWeb3() {
       console.log(colors.gray(`connecting web3 to '${providerUrl}'...`));
       provider = new Web3.providers.HttpProvider(providerUrl);
     } else {
-      provider = new HDWalletProvider(
-        constants.ACTIVE_NETWORK.privKey,
-        constants.ACTIVE_NETWORK.url
+      provider = createSigningProvider(
+        constants.ACTIVE_NETWORK.url,
+        constants.ACTIVE_NETWORK.privKey
       );
     }
     //web3 = new ethers.providers.Web3Provider(provider)
