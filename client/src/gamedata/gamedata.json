@@ -646,6 +646,21 @@
       "deployId": "41",
       "instanceGas": 1500000,
       "author": "mivgubel"
+    },
+    {
+      "name": "FrontRunner",
+      "created": "2026-09-22",
+      "difficulty": "4",
+      "description": "front_runner.md",
+      "completedDescription": "front_runner_complete.md",
+      "levelContract": "FrontRunnerFactory.sol",
+      "instanceContract": "FrontRunner.sol",
+      "revealCode": true,
+      "deployParams": [],
+      "deployFunds": 0,
+      "deployId": "42",
+      "instanceGas": 800000,
+      "author": "mivgubel"
     }
   ]
 }
