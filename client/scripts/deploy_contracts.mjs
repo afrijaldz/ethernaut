@@ -77,7 +77,8 @@ exec();
 async function deployContracts(deployData) {
   const props = {
     gasPrice: parseInt((await web3.eth.getGasPrice()) * 1.05),
-    gas: 20000000,
+    // EIP-7825 (Fusaka) caps one transaction at 2^24 = 16,777,216 gas.
+    gas: 16000000,
   };
 
   let from = constants.ADDRESSES[constants.ACTIVE_NETWORK.name];
