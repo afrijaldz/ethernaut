@@ -36,7 +36,7 @@ class Help extends React.Component {
 
           <h3>Troubleshooting</h3>
           <section>
-            <MarkdownComponent target={strings.troubleshooting} />
+            <MarkdownComponent target={strings.troubleshooting} linkTarget="_blank" />
           </section>
         </main>
         {/* Footer */}

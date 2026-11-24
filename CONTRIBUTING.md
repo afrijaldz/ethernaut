@@ -38,7 +38,7 @@ Currently, we are reviewing contributions of the following types:
 - [Translations and additional languages](#translations-and-additional-languages)
 - [Documentation updates and corrections](#documentation-updates-and-corrections)
 
-If you would like to contribute in another way, please reach out to us via email: [ethernaut@zeppelin.solutions](mailto:ethernaut@zeppelin.solutions)
+If you would like to contribute in another way, please open an issue: [https://github.com/afrijaldz/ethernaut/issues](https://github.com/afrijaldz/ethernaut/issues)
 
 ### Level development
 
