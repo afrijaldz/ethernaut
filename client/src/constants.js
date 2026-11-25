@@ -1,7 +1,4 @@
-import dotenv from "dotenv";
 import pkgWeb3 from "web3";
-
-dotenv.config();
 
 export const DEBUG = process.env.NODE_ENV !== "production";
 export const DEBUG_REDUX = DEBUG;

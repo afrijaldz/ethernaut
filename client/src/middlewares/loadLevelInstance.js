@@ -2,6 +2,7 @@ import * as ethutil from '../utils/ethutil';
 import * as actions from '../actions';
 import { loadTranslations } from '../utils/translations';
 import { getGasFeeDetails } from '../utils/ethutil'
+import { loadContractJson } from '../utils/contractjson';
 import { verifyContract } from '../utils/contractutil';
 
 let language = localStorage.getItem('lang');
@@ -77,15 +78,18 @@ const loadLevelInstance = (store) => (next) => (action) => {
   // Get instance from address
   if (!instanceAddress) return;
   console.info(`=> ${strings.instanceAddressMessage}\n${instanceAddress}`);
-  const Instance = ethutil.getTruffleContract(
-    require(`../contracts/out/${action.level.instanceContract
-    }/${withoutExtension(action.level.instanceContract)}.json`),
-    {
-      from: state.player.address,
-      gasPrice: 2 * state.network.gasPrice,
-    }
-  );
-  Instance.at(instanceAddress)
+  loadContractJson(
+    action.level.instanceContract,
+    withoutExtension(action.level.instanceContract)
+  )
+    .then((contractJson) =>
+      ethutil
+        .getTruffleContract(contractJson, {
+          from: state.player.address,
+          gasPrice: 2 * state.network.gasPrice,
+        })
+        .at(instanceAddress)
+    )
     .then((instance) => {
       window.instance = instance.address;
       window.contract = instance;

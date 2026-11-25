@@ -1,3 +1,4 @@
+import "dotenv/config";
 import prompt from "prompt";
 import colors from "colors";
 import fs from "fs";

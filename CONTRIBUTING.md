@@ -99,7 +99,7 @@ To modify or add a new language to the list of supported ones, follow these step
     }
     ```
 
-6. Once translation is done, add an entry in `client/src/containers/Headers.js` in the following code snippet for the user interface so you can select your added language:
+6. Once translation is done, add an entry in `client/src/containers/Header.jsx` in the following code snippet for the user interface so you can select your added language:
 
     ```javascript
         const LANGUAGES_MAP = {

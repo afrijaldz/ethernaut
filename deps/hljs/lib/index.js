@@ -1,7 +1,6 @@
-/** @type import('highlight.js') */
-const hljs = require('highlight.js/lib/core');
+import hljs from 'highlight.js/lib/core';
+import hljsDefineSolidity from 'highlightjs-solidity';
 
-const hljsDefineSolidity = require('highlightjs-solidity');
 hljsDefineSolidity(hljs);
 
-module.exports = hljs;
+export default hljs;

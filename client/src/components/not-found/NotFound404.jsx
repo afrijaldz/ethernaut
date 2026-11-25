@@ -2,7 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { loadTranslations } from "../../utils/translations";
-import { Link } from "../../router";
+import { Link } from "react-router";
 import * as constants from "../../constants";
 import { randBadIcon } from "../../utils/^^";
 

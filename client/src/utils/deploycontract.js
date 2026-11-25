@@ -1,6 +1,7 @@
 import colors from "colors";
 import * as ethutil from "../utils/ethutil.js";
-import * as LocalFactoryABI from "../contracts/out/LocalFactory.sol/Factory.json";
+import { loadContractJson } from "./contractjson";
+import { getDeployFile } from "./deployfile";
 import { getGasFeeDetails } from "../utils/ethutil.js";
 import {
   cacheContract,
@@ -49,7 +50,7 @@ const confirmMainnetDeployment = (chainId) => {
 
 export async function deployAndRegisterLevel(level) {
   try {
-    const levelABI = fetchLevelABI(level);
+    const levelABI = await fetchLevelABI(level);
     const web3 = ethutil.getWeb3();
     const chainId = await web3.eth.getChainId();
     if (!confirmMainnetDeployment(chainId)) {
@@ -66,7 +67,8 @@ export async function deployAndRegisterLevel(level) {
     logger(`Registering ${level.name} level on the ethernaut contract `);
     // -- use the factory to register a new level since it owns the ethernaut contract
     const factoryAddress = restoreContract(chainId)["factory"];
-    const LocalFactory = await ethutil.getTruffleContract(LocalFactoryABI.default, {
+    const factoryJson = await loadContractJson("LocalFactory.sol", "Factory");
+    const LocalFactory = await ethutil.getTruffleContract(factoryJson, {
       from,
     });
     const localFactory = await LocalFactory.at(factoryAddress);
@@ -97,7 +99,7 @@ export async function deployAdminContracts() {
 
     // -- deploy factory contracts
     const factoryContracts = await deploySingleContract(
-      LocalFactoryABI.default,
+      await loadContractJson("LocalFactory.sol", "Factory"),
       { gas: 10000000, ...gasDetails },
       from
     );
@@ -136,18 +138,5 @@ export async function deployAdminContracts() {
   }
 }
 
-export const getDeployData = (networkId) => {
-  const active_network = ID_TO_NETWORK[networkId];
-  const network = active_network;
-  let gameData = {};
-
-  try {
-    // try importing the game data file
-    gameData = require(`../gamedata/deploy.${network}.json`);
-  } catch (err) {
-    // if there's an error then check localstorage if data exists for this chain
-    gameData = restoreContract(networkId);
-  }
-
-  return gameData;
-};
+export const getDeployData = (networkId) =>
+  getDeployFile(ID_TO_NETWORK[networkId]) || restoreContract(networkId);
