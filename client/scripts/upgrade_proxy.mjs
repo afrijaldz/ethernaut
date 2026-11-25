@@ -1,61 +1,65 @@
 import 'dotenv/config';
 import colors from 'colors';
-import Web3 from 'web3';
 import fs from 'fs';
-import * as ethutil from '../src/utils/ethutil.js';
 import * as constants from '../src/constants.js';
-import { createSigningProvider } from './signing-provider.mjs';
+import {
+  createClients,
+  deployContract,
+  getScaledGasPrice,
+  sendContractTransaction,
+} from './viem-client.mjs';
 import * as ProxyAdminABI from '../src/contracts/out/ProxyAdmin.sol/ProxyAdmin.json' with { type: 'json' };
 import * as ImplementationABI from '../src/contracts/out/Statistics.sol/Statistics.json' with { type: 'json' };
 
-let web3;
+let clients;
 
 const DEPLOY_DATA_PATH = `./client/src/gamedata/deploy.${constants.ACTIVE_NETWORK.name}.json`;
 
-async function deployImplementation(from, props) {
+async function deployImplementation(props) {
   console.log(colors.green(`Deploying Statistics.sol...`));
-  const Implementation = await ethutil.getTruffleContract(
+  const implementation = await deployContract(
+    clients,
     ImplementationABI.default,
-    {
-      from,
-    }
+    [],
+    props
   );
-  const implementation = await Implementation.new(props);
   console.log(` Implementation: ${implementation.address}`);
   return implementation.address;
 }
 
-async function upgradeTo(from, props, newImplementation) {
+async function upgradeTo(props, newImplementation) {
   console.log(colors.green(`Upgrading to new Implementation...`));
   const deployedData = loadDeployData(DEPLOY_DATA_PATH);
 
-  const proxyAdmin = new web3.eth.Contract(
-    ProxyAdminABI.default.abi,
-    deployedData.proxyAdmin
-  );
+  const proxyAdmin = {
+    address: deployedData.proxyAdmin,
+    abi: ProxyAdminABI.default.abi,
+  };
 
-  await proxyAdmin.methods
-    .upgrade(deployedData.proxyStats, newImplementation)
-    .send({ from, ...props });
+  await sendContractTransaction(
+    clients,
+    proxyAdmin,
+    'upgrade',
+    [deployedData.proxyStats, newImplementation],
+    props
+  );
 
   console.log(colors.bgBlue(`Proxy is upgraded!`));
 }
 
 async function deploy() {
-  await initWeb3();
+  clients = createClients(constants.ACTIVE_NETWORK);
 
   const props = {
-    gasPrice: (await web3.eth.getGasPrice()) * 10,
-    gas: 4500000,
+    gasPrice: await getScaledGasPrice(clients, 1000n),
+    gas: 4500000n,
   };
 
-  let from = constants.ADDRESSES[constants.ACTIVE_NETWORK.name];
-  if (!from) from = (await web3.eth.getAccounts())[0];
-  console.log('FROM: ', from);
+  console.log('FROM: ', clients.walletClient.account.address);
 
-  let impl = await deployImplementation(from, props);
+  let impl = await deployImplementation(props);
 
-  await upgradeTo(from, props, impl);
+  await upgradeTo(props, impl);
 
   let deployData = {
     implementation: impl,
@@ -81,33 +85,4 @@ function loadDeployData(path) {
   } catch (err) {
     return {};
   }
-}
-
-function initWeb3() {
-  return new Promise(async (resolve, reject) => {
-    let provider;
-    if (constants.ACTIVE_NETWORK === constants.NETWORKS.LOCAL) {
-      const providerUrl = `${constants.ACTIVE_NETWORK.url}:${constants.ACTIVE_NETWORK.port}`;
-      console.log(colors.gray(`connecting web3 to '${providerUrl}'...`));
-      provider = new Web3.providers.HttpProvider(providerUrl);
-    } else {
-      provider = createSigningProvider(
-        constants.ACTIVE_NETWORK.url,
-        constants.ACTIVE_NETWORK.privKey
-      );
-    }
-
-    web3 = new Web3(provider);
-
-    web3.eth.net.isListening((err, res) => {
-      if (err) {
-        console.log('error connecting web3:', err);
-        reject();
-        return;
-      }
-      console.log(colors.gray(`web3 connected: ${res}\n`));
-      ethutil.setWeb3(web3);
-      resolve();
-    });
-  });
 }

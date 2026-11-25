@@ -1,18 +1,23 @@
 import "dotenv/config";
 import prompt from "prompt";
 import colors from "colors";
-import Web3 from "web3";
 import fs from "fs";
-import * as ethutil from "../src/utils/ethutil.js";
 import * as constants from "../src/constants.js";
-import { createSigningProvider } from "./signing-provider.mjs";
+import {
+  createClients,
+  deployContract,
+  getDeployedContract,
+  getScaledGasPrice,
+  readContract,
+  sendContractTransaction,
+} from "./viem-client.mjs";
 import * as gamedata from "../src/gamedata/gamedata.json" with { type: "json" };
 import * as EthernautABI from "../src/contracts/out/Ethernaut.sol/Ethernaut.json" with { type: "json" };
 import * as ProxyAdminABI from "../src/contracts/out/ProxyAdmin.sol/ProxyAdmin.json" with { type: "json" };
 import * as ImplementationABI from "../src/contracts/out/Statistics.sol/Statistics.json" with { type: "json" };
 import * as ProxyStatsABI from "../src/contracts/out/ProxyStats.sol/ProxyStats.json" with { type: "json" };
 
-let web3;
+let clients;
 let ethernaut;
 let proxyAdmin;
 let implementation;
@@ -26,7 +31,7 @@ async function exec() {
     colors.cyan(`<< NETWORK: ${constants.ACTIVE_NETWORK.name} >>`).inverse
   );
 
-  await initWeb3();
+  clients = createClients(constants.ACTIVE_NETWORK);
 
   // Retrieve deployment data for the active network.
   const deployData = loadDeployData(DEPLOY_DATA_PATH);
@@ -76,45 +81,39 @@ exec();
 
 async function deployContracts(deployData) {
   const props = {
-    gasPrice: parseInt((await web3.eth.getGasPrice()) * 1.05),
+    gasPrice: await getScaledGasPrice(clients, 105n),
     // EIP-7825 (Fusaka) caps one transaction at 2^24 = 16,777,216 gas.
-    gas: 16000000,
+    gas: 16000000n,
   };
 
-  let from = constants.ADDRESSES[constants.ACTIVE_NETWORK.name];
-  if (!from) from = (await web3.eth.getAccounts())[0];
-  console.log("FROM: ", from);
+  console.log("FROM: ", clients.walletClient.account.address);
 
   // Deploy/retrieve ethernaut contract
-  const Ethernaut = await ethutil.getTruffleContract(EthernautABI.default, {
-    from,
-  });
-  try {
-    if (needsDeploy(deployData.ethernaut)) {
-      console.log(`Deploying Ethernaut.sol...`);
-      ethernaut = await Ethernaut.new(props);
-      console.log(colors.yellow(`  Ethernaut: ${ethernaut.address}`));
-      deployData.ethernaut = ethernaut.address;
-    } else {
-      console.log("Using deployed Ethernaut.sol:", deployData.ethernaut);
-      ethernaut = await Ethernaut.at(deployData.ethernaut);
-      // console.log('ethernaut: ', ethernaut);
-    }
-  } catch (error) {
-    console.log(error);
+  if (needsDeploy(deployData.ethernaut)) {
+    console.log(`Deploying Ethernaut.sol...`);
+    ethernaut = await deployContract(clients, EthernautABI.default, [], props);
+    console.log(colors.yellow(`  Ethernaut: ${ethernaut.address}`));
+    deployData.ethernaut = ethernaut.address;
+  } else {
+    console.log("Using deployed Ethernaut.sol:", deployData.ethernaut);
+    ethernaut = await getDeployedContract(
+      clients,
+      EthernautABI.default,
+      deployData.ethernaut
+    );
   }
 
   // Deploy/retrieve Implementation
-  await deployImplementation(from, props, deployData);
+  await deployImplementation(props, deployData);
 
   // Deploy/retrieve Proxy Admin
-  await deployProxyAdmin(from, props, deployData);
+  await deployProxyAdmin(props, deployData);
 
   // Deploy/retrieve ProxyStats
-  await deployProxyStats(from, props, deployData);
+  await deployProxyStats(props, deployData);
 
   // set ProxyStats in Ethernaut
-  await setStatProxy(from, props);
+  await setStatProxy(props);
 
   // Sweep levels one at a time: every transaction comes from the same
   // account, so parallel sends race for the same nonce.
@@ -137,8 +136,12 @@ async function deployContracts(deployData) {
         "utf-8"
       )
     );
-    const Contract = await ethutil.getTruffleContract(LevelABI, { from });
-    const contract = await Contract.new(...level.deployParams, props);
+    const contract = await deployContract(
+      clients,
+      LevelABI,
+      level.deployParams,
+      props
+    );
     console.log(colors.yellow(`  ${level.name}: ${contract.address}`));
     deployData[level.deployId] = contract.address;
     console.log(
@@ -151,7 +154,13 @@ async function deployContracts(deployData) {
     console.log(
       `  Registering level ${level.levelContract} in Ethernaut.sol...`
     );
-    await ethernaut.registerLevel(contract.address, props);
+    await sendContractTransaction(
+      clients,
+      ethernaut,
+      "registerLevel",
+      [contract.address],
+      props
+    );
     console.log(`Registered ${level.levelContract}!`);
   }
 }
@@ -160,58 +169,59 @@ async function deployContracts(deployData) {
 // Deployment Functions
 // ----------------------------------
 
-async function deployProxyAdmin(from, props, deployData) {
-  const ProxyAdmin = await ethutil.getTruffleContract(ProxyAdminABI.default, {
-    from,
-  });
-
+async function deployProxyAdmin(props, deployData) {
   if (needsDeploy(deployData.proxyAdmin)) {
     console.log(`Deploying ProxyAdmin.sol...`);
-    proxyAdmin = await ProxyAdmin.new(props);
+    proxyAdmin = await deployContract(clients, ProxyAdminABI.default, [], props);
     console.log(colors.yellow(`  ProxyAdmin: ${proxyAdmin.address}`));
     deployData.proxyAdmin = proxyAdmin.address;
   } else {
     console.log("Using deployed ProxyAdmin.sol:", deployData.proxyAdmin);
-    proxyAdmin = await ProxyAdmin.at(deployData.proxyAdmin);
+    proxyAdmin = await getDeployedContract(
+      clients,
+      ProxyAdminABI.default,
+      deployData.proxyAdmin
+    );
   }
   return proxyAdmin.address;
 }
 
-async function deployImplementation(from, props, deployData) {
-  const Implementation = await ethutil.getTruffleContract(
-    ImplementationABI.default,
-    {
-      from,
-    }
-  );
+async function deployImplementation(props, deployData) {
   if (needsDeploy(deployData.implementation)) {
     console.log(`Deploying Statistics.sol...`);
-    implementation = await Implementation.new(props);
+    implementation = await deployContract(clients, ImplementationABI.default, [], props);
     console.log(colors.yellow(`  Statistics: ${implementation.address}`));
     deployData.implementation = implementation.address;
   } else {
     console.log("Using deployed Statistics.sol:", deployData.implementation);
-    implementation = await Implementation.at(deployData.implementation);
+    implementation = await getDeployedContract(
+      clients,
+      ImplementationABI.default,
+      deployData.implementation
+    );
   }
 
   return implementation.address;
 }
 
-async function deployProxyStats(from, props, deployData) {
-  const ProxyStats = await ethutil.getTruffleContract(ProxyStatsABI.default, {
-    from,
-  });
+async function deployProxyStats(props, deployData) {
   if (needsDeploy(deployData.proxyStats)) {
     console.log(`Deploying Proxy.sol...`);
-    proxyStats = await ProxyStats.new(
-      ...[implementation.address, proxyAdmin.address, ethernaut.address],
+    proxyStats = await deployContract(
+      clients,
+      ProxyStatsABI.default,
+      [implementation.address, proxyAdmin.address, ethernaut.address],
       props
     );
     console.log(colors.yellow(`  Proxy: ${proxyStats.address}`));
     deployData.proxyStats = proxyStats.address;
   } else {
     console.log("Using deployed Proxy.sol:", deployData.proxyStats);
-    proxyStats = await ProxyStats.at(deployData.proxyStats);
+    proxyStats = await getDeployedContract(
+      clients,
+      ProxyStatsABI.default,
+      deployData.proxyStats
+    );
   }
 
   return proxyStats.address;
@@ -221,20 +231,18 @@ async function deployProxyStats(from, props, deployData) {
 // Utils
 // ----------------------------------
 
-async function setStatProxy(from, props) {
+async function setStatProxy(props) {
   console.log(`Setting proxy in Ethernaut.sol...`);
 
-  const ethernautContract = new web3.eth.Contract(
-    EthernautABI.default.abi,
-    ethernaut.address
-  );
-
-  let proxy_address = await ethernaut.statistics();
-  if (needsSetProxy(proxy_address)) {
-    await ethernautContract.methods.setStatistics(proxyStats.address).send({
-      from,
-      ...props,
-    });
+  const proxyAddress = await readContract(clients, ethernaut, "statistics");
+  if (needsSetProxy(proxyAddress)) {
+    await sendContractTransaction(
+      clients,
+      ethernaut,
+      "setStatistics",
+      [proxyStats.address],
+      props
+    );
   }
 }
 
@@ -252,39 +260,6 @@ function withoutExtension(str) {
 function needsDeploy(deployAddress) {
   if (constants.ACTIVE_NETWORK === constants.NETWORKS.LOCAL) return true;
   return deployAddress === undefined || deployAddress === "x";
-}
-
-function initWeb3() {
-  return new Promise(async (resolve, reject) => {
-    let provider;
-    if (constants.ACTIVE_NETWORK === constants.NETWORKS.LOCAL) {
-      const providerUrl = `${constants.ACTIVE_NETWORK.url}:${constants.ACTIVE_NETWORK.port}`;
-      console.log(colors.gray(`connecting web3 to '${providerUrl}'...`));
-      provider = new Web3.providers.HttpProvider(providerUrl);
-    } else {
-      provider = createSigningProvider(
-        constants.ACTIVE_NETWORK.url,
-        constants.ACTIVE_NETWORK.privKey
-      );
-    }
-    web3 = new Web3(provider);
-    ethutil.setWeb3(web3);
-
-    resolve();
-
-    // web3.eth.net.isListening((err, res) => {
-    //   if (err) {
-    //     console.log('error connecting web3:', err);
-    //     reject();
-    //     return;
-    //   }
-    //   console.log(colors.gray(`web3 connected: ${res}\n`));
-    //   ethutil.setWeb3(web3);
-    //   resolve();
-    // });
-  }).catch((error) => {
-    console.log(error);
-  });
 }
 
 function loadDeployData(path) {

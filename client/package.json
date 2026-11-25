@@ -31,12 +31,14 @@
     "redux": "^4.2.0",
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.3.0",
+    "viem": "2.58.6",
     "web3": "1.8.2"
   },
   "scripts": {
     "start": "vite",
     "build": "vite build",
-    "test": "node --test \"src/**/*.test.mjs\""
+    "test": "node --test \"src/**/*.test.mjs\"",
+    "test:scripts": "node --test \"scripts/**/*.test.mjs\""
   },
   "devDependencies": {
     "@vitejs/plugin-react": "6.3.0",
