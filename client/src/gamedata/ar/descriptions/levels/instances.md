@@ -39,7 +39,7 @@
 
 #### 5. التفاعل مع الـ ABI
 
-كائن `ethernaut` هو من نوع `TruffleContract` object يقوم بتغليف عقد `Ethernaut.sol` الذي تم نشره على البلوكشين.
+كائن `ethernaut` هو عقد (contract object) يقوم بتغليف عقد `Ethernaut.sol` الذي تم نشره على البلوكشين.
 
 
 من بين أمور أخرى، تكشف واجهة تطبيق العقد (ABI) عن جميع الدوال العامة (public methods) الخاصة بـ `Ethernaut.sol` مثل دالة `owner`. اكتب الأمر التالي على سبيل المثال:

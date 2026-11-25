@@ -1,7 +1,7 @@
 // Run with: node --test client/src/utils/wallet.test.mjs
 import assert from "node:assert/strict";
 import { afterEach, beforeEach, describe, it, mock } from "node:test";
-import Web3 from "web3";
+import * as ethutil from "./ethutil.js";
 
 const storage = new Map();
 globalThis.window = new EventTarget();
@@ -187,7 +187,7 @@ describe("connection", () => {
     assert.equal(localStorage.getItem(wallet.STORAGE_WALLET_KEY), "com.second");
   });
 
-  it("sends the web3 transactions to the selected wallet", async () => {
+  it("sends the transactions to the selected wallet", async () => {
     const first = createWallet("first");
     const second = createWallet(
       "second",
@@ -196,13 +196,21 @@ describe("connection", () => {
     window.ethereum = first.provider;
     wallet.selectWallet(second);
     const address = "0x0000000000000000000000000000000000000001";
-    const web3 = new Web3(wallet.getProvider());
+    ethutil.connectProvider(wallet.getProvider(), 84532, address);
     await assert.rejects(
-      web3.eth.sendTransaction({ from: address, to: address, gas: 1, gasPrice: 1 }),
+      ethutil.sendTransaction({ to: address, gas: 1, gasPrice: 1 }),
       { code: 4001 }
     );
     assert.ok(getMethods(second.provider).includes("eth_sendTransaction"));
     assert.equal(first.provider.request.mock.callCount(), 0);
+  });
+
+  it("returns the connected account with checksum", async () => {
+    const account = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266";
+    wallet.selectWallet(
+      createWallet("first", createProvider({ eth_accounts: [account.toLowerCase()] }))
+    );
+    assert.equal(await wallet.getAccount(), account);
   });
 
   it("reports a rejection and other errors", async () => {

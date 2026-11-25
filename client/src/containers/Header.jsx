@@ -148,7 +148,7 @@ class Header extends React.Component {
                 >
                   {isHome ? strings.help : strings.home}
                 </Link>
-                {isHome && !!this.props.web3 && !readOnly && (
+                {isHome && !!this.props.isConnected && !readOnly && (
                   <Link
                     className="ui-menu__item"
                     to={constants.PATH_LEADERBOARD}
@@ -166,7 +166,7 @@ class Header extends React.Component {
                 >
                   {strings.darkTheme}
                 </button>
-                {this.props.web3 && !readOnly && (
+                {this.props.isConnected && !readOnly && (
                   <>
                     <button
                       type="button"
@@ -279,7 +279,7 @@ class Header extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    web3: state.network.web3,
+    isConnected: state.network.isConnected,
     networkId: state.network.networkId,
     readOnly: state.gamedata.readOnly,
     allLevelsCompleted: state.player.allLevelsCompleted,

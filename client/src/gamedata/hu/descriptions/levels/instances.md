@@ -38,7 +38,7 @@ Ez a játék fő okosszerződése. Nem kell közvetlenül interakcióba lépned 
 Bontsd ki az ethernaut objektumot, hogy lásd, mi van benne.
 
 #### 5. Interakció az ABI-val
-Az `ethernaut` egy `TruffleContract` objektum, amely becsomagolja az `Ethernaut.sol` szerződést, amelyet telepítettek a blokkláncra.
+Az `ethernaut` egy szerződés objektum, amely becsomagolja az `Ethernaut.sol` szerződést, amelyet telepítettek a blokkláncra.
 
 Többek között a szerződés ABI-ja elérhetővé teszi az `Ethernaut.sol` összes publikus metódusát, mint például az `owner`. Írd be például a következő parancsot:
 

@@ -33,7 +33,7 @@
 Ethernaut 객체를 확장해서 내부에 어떤 기능들이 있는지 확인해 보세요.
 
 #### 5. ABI를 통한 상호작용
-`ethernaut`는 `TruffleContract` 객체이며, 블록체인에 배포된 `Ethernaut.sol` 컨트랙트를 래핑합니다. 
+`ethernaut`는 컨트랙트 객체이며, 블록체인에 배포된 `Ethernaut.sol` 컨트랙트를 래핑합니다. 
 이 컨트랙트의 ABI는  `owner`와 같은 `Ethernaut.sol`의 공개 메서드를 포함하고 있으며, 이 외에도 여러 기능들을 제공합니다.
 예를 들어 `ethernaut.owner()`를 입력하면 이 컨트랙트의 owner가 누구인지 확인할 수 있습니다.
 혹은 Chrome v62 이상을 사용 중이라면 `await ethernaut.owner()` 으로 입력해야 합니다.

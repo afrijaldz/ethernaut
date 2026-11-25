@@ -1,4 +1,4 @@
-import Web3 from "web3";
+import { createPublicClient, decodeAbiParameters, encodeFunctionData, http } from "viem";
 
 const MULTICALL3_ADDRESS = "0xcA11bde05977b3631167028862bE2a173976CA11";
 
@@ -55,52 +55,55 @@ const STATISTICS_ABI = [
   ),
 ];
 
-export const createRpcProvider = (rpcUrl) =>
-  new Web3.providers.HttpProvider(rpcUrl, { timeout: REQUEST_TIMEOUT_MS });
+export const createRpcClient = (rpcUrl) =>
+  createPublicClient({ transport: http(rpcUrl, { timeout: REQUEST_TIMEOUT_MS }) });
 
 // `levels` is a list of { address, difficulty }.
-export async function fetchPlayers(provider, statisticsAddress, levels) {
-  const web3 = new Web3(provider);
-  const statistics = new web3.eth.Contract(STATISTICS_ABI, statisticsAddress)
-    .methods;
-  const multicall = new web3.eth.Contract(MULTICALL3_ABI, MULTICALL3_ADDRESS);
-
-  const aggregate = async (methods, allowFailure) => {
+export async function fetchPlayers(publicClient, statisticsAddress, levels) {
+  const aggregate = async (functionName, argsList, allowFailure) => {
     const results = [];
-    for (let i = 0; i < methods.length; i += CALLS_PER_REQUEST) {
-      const calls = methods.slice(i, i + CALLS_PER_REQUEST).map((method) => ({
+    for (let i = 0; i < argsList.length; i += CALLS_PER_REQUEST) {
+      const calls = argsList.slice(i, i + CALLS_PER_REQUEST).map((args) => ({
         target: statisticsAddress,
         allowFailure,
-        callData: method.encodeABI(),
+        callData: encodeFunctionData({ abi: STATISTICS_ABI, functionName, args }),
       }));
-      results.push(...(await multicall.methods.aggregate3(calls).call()));
+      const chunk = await publicClient.readContract({
+        address: MULTICALL3_ADDRESS,
+        abi: MULTICALL3_ABI,
+        functionName: "aggregate3",
+        args: [calls],
+      });
+      results.push(...chunk);
     }
     return results;
   };
 
-  const read = async (methods, type) => {
-    const results = await aggregate(methods, false);
-    return results.map((result) =>
-      web3.eth.abi.decodeParameter(type, result.returnData)
+  const read = async (functionName, argsList, type) => {
+    const results = await aggregate(functionName, argsList, false);
+    return results.map(
+      (result) => decodeAbiParameters([{ type }], result.returnData)[0]
     );
   };
 
-  const playerCount = Number(await statistics.getTotalNoOfPlayers().call());
-  const indexes = Array.from({ length: playerCount }, (_, index) => index);
-  const addresses = await read(
-    indexes.map((index) => statistics.players(index)),
-    "address"
+  const playerCount = Number(
+    await publicClient.readContract({
+      address: statisticsAddress,
+      abi: STATISTICS_ABI,
+      functionName: "getTotalNoOfPlayers",
+    })
   );
+  const indexes = Array.from({ length: playerCount }, (_, index) => [BigInt(index)]);
+  const addresses = await read("players", indexes, "address");
+  const playerArgs = addresses.map((address) => [address]);
   const completedCounts = await read(
-    addresses.map((address) =>
-      statistics.getTotalNoOfLevelsCompletedByPlayer(address)
-    ),
+    "getTotalNoOfLevelsCompletedByPlayer",
+    playerArgs,
     "uint256"
   );
   const averageTimes = await read(
-    addresses.map((address) =>
-      statistics.getAverageTimeTakenToCompleteLevels(address)
-    ),
+    "getAverageTimeTakenToCompleteLevels",
+    playerArgs,
     "uint256"
   );
 
@@ -114,11 +117,8 @@ export async function fetchPlayers(provider, statisticsAddress, levels) {
 
   // This call reverts when the player has not completed the level.
   const completions = await aggregate(
-    players.flatMap(({ player }) =>
-      levels.map((level) =>
-        statistics.getTimeElapsedForCompletionOfLevel(player, level.address)
-      )
-    ),
+    "getTimeElapsedForCompletionOfLevel",
+    players.flatMap(({ player }) => levels.map((level) => [player, level.address])),
     true
   );
   // A revert of the contract has a reason. A call that ran out of gas has no data.

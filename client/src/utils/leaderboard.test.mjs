@@ -1,20 +1,35 @@
 // Run with: node --test client/src/utils/leaderboard.test.mjs
 import assert from "node:assert/strict";
 import { describe, it, mock } from "node:test";
-import Web3 from "web3";
+import {
+  createPublicClient,
+  custom,
+  decodeAbiParameters,
+  encodeAbiParameters,
+  getAddress,
+  pad,
+  toFunctionSelector,
+  toHex,
+} from "viem";
 import { calculateScore, fetchPlayers, rankPlayers } from "./leaderboard.js";
 
-const { abi } = new Web3().eth;
+const encode = (type, value) => encodeAbiParameters([{ type }], [value]);
 const STATISTICS = "0xB4D82aA77d499bC27667637Fa8CE2fa9E4365F3b";
 const MULTICALL3 = "0xcA11bde05977b3631167028862bE2a173976CA11";
-const CALLS_TYPE = "tuple(address,bool,bytes)[]";
-const RESULTS_TYPE = "tuple(bool,bytes)[]";
+const CALLS_TYPE = {
+  type: "tuple[]",
+  components: [{ type: "address" }, { type: "bool" }, { type: "bytes" }],
+};
+const RESULTS_TYPE = {
+  type: "tuple[]",
+  components: [{ type: "bool" }, { type: "bytes" }],
+};
 const REVERT_DATA =
   "0x08c379a0" +
-  abi.encodeParameter("string", "Level not completed").slice(2);
+  encode("string", "Level not completed").slice(2);
 
 const createAddress = (number) =>
-  Web3.utils.toChecksumAddress(Web3.utils.padLeft(number, 40));
+  getAddress(pad(toHex(number), { size: 20 }));
 
 const LEVELS = [
   { address: createAddress(1001), difficulty: 0 },
@@ -23,37 +38,37 @@ const LEVELS = [
 ];
 
 const decodeCall = (types, data) =>
-  Object.values(abi.decodeParameters(types, "0x" + data.slice(10)));
+  decodeAbiParameters(types, "0x" + data.slice(10));
 
 const isCallTo = (data, signature) =>
-  data.startsWith(abi.encodeFunctionSignature(signature));
+  data.startsWith(toFunctionSelector(signature));
 
 // A chain with the Statistics contract and Multicall3. A player is { address, averageTime, levels }.
 // `fail` receives the calldata of each eth_call and can throw.
 function createProvider(players, { fail = () => {}, emptyRevert = false } = {}) {
   const callStatistics = (data) => {
     if (isCallTo(data, "getTotalNoOfPlayers()")) {
-      return abi.encodeParameter("uint256", players.length);
+      return encode("uint256", players.length);
     }
     if (isCallTo(data, "players(uint256)")) {
-      const [index] = decodeCall(["uint256"], data);
-      return abi.encodeParameter("address", players[index].address);
+      const [index] = decodeCall([{ type: "uint256" }], data);
+      return encode("address", players[index].address);
     }
-    const [address] = decodeCall(["address"], data);
+    const [address] = decodeCall([{ type: "address" }], data);
     const player = players.find((item) => item.address === address);
     if (isCallTo(data, "getTotalNoOfLevelsCompletedByPlayer(address)")) {
-      return abi.encodeParameter("uint256", player.levels.length);
+      return encode("uint256", player.levels.length);
     }
     if (isCallTo(data, "getAverageTimeTakenToCompleteLevels(address)")) {
-      return abi.encodeParameter("uint256", player.averageTime);
+      return encode("uint256", player.averageTime);
     }
     assert.ok(
       isCallTo(data, "getTimeElapsedForCompletionOfLevel(address,address)")
     );
-    const [, level] = decodeCall(["address", "address"], data);
+    const [, level] = decodeCall([{ type: "address" }, { type: "address" }], data);
     if (!player.levels.includes(level)) return null;
     // The time is zero when the instance is created and solved in one block.
-    return abi.encodeParameter("uint256", 0);
+    return encode("uint256", 0);
   };
 
   return {
@@ -79,10 +94,13 @@ function createProvider(players, { fail = () => {}, emptyRevert = false } = {}) 
         if (result) return [true, result];
         return [false, emptyRevert ? "0x" : REVERT_DATA];
       });
-      return abi.encodeParameter(RESULTS_TYPE, results);
+      return encodeAbiParameters([RESULTS_TYPE], [results]);
     }),
   };
 }
+
+const createClient = (provider) =>
+  createPublicClient({ transport: custom(provider, { retryCount: 0 }) });
 
 const createPlayer = (number, levels, averageTime = 60) => ({
   address: createAddress(number),
@@ -96,7 +114,7 @@ describe("players", () => {
       createPlayer(1, [LEVELS[0], LEVELS[2]], 30),
       createPlayer(2, LEVELS, 90),
     ]);
-    assert.deepEqual(await fetchPlayers(provider, STATISTICS, LEVELS), [
+    assert.deepEqual(await fetchPlayers(createClient(provider), STATISTICS, LEVELS), [
       { player: createAddress(1), completed: 2, averageTime: 30, difficultyFaced: 4 },
       { player: createAddress(2), completed: 3, averageTime: 90, difficultyFaced: 5 },
     ]);
@@ -107,7 +125,7 @@ describe("players", () => {
       createPlayer(1, []),
       createPlayer(2, [LEVELS[1]]),
     ]);
-    const players = await fetchPlayers(provider, STATISTICS, LEVELS);
+    const players = await fetchPlayers(createClient(provider), STATISTICS, LEVELS);
     assert.deepEqual(
       players.map((item) => item.player),
       [createAddress(2)]
@@ -116,7 +134,7 @@ describe("players", () => {
 
   it("is empty without players", async () => {
     assert.deepEqual(
-      await fetchPlayers(createProvider([]), STATISTICS, LEVELS),
+      await fetchPlayers(createClient(createProvider([])), STATISTICS, LEVELS),
       []
     );
   });
@@ -126,7 +144,7 @@ describe("players", () => {
       createPlayer(index + 1, [LEVELS[index % 3]])
     );
     const provider = createProvider(all);
-    const players = await fetchPlayers(provider, STATISTICS, LEVELS);
+    const players = await fetchPlayers(createClient(provider), STATISTICS, LEVELS);
     assert.deepEqual(
       players.map((item) => [item.player, item.difficultyFaced]),
       all.map((item, index) => [item.address, LEVELS[index % 3].difficulty])
@@ -147,14 +165,14 @@ describe("failures", () => {
     "getTimeElapsedForCompletionOfLevel(address,address)",
   ]) {
     it(`fails when the request for ${signature} fails`, async () => {
-      const selector = abi.encodeFunctionSignature(signature).slice(2);
+      const selector = toFunctionSelector(signature).slice(2);
       const provider = createProvider(players, {
         fail: (data) => {
           if (data.includes(selector)) throw new Error("rate limited");
         },
       });
       await assert.rejects(
-        fetchPlayers(provider, STATISTICS, LEVELS),
+        fetchPlayers(createClient(provider), STATISTICS, LEVELS),
         /rate limited/
       );
     });
@@ -172,7 +190,7 @@ describe("failures", () => {
       },
     });
     await assert.rejects(
-      fetchPlayers(provider, STATISTICS, LEVELS),
+      fetchPlayers(createClient(provider), STATISTICS, LEVELS),
       /rate limited/
     );
   });
@@ -180,7 +198,7 @@ describe("failures", () => {
   it("fails when a completion call fails without a revert reason", async () => {
     const provider = createProvider(players, { emptyRevert: true });
     await assert.rejects(
-      fetchPlayers(provider, STATISTICS, LEVELS),
+      fetchPlayers(createClient(provider), STATISTICS, LEVELS),
       /without a revert reason/
     );
   });

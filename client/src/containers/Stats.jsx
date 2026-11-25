@@ -1,4 +1,5 @@
 import React from 'react'
+import { getAddress } from 'viem'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 import * as actions from '../actions';
@@ -42,10 +43,10 @@ class Stats extends React.Component {
       getTotalPlayers(this.props.networkId)
     ])
     this.setState({
-      totalCompleted: completed ? completed.toNumber() : 0,
-      totalCreated: created ? created.toNumber() : 0,
-      totalFailures: failures ? failures.toNumber() : 0,
-      totalPlayers: totalPlayers ? totalPlayers.toNumber() : 0,
+      totalCompleted: Number(completed ?? 0),
+      totalCreated: Number(created ?? 0),
+      totalFailures: Number(failures ?? 0),
+      totalPlayers: Number(totalPlayers ?? 0),
     })
   }
 
@@ -87,7 +88,8 @@ class Stats extends React.Component {
 
       this.setState({playerFilter: playerAddress});
 
-      var stats = await this.collectPlayerStats(playerAddress);
+      // viem does not accept an address in upper case
+      var stats = await this.collectPlayerStats(getAddress(playerAddress));
       // sort the levels and display in ascending level of difficulty
       // woth noting that the sort is 'inplace'
       stats?.levelsSolved.sort((a, b) => +a.difficulty - +b.difficulty)

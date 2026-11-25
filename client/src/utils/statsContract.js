@@ -1,7 +1,7 @@
-import { getTruffleContract } from './ethutil';
+import { formatEther } from 'viem';
+import { getContractAt } from './contract';
 import { getDeployData } from './deploycontract';
 import { loadContractJson } from './contractjson';
-import Web3 from 'web3';
 import { getLevelDetailsByAddress } from './getlevelsdata';
 
 export const getLevelsSolvedByPlayer = async (playerAddress, networkId) => {
@@ -81,7 +81,7 @@ export const checkIfPlayerExist = async (playerAddress, networkId) => {
 
 const getPercentageOfLevelsSolved = async (statsContract, playerAddress) => {
     const response = await statsContract.getPercentageOfLevelsCompleted(playerAddress)
-    const roundedPercentage = (Web3.utils.fromWei(response.toString()) * 100).toFixed(2)
+    const roundedPercentage = (formatEther(response) * 100).toFixed(2)
     return roundedPercentage
 }
 
@@ -165,12 +165,5 @@ const getProxyStatsContractAddressInNetwork = (networkId) => {
 
 const getStatsContract = async (proxyStatsAddress, playerAddress) => {
     const statsABI = await loadContractJson("Statistics.sol", "Statistics");
-    let statsContract;
-    if (playerAddress) {
-        statsContract = getTruffleContract(statsABI, { from: playerAddress });
-    } else { 
-        statsContract = getTruffleContract(statsABI);
-    }
-    const statsContractInstance = await statsContract.at(proxyStatsAddress)
-    return statsContractInstance;
+    return getContractAt(statsABI, proxyStatsAddress, { from: playerAddress });
 }

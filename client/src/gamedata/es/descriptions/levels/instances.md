@@ -41,7 +41,7 @@ Este es el principal contrato inteligente del juego. No necesitas interactuar co
 Continúa y expande el objeto ethernaut para ver qué hay dentro.
 
 #### 5. Interactuar con el ABI
-`ethernaut` es un objeto `TruffleContract` que envuelve el contrato `Ethernaut.sol` que se ha implementado en la red.
+`ethernaut` es un objeto de contrato que envuelve el contrato `Ethernaut.sol` que se ha implementado en la red.
 
 Entre otras cosas, el ABI del contrato expone todos los métodos públicos de `Ethernaut.sol`,  como `owner`. Escribe el siguiente comando, por ejemplo:
 ```

@@ -1,7 +1,7 @@
 import * as actions from '../actions';
 
 const initialState = {
-  web3: undefined,
+  isConnected: false,
   gasPrice: 20000000,
   blockNum: undefined,
   networkId: undefined,
@@ -10,8 +10,8 @@ const initialState = {
 
 const networkReducer = function(state = initialState, action) {
   switch(action.type) {
-    case actions.CONNECT_WEB3:
-      return { ...state, web3: action.web3 }
+    case actions.CONNECT_WALLET:
+      return { ...state, isConnected: true }
 
     case actions.SET_CONNECTION_DIALOG_OPEN:
       return { ...state, connectionDialogOpen: action.open }

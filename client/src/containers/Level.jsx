@@ -146,7 +146,7 @@ class Level extends React.Component {
 
     const showNext = levelCompleted && nextLevelId;
     const showSubmit = this.props.levelEmitted && !levelCompleted;
-    const showInstance = !store.getState().gamedata.readOnly && this.props.web3;
+    const showInstance = !store.getState().gamedata.readOnly && this.props.isConnected;
 
     return (
       <main className="level-page">
@@ -330,7 +330,7 @@ function mapStateToProps(state) {
   const level = state.gamedata.activeLevel;
 
   return {
-    web3: state.network.web3,
+    isConnected: state.network.isConnected,
     networkId: state.network.networkId,
     level: level,
     activeLevel: level,

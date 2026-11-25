@@ -38,7 +38,7 @@ Nhập lệnh sau vào bảng điều khiển:
 Hãy tiếp tục và mở rộng đối tượng ethernaut để xem có gì bên trong.
 
 #### 5. Tương tác với ABI
-`ethernaut` là một đối tượng `TruffleContract` bao bọc hợp đồng `Ethernaut.sol` đã được triển khai trên blockchain.
+`ethernaut` là một đối tượng hợp đồng bao bọc hợp đồng `Ethernaut.sol` đã được triển khai trên blockchain.
 
 Trong số những thứ khác, ABI của hợp đồng tiết lộ tất cả các phương thức công khai của `Ethernaut.sol`, chẳng hạn như `chủ sở hữu`. Nhập lệnh sau đây chẳng hạn:
 

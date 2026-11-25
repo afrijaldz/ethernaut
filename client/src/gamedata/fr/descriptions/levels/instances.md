@@ -43,7 +43,7 @@ Allez-y étendez l'objet éthernaut pour voir ce qu'il y a dedans.
 
 &nbsp;
 #### 5. Interagir avec l'ABI
-`ethernaut` est un objet `TruffleContract` qui englobe le contrat `Ethernaut.sol` qui a été déployé dans la blockchain.
+`ethernaut` est un objet de contrat qui englobe le contrat `Ethernaut.sol` qui a été déployé dans la blockchain.
 
 Entre autres, l'ABI du contrat expose toutes les méthodes publiques de `Ethernaut.sol`, telles que `owner`. Tapez par exemple la commande suivante :
 ```

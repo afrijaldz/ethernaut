@@ -4,7 +4,7 @@ import reactPaginate from "react-paginate";
 import Search from "../components/leaderboard/Search";
 import { NETWORKS_INGAME } from "../constants";
 import { loadTranslations } from "../utils/translations";
-import { createRpcProvider, fetchPlayers, rankPlayers } from "../utils/leaderboard";
+import { createRpcClient, fetchPlayers, rankPlayers } from "../utils/leaderboard";
 import gamedata from "../gamedata/gamedata.json";
 import deployData from "../gamedata/deploy.base-sepolia.json";
 
@@ -20,7 +20,7 @@ const levels = gamedata.levels.map((level) => ({
   difficulty: Number(level.difficulty),
 }));
 
-const provider = createRpcProvider(NETWORKS_INGAME.BASE_SEPOLIA.rpcUrl);
+const publicClient = createRpcClient(NETWORKS_INGAME.BASE_SEPOLIA.rpcUrl);
 
 function Leaderboard() {
   const [offset, setOffset] = useState(0);
@@ -41,7 +41,7 @@ function Leaderboard() {
   useEffect(() => {
     let isCancelled = false;
     setStatus(STATUS.LOADING);
-    fetchPlayers(provider, deployData.proxyStats, levels)
+    fetchPlayers(publicClient, deployData.proxyStats, levels)
       .then((players) => {
         if (isCancelled) return;
         setPlayersWithRank(rankPlayers(players, levels));

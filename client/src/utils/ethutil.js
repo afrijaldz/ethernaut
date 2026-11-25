@@ -1,133 +1,113 @@
-import * as ethjs from 'ethereumjs-util';
-import TruffleContract from '@truffle/contract';
+import {
+  createPublicClient,
+  createWalletClient,
+  custom,
+  defineChain,
+  formatEther,
+  formatTransactionRequest,
+  getAddress,
+  parseEther,
+  parseGwei,
+} from 'viem';
 import * as constants from "../constants.js";
 import { NETWORKS_INGAME } from '../constants.js'
 
-let web3;
-let connectedContract;
+const POLLING_INTERVAL_MS = 1000;
+const QUANTITY_OPTIONS = ['value', 'gas', 'gasPrice', 'maxFeePerGas', 'maxPriorityFeePerGas'];
 
-export const setWeb3 = (_web3) => {
-  web3 = _web3;
-  // Truffle adds listeners to the wallet provider on every setProvider call and never
-  // removes them. So only this contract calls it, and all others share its connection.
-  connectedContract = TruffleContract({ abi: [] });
-  connectedContract.setProvider(web3.currentProvider);
-}
+let publicClient;
+let walletClient;
 
-export const getWeb3 = () => web3;
-
-export const getTruffleContract = (jsonABI, defaults = {}) => {
-  // // HACK: Doing this here instead of `import` so that the project uses the web3.js version
-  // // defined in `package.json` instead of relying on Truffle dependencies (that use an old version).
-  // const TruffleContract = require('@truffle/contract');
-
-  const truffleContract = TruffleContract({ abi: jsonABI.abi, bytecode: jsonABI.bytecode.object });
-  if (!defaults.gasPrice) defaults.gasPrice = 2000000000;
-  if (!defaults.gas) defaults.gas = 2000000;
-  truffleContract.defaults(defaults);
-  truffleContract.web3 = connectedContract.web3;
-  truffleContract.interfaceAdapter = connectedContract.interfaceAdapter;
-  truffleContract.currentProvider = connectedContract.currentProvider;
-  truffleContract.networkType = connectedContract.networkType;
-  return truffleContract;
-}
-
-export const getBalance = (address) => {
-  return new Promise(function (resolve, reject) {
-    web3.eth.getBalance(address, function (error, result) {
-      if (error) reject(error)
-      else resolve(web3.utils.fromWei(result, 'ether'))
-    })
-  })
-}
-
-export const getBlockNumber = () => {
-  return new Promise((resolve, reject) => {
-    web3.eth.getBlockNumber((err, blockNumber) => {
-      if (err) reject(err)
-      resolve(blockNumber);
-    });
+// Both clients send their requests to the provider of the selected wallet.
+export const connectProvider = (provider, chainId, account) => {
+  const chain = defineChain({
+    id: chainId,
+    name: constants.ID_TO_NETWORK[chainId] || `chain ${chainId}`,
+    nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+    rpcUrls: { default: { http: [] } },
+  });
+  publicClient = createPublicClient({
+    chain,
+    transport: custom(provider),
+    pollingInterval: POLLING_INTERVAL_MS,
+  });
+  // No retries: the wallet can already have the transaction when the response is lost.
+  walletClient = createWalletClient({
+    account,
+    chain,
+    transport: custom(provider, { retryCount: 0 }),
   });
 }
 
-export const sendTransaction = (options) => {
-  return new Promise((resolve, reject) => {
-    web3.eth.sendTransaction(options, (err, res) => {
-      if (err) reject(err)
-      else resolve(res)
-    })
-  })
+export const getPublicClient = () => publicClient;
+
+export const getWalletClient = () => walletClient;
+
+// Players write quantities as numbers, strings or bigints.
+export const parseTransactionOptions = (options) => {
+  const parsed = { ...options };
+  for (const name of QUANTITY_OPTIONS) {
+    if (parsed[name] !== undefined) parsed[name] = BigInt(parsed[name]);
+  }
+  return parsed;
 }
 
-export const getNetworkId = () => {
-  return new Promise((resolve, reject) => {
-    web3.eth.net.getId((err, netId) => {
-      if (err) reject();
-      else resolve(netId);
-    });
+export const getBalance = async (address) =>
+  formatEther(await publicClient.getBalance({ address }));
+
+export const getBlockNumber = async () => Number(await publicClient.getBlockNumber());
+
+// Returns the transaction hash. A wallet rejection is thrown with its code 4001.
+export const sendTransaction = async (options) => {
+  // walletClient.sendTransaction asks some wallets a second time after an error, with
+  // another RPC method.
+  return walletClient.request({
+    method: 'eth_sendTransaction',
+    params: [
+      formatTransactionRequest({
+        from: walletClient.account?.address,
+        ...parseTransactionOptions(options),
+      }),
+    ],
   });
 }
 
-export const toWei = (ether) => {
-  return web3.utils.toWei(ether, 'ether')
-}
+export const getNetworkId = () => publicClient.getChainId();
 
-export const fromWei = (wei) => {
-  return web3.utils.fromWei(wei, 'ether')
-}
+export const toWei = (ether) => parseEther(String(ether));
+
+export const fromWei = (wei) => formatEther(BigInt(wei));
 
 export const watchAccountChanges = (callback, lastKnownAccount) => {
-  let interval = setInterval(function () {
-    web3.eth.getAccounts(function (error, accounts) {
-      if (error) return console.log(error)
-      const newAccount = accounts[0]
-      if (newAccount !== lastKnownAccount) {
-        callback(newAccount)
-        clearInterval(interval)
-        this.watchAccountChanges(callback, newAccount);
-      }
-    })
+  setInterval(async () => {
+    try {
+      const [newAccount] = await walletClient.getAddresses();
+      if (newAccount === lastKnownAccount) return;
+      lastKnownAccount = newAccount;
+      callback(newAccount);
+    } catch (error) {
+      console.log(error);
+    }
   }, 1000)
 }
 
 export const watchNetwork = (callbacks) => {
+  watchValue(() => publicClient.getGasPrice(), callbacks.gasPrice, 30 * 60000);
+  watchValue(getNetworkId, callbacks.networkId, 5 * 1000);
+  watchValue(getBlockNumber, callbacks.blockNum, 10 * 1000);
+}
 
-  // Gas price
-  if (callbacks.gasPrice) {
-    const gasPrice = function () {
-      web3.eth.getGasPrice(function (error, result) {
-        if (error) return console.log(error)
-        callbacks.gasPrice(result)
-      })
+const watchValue = (read, callback, interval) => {
+  if (!callback) return;
+  const update = async () => {
+    try {
+      callback(await read());
+    } catch (error) {
+      console.log(error);
     }
-    gasPrice()
-    setInterval(gasPrice, 30 * 60000)
   }
-
-  // Network id
-  if (callbacks.networkId) {
-    const netId = function () {
-      web3.eth.net.getId(function (error, result) {
-        if (error) return console.log(error)
-        callbacks.networkId(result)
-      })
-    }
-    netId()
-    setInterval(netId, 5 * 1000)
-  }
-
-  // Block num
-  if (callbacks.blockNum) {
-    const blockNum = function () {
-      web3.eth.getBlockNumber((err, blockNumber) => {
-        if (err) console.log(err)
-        callbacks.blockNum(blockNumber);
-      });
-    }
-    blockNum()
-    setInterval(blockNum, 10 * 1000)
-  }
-
+  update();
+  setInterval(update, interval);
 }
 
 export const validateAddress = (address) => {
@@ -146,40 +126,24 @@ export const validateAddress = (address) => {
     return true; // accepts address with no checksum data
   }
   else {
-    const checksum = ethjs.toChecksumAddress(address);
+    const checksum = getAddress(address);
     if (address !== checksum) return false;
   }
 
   return true;
 }
 
-export const verifySignature = (json) => {
-  try {
-    const messageHash = ethjs.hashPersonalMessage(ethjs.toBuffer(json.msg));
-    const signedMessageDecoded = ethjs.fromRpcSig(json.sig);
-    const recoveredPublicKey = ethjs.ecrecover(messageHash, signedMessageDecoded.v, signedMessageDecoded.r, signedMessageDecoded.s);
-    const recoveredAddressBuffer = ethjs.pubToAddress(recoveredPublicKey);
-    const recoveredAddress = ethjs.bufferToHex(recoveredAddressBuffer);
-    return json.address === recoveredAddress;
-  }
-  catch (err) {
-    return false;
-  }
-}
-
-export const getGasFeeDetails = async (network, multiplier) => {
-  if (constants.SUPPORTS_EIP_1559.includes(network.networkId.toString())) {
-    const maxPriorityFeePerGas = network.web3.utils.toWei('2.5', 'gwei');
-    const block = await network.web3.eth.getBlock('latest')
-    const blockBaseFee = block.baseFeePerGas ? block.baseFeePerGas : 1;
+export const getGasFeeDetails = async (networkId, multiplier) => {
+  if (constants.SUPPORTS_EIP_1559.includes(networkId.toString())) {
+    const maxPriorityFeePerGas = parseGwei('2.5');
+    const block = await publicClient.getBlock();
     return {
       maxPriorityFeePerGas,
-      maxFeePerGas: multiplier * Number(blockBaseFee) + Number(maxPriorityFeePerGas)
+      maxFeePerGas: BigInt(multiplier) * (block.baseFeePerGas || 1n) + maxPriorityFeePerGas
     }
   } else {
-    const gasPrice = await network.web3.eth.getGasPrice()
     return {
-      gasPrice: multiplier * gasPrice
+      gasPrice: BigInt(multiplier) * (await publicClient.getGasPrice())
     }
   }
 }

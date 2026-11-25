@@ -1,21 +1,20 @@
 import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
-import { nodePolyfills } from "vite-plugin-node-polyfills";
 
 const ENV_PREFIX = "REACT_APP_";
 
 export default defineConfig(({ mode }) => {
-  // Only these variables reach the bundle. Never define `process.env` as a whole:
+  // Only these variables reach the bundle. Never define `process.env` with all values:
   // constants.js also reads the private key and the RPC URL of the operator scripts.
   const env = loadEnv(mode, import.meta.dirname, ENV_PREFIX);
-  const define = {};
+  // The other variables of constants.js are undefined in the browser.
+  const define = { "process.env": "{}" };
   for (const name of Object.keys(env)) {
     define[`process.env.${name}`] = JSON.stringify(env[name]);
   }
 
   return {
-    // web3 1 and Truffle need the Node modules and globals.
-    plugins: [react(), nodePolyfills()],
+    plugins: [react()],
     envPrefix: ENV_PREFIX,
     define,
     server: { port: 3000 },
