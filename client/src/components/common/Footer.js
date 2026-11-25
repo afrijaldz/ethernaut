@@ -3,33 +3,39 @@ import { loadTranslations } from "../../utils/translations";
 import { connect } from "react-redux";
 import { contractsDeploymentStatus, raiseIssue, deployStatus } from "../../utils/contractutil";
 
-export const Footer = (props) => {
+const FooterContent = ({ networkId }) => {
     let language = localStorage.getItem("lang");
     const strings = loadTranslations(language);
-    const deploymentStatus = contractsDeploymentStatus(props.network.networkId);
+    const deploymentStatus = contractsDeploymentStatus(networkId);
 
-    return (deploymentStatus === deployStatus.ALL_DEPLOYED ?
-        <footer
-            className="deploy-footer"
-            dangerouslySetInnerHTML={{ __html: strings.submitGameFooter }}
-            onClick={raiseIssue}
-        ></footer>
-        : (
-            deploymentStatus === deployStatus.CORE_DEPLOYED ?
-                <footer
-                    className="footer"
-                    dangerouslySetInnerHTML={{ __html: strings.submitLevelFooter }}
-                ></footer>
-                :
-                <footer className="footer">
-                    <span dangerouslySetInnerHTML={{ __html: strings.footer }}></span>
-                    {" · "}
-                    <a href="https://github.com/afrijaldz/ethernaut">Source code of this deployment</a>
-                </footer>
-        )
+    if (deploymentStatus === deployStatus.ALL_DEPLOYED) {
+        return (
+            <button type="button" className="ui-button" onClick={raiseIssue}>
+                {strings.submitGameFooter}
+            </button>
+        );
+    }
+
+    if (deploymentStatus === deployStatus.CORE_DEPLOYED) {
+        return <span dangerouslySetInnerHTML={{ __html: strings.submitLevelFooter }}></span>;
+    }
+
+    return (
+        <>
+            <span dangerouslySetInnerHTML={{ __html: strings.footer }}></span>
+            {" · "}
+            <a href="https://github.com/afrijaldz/ethernaut">Source code of this deployment</a>
+        </>
     );
 };
 
+export const Footer = (props) => (
+    <footer className="site-footer">
+        <div className="site-footer__inner">
+            <FooterContent networkId={props.network.networkId} />
+        </div>
+    </footer>
+);
 
 const mapStateToProps = (state) => {
     return {

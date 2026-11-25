@@ -1,7 +1,7 @@
 {
   "ethernaut": "Ethernaut",
   "title": "Ethernaut",
-  "info": "<h2>Ethernaut це Web3/Solidity варгейм на базі Ethereum Virtual Machine, натхненний <a href='https://overthewire.org' target='_blank' rel='noopener noreferrer'>overthewire.org</a>. Кожен рівень є смарт-контрактом, який потрібно 'зламати'. Вихідний код гри повністю відкритий, а всі рівні створені іншими гравцями. У тебе є цікава ідея для нового рівня? <a href='https://github.com/OpenZeppelin/ethernaut'><button>Ласкаво просимо</button></a></h2>",
+  "info": "<h2>Ethernaut це Web3/Solidity варгейм на базі Ethereum Virtual Machine, натхненний <a href='https://overthewire.org' target='_blank' rel='noopener noreferrer'>overthewire.org</a>. Кожен рівень є смарт-контрактом, який потрібно 'зламати'. Вихідний код гри повністю відкритий, а всі рівні створені іншими гравцями. У тебе є цікава ідея для нового рівня? <a class='ui-button' href='https://github.com/OpenZeppelin/ethernaut'>Ласкаво просимо</a></h2>",
   "home": "Назад",
   "help": "Допомога",
   "stats": "Статистика",
@@ -112,5 +112,9 @@
   "Networks": "Мережі",
   "Languages": "Мови",
   "PageNotFoundTitle": "Помилка 404 - Сторінку не знайдено",
-  "PageNotFoundText": "Ой! Сторінка, яку ви шукаєте, не може бути знайдена."
+  "PageNotFoundText": "Ой! Сторінка, яку ви шукаєте, не може бути знайдена.",
+  "leaderboard": "Таблиця лідерів",
+  "darkTheme": "Темна тема",
+  "close": "Закрити",
+  "connectAccount": "Підключити"
 }

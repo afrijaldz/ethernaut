@@ -1,0 +1,319 @@
+/* Button */
+
+.ui-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--touch-target);
+  min-height: var(--touch-target);
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius-control);
+  background-color: var(--color-accent);
+  color: var(--color-on-accent);
+  font-family: inherit;
+  font-size: var(--text-md);
+  font-weight: 600;
+  line-height: 1.25;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: opacity var(--duration), border-color var(--duration);
+}
+
+.ui-button:hover {
+  color: var(--color-on-accent);
+  opacity: 0.9;
+}
+
+.ui-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.ui-button--secondary {
+  border-color: var(--color-border-strong);
+  background-color: var(--color-surface);
+  color: var(--color-text);
+}
+
+.ui-button--secondary:hover {
+  border-color: var(--color-accent);
+  color: var(--color-text);
+  opacity: 1;
+}
+
+/* Card */
+
+.ui-card {
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background-color: var(--color-surface);
+}
+
+@media (min-width: 640px) {
+  .ui-card {
+    padding: var(--space-5);
+  }
+}
+
+/* Badge */
+
+.ui-badge {
+  display: inline-block;
+  padding: 0 var(--space-2);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-control);
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+}
+
+.ui-badge--success {
+  border-color: currentColor;
+  color: var(--color-success);
+}
+
+.ui-badge--warning {
+  border-color: currentColor;
+  color: var(--color-warning);
+}
+
+.ui-badge--danger {
+  border-color: currentColor;
+  color: var(--color-danger);
+}
+
+/* Input */
+
+.ui-input {
+  width: 100%;
+  min-height: var(--touch-target);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-control);
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  font-size: var(--text-md);
+}
+
+.ui-input::placeholder {
+  color: var(--color-text-muted);
+  opacity: 1;
+}
+
+/* Menu */
+
+.ui-menu {
+  padding: var(--space-2);
+  overflow-y: auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background-color: var(--color-surface);
+  box-shadow: var(--shadow-overlay);
+}
+
+.ui-menu__item,
+.ui-menu__item:hover {
+  color: var(--color-text);
+}
+
+.ui-menu__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  width: 100%;
+  min-height: var(--touch-target);
+  padding: var(--space-2) var(--space-3);
+  border: 0;
+  border-radius: var(--radius-control);
+  background-color: transparent;
+  font-size: var(--text-md);
+  text-align: start;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+  transition: background-color var(--duration);
+}
+
+.ui-menu__item:hover {
+  background-color: var(--color-bg);
+}
+
+.ui-menu__item:focus-visible {
+  outline-offset: -2px;
+}
+
+.ui-menu__item[aria-expanded="false"]::after {
+  content: "+";
+}
+
+.ui-menu__item[aria-expanded="true"]::after {
+  content: "−";
+}
+
+.ui-menu__item[aria-checked="true"]::after,
+.ui-menu__item[aria-current="true"]::after {
+  content: "✓";
+  color: var(--color-accent);
+}
+
+.ui-menu__group {
+  margin-inline-start: var(--space-3);
+  padding-inline-start: var(--space-2);
+  border-inline-start: 1px solid var(--color-border);
+}
+
+/* Dialog */
+
+.ui-dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  background-color: var(--color-backdrop);
+}
+
+.ui-dialog {
+  position: absolute;
+  inset: 0;
+  width: min(560px, 100% - 32px);
+  height: fit-content;
+  max-height: calc(100dvh - 32px);
+  margin: auto;
+  padding: var(--space-5);
+  overflow-y: auto;
+  overflow-wrap: anywhere;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  box-shadow: var(--shadow-overlay);
+}
+
+.ui-dialog__icon {
+  margin-block-end: var(--space-4);
+  font-size: var(--text-xl);
+  text-align: center;
+}
+
+.ui-dialog__title {
+  margin-block-end: var(--space-4);
+  font-size: var(--text-xl);
+  text-align: center;
+}
+
+.ui-dialog__close {
+  display: flex;
+  margin-inline-start: auto;
+}
+
+.ui-dialog__actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-block: var(--space-4);
+}
+
+@media (min-width: 640px) {
+  .ui-dialog__actions {
+    flex-flow: row wrap;
+    justify-content: center;
+  }
+}
+
+/* Alert */
+
+.ui-alert {
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-control);
+  background-color: var(--color-surface);
+}
+
+.ui-alert--success {
+  border-color: var(--color-success);
+}
+
+.ui-alert--warning {
+  border-color: var(--color-warning);
+}
+
+.ui-alert--danger {
+  border-color: var(--color-danger);
+}
+
+.ui-alert--success strong {
+  color: var(--color-success);
+}
+
+.ui-alert--warning strong {
+  color: var(--color-warning);
+}
+
+.ui-alert--danger strong {
+  color: var(--color-danger);
+}
+
+/* Table */
+
+.ui-table-wrapper {
+  overflow-x: auto;
+}
+
+.ui-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.ui-table th,
+.ui-table td {
+  padding: var(--space-3);
+  border-block-end: 1px solid var(--color-border);
+  text-align: start;
+}
+
+.ui-table th {
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+}
+
+/* Prose */
+
+.ui-prose {
+  max-width: var(--width-reading);
+  overflow-wrap: anywhere;
+}
+
+.ui-prose img {
+  max-width: 100%;
+}
+
+.ui-prose pre {
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control);
+  background-color: var(--color-bg);
+}
+
+.ui-prose blockquote {
+  padding-inline-start: var(--space-4);
+  border-inline-start: 2px solid var(--color-border-strong);
+  color: var(--color-text-muted);
+}
+
+/* Code block. The syntax theme sets the same dark colors in both themes. */
+
+.ui-code {
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+}
+
+.ui-code code {
+  display: block;
+  padding: var(--space-4);
+  overflow-x: auto;
+}

@@ -1,6 +1,5 @@
 import React from "react";
 import Mosaic from "./Mosaic";
-import Footer from "../components/common/Footer";
 import * as constants from "../constants";
 import { loadTranslations } from "../utils/translations";
 import parse from "html-react-parser";
@@ -33,7 +32,7 @@ class App extends React.Component {
 
   componentDidUpdate(prevProps) {
     if (this.props.location !== prevProps.location) {
-      this.childrenElement.parentElement.scrollTop = 0;
+      window.scrollTo(0, 0);
     }
   }
 
@@ -152,19 +151,25 @@ class App extends React.Component {
           <section className="titles">
             <a href={constants.PATH_ROOT}>
               <img
-                id="the-ethernaut"
                 src="../../imgs/the-ethernaut.svg"
                 alt="The-Ethernaut"
                 className="the-ethernaut"
               />
             </a>
-            <img
-              src="../../imgs/arrow.svg"
-              id="arrow"
-              alt="arrows"
+            <svg
               className="arrow"
-            />
-            <ul>
+              width="29"
+              height="10"
+              viewBox="0 0 29 10"
+              fill="none"
+              aria-hidden="true"
+            >
+              <path
+                d="M27.7822 0.443248L14.3906 8.8865L0.999 0.443248"
+                stroke="currentColor"
+              />
+            </svg>
+            <div>
               <button
                 onClick={() => {
                   if (!store.getState().gamedata.readOnly) {
@@ -173,29 +178,34 @@ class App extends React.Component {
                     this.displayConnectionWindow();
                   }
                 }}
-                className="buttons"
+                className="ui-button"
               >
                 {strings.playNow}
               </button>
-            </ul>
+            </div>
           </section>
           {/*not Account Connected window*/}
-          <div className="account-connection-window-bg">
-            <div className="account-connection-window">
+          <div className="account-connection-window-bg ui-dialog-backdrop">
+            <div
+              className="ui-dialog"
+              role="dialog"
+              aria-labelledby="account-connection-title"
+            >
               <button
-                className="account-connection-close-x fas fa-x "
+                className="ui-button ui-button--secondary ui-dialog__close"
+                aria-label={strings.close}
                 onClick={this.continueInReadOnly}
               >
+                ×
               </button>
-              <h1>{randBadIcon()}</h1>
-              <br />
-              <h2>{strings.accountNotConnectedTitle}</h2>
-              <br />
+              <h1 className="ui-dialog__icon">{randBadIcon()}</h1>
+              <h2 id="account-connection-title" className="ui-dialog__title">
+                {strings.accountNotConnectedTitle}
+              </h2>
               <p>{strings.accountNotConnectedMessage}</p>
-              <br />
-              <div className="choice-buttons">
+              <div className="ui-dialog__actions">
                 <button
-                  className="buttons"
+                  className="ui-button"
                   onClick={async () => {
                     await this.requestAccounts();
                     window.location.reload();
@@ -207,43 +217,58 @@ class App extends React.Component {
             </div>
           </div>
           {/*not Deployed window*/}
-          <div className="deploy-window-bg">
+          <div className="deploy-window-bg ui-dialog-backdrop">
             {!networkOnDeprecationOrDeprecated(this.state.chainId) ? (
-              <div className="deploy-window">
+              <div
+                className="ui-dialog"
+                role="dialog"
+                aria-labelledby="deploy-title"
+              >
                 {/*deploy window*/}
-                <h1>{randGoodIcon()}</h1>
-                <h2>{strings.deployMessageTitle}</h2>
+                <h1 className="ui-dialog__icon">{randGoodIcon()}</h1>
+                <h2 id="deploy-title" className="ui-dialog__title">
+                  {strings.deployMessageTitle}
+                </h2>
                 {strings.deployMessage}
                 {supportedNetworksList(supportedNetworks)}
-                <p className="deploy-note">{strings.deployConfirmation}</p>
-                <div className="choice-buttons">
-                  <button className="buttons" onClick={deployAdminContracts}>
+                <p>{strings.deployConfirmation}</p>
+                <div className="ui-dialog__actions">
+                  <button
+                    className="ui-button ui-button--secondary"
+                    onClick={deployAdminContracts}
+                  >
                     {strings.deployGame}
                   </button>
-                  <button className="buttons" onClick={switchToBaseSepolia}>
+                  <button className="ui-button" onClick={switchToBaseSepolia}>
                     {strings.switchToBaseSepolia}
                   </button>
                 </div>
-                <p className="deploy-note">{strings.deployNote}</p>
+                <p>{strings.deployNote}</p>
               </div>
             ) : (
-              <div className="deploy-window">
+              <div
+                className="ui-dialog"
+                role="dialog"
+                aria-labelledby="deploy-title"
+              >
                 {/*deprecation window*/}
-                <h1>{randBadIcon()}</h1>
-                <h2>
+                <h1 className="ui-dialog__icon">{randBadIcon()}</h1>
+                <h2 id="deploy-title" className="ui-dialog__title">
                   {isDeprecatedNetwork(this.state.chainId)
                     ? strings.deprecatedNetwork
                     : strings.networkBeingDeprecated}
                 </h2>
-                <br />
                 {strings.deployMessage}
                 {supportedNetworksList(supportedNetworks)}
-                <div className="choice-buttons">
-                  <button className="buttons" onClick={switchToBaseSepolia}>
+                <div className="ui-dialog__actions">
+                  <button className="ui-button" onClick={switchToBaseSepolia}>
                     {strings.switchToBaseSepolia}
                   </button>
                   {!isDeprecatedNetwork(this.state.chainId) && (
-                    <button className="buttons" onClick={this.continueAnyway}>
+                    <button
+                      className="ui-button ui-button--secondary"
+                      onClick={this.continueAnyway}
+                    >
                       {strings.continueAnyway}
                     </button>
                   )}
@@ -261,8 +286,6 @@ class App extends React.Component {
             {parse(strings.info)}
           </section>
         </main>
-        {/* Footer */}
-        <Footer></Footer>
       </div>
     );
   }

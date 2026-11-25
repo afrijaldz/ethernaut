@@ -3,7 +3,7 @@
   "title": "Az Ethernaut",
   "ctfRegister": "Regisztrálj most!",
   "ctfInfo": "<strong>Ethernaut CTF eseményt szervezünk:</strong> Egy 48 órás capture the flag verseny díjakkal és blockchain kihívásokkal, március 16-tól.",
-  "info": "<h2>Az Ethernaut egy Web3/Solidity alapú wargame, amelyet az <a href='https://overthewire.org' target='_blank' rel='noopener noreferrer'>overthewire.org</a> inspirált, és az Ethereum Virtuális Gépen játszható. Minden szint egy okosszerződés, amelyet 'meg kell törni'. A játék 100%-ban nyílt forráskódú, és minden szintet más játékosok hoztak létre. Van egy érdekes ötleted? A pull requestek <a href='https://github.com/OpenZeppelin/ethernaut'><button>üdvözöltek</button></a></h2>",
+  "info": "<h2>Az Ethernaut egy Web3/Solidity alapú wargame, amelyet az <a href='https://overthewire.org' target='_blank' rel='noopener noreferrer'>overthewire.org</a> inspirált, és az Ethereum Virtuális Gépen játszható. Minden szint egy okosszerződés, amelyet 'meg kell törni'. A játék 100%-ban nyílt forráskódú, és minden szintet más játékosok hoztak létre. Van egy érdekes ötleted? A pull requestek <a class='ui-button' href='https://github.com/OpenZeppelin/ethernaut'>üdvözöltek</a></h2>",
   "home": "Főoldal",
   "help": "Segítség",
   "stats": "Statisztikák",
@@ -120,5 +120,8 @@
   "Networks": "Hálózatok",
   "Languages": "Nyelvek",
   "PageNotFoundTitle": "404 Hiba - Az oldal nem található",
-  "PageNotFoundText": "Hoppá! A keresett oldal nem található."
+  "PageNotFoundText": "Hoppá! A keresett oldal nem található.",
+  "leaderboard": "Ranglista",
+  "darkTheme": "Sötét téma",
+  "close": "Bezárás"
 }

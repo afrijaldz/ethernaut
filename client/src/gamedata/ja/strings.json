@@ -3,7 +3,7 @@
   "title": "The Ethernaut",
   "ctfRegister": "今すぐ登録!",
   "ctfInfo": "<strong>私たちは Ethernaut CTF を主催しています:</strong> 賞品とブロックチェーン チャレンジを備えた 48 時間のキャプチャ ザ フラッグ イベントが 2003 年 16 月から始まります。",
-  "info": "<h2>Ethernautは<a href='https://overthewire.org' target='_blank' rel='noopener noreferrer'>overthewire.org</a>にインスパイアされたEthereum仮想マシン(EVM)を使用するWeb3/Solidityハッキングゲームです。各レベルのスマートコントラクトは脆弱性のあるスマートコントラクトです。</p><p>このゲームは100%オープンソースでプレーヤーによって全てのレベルが作成されています。もし新たにゲームのアイデアがあれば<a href='https://github.com/OpenZeppelin/ethernaut'><button>こちらにPRをください！</button></a></h2>",
+  "info": "<h2>Ethernautは<a href='https://overthewire.org' target='_blank' rel='noopener noreferrer'>overthewire.org</a>にインスパイアされたEthereum仮想マシン(EVM)を使用するWeb3/Solidityハッキングゲームです。各レベルのスマートコントラクトは脆弱性のあるスマートコントラクトです。</p><p>このゲームは100%オープンソースでプレーヤーによって全てのレベルが作成されています。もし新たにゲームのアイデアがあれば<a class='ui-button' href='https://github.com/OpenZeppelin/ethernaut'>こちらにPRをください！</a></h2>",
   "home": "ホーム",
   "help": "ヘルプ",
   "stats": "ステータス",
@@ -120,5 +120,8 @@
   "Networks": "ネットワーク",
   "Languages": "言語",
   "PageNotFoundTitle": "404エラー - ページが見つかりません",
-  "PageNotFoundText": "おっと！お探しのページが見つかりませんでした。"
+  "PageNotFoundText": "おっと！お探しのページが見つかりませんでした。",
+  "leaderboard": "リーダーボード",
+  "darkTheme": "ダークテーマ",
+  "close": "閉じる"
 }

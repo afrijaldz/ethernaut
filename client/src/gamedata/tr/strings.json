@@ -3,7 +3,7 @@
   "title": "The Ethernaut",
   "ctfRegister": "Hemen kayıt ol!",
   "ctfInfo": "<strong>Ethernaut CTF başlıyor:</strong> Ödüllerle dolu, blockchain tabanlı görevlerden oluşan 48 saatlik Capture the Flag etkinliği 16/03’te başlıyor.",
-  "info": "<h2>Ethernaut, Ethereum Sanal Makinesi üzerinde oynanan Web3/Solidity tabanlı bir savaş oyunudur. <a href='https://overthewire.org' target='_blank' rel='noopener noreferrer'>overthewire.org</a>'dan esinlenmiştir. Her seviyede hack’lemen gereken bir akıllı kontrat bulunur. Oyun %100 açık kaynaklıdır ve seviyeler oyuncuların katkılarıyla hazırlanmıştır. Senin de ilginç bir fikrin mi var? Katkılarını <a href='https://github.com/OpenZeppelin/ethernaut'><button>Bekliyoruz</button></a></h2>",
+  "info": "<h2>Ethernaut, Ethereum Sanal Makinesi üzerinde oynanan Web3/Solidity tabanlı bir savaş oyunudur. <a href='https://overthewire.org' target='_blank' rel='noopener noreferrer'>overthewire.org</a>'dan esinlenmiştir. Her seviyede hack’lemen gereken bir akıllı kontrat bulunur. Oyun %100 açık kaynaklıdır ve seviyeler oyuncuların katkılarıyla hazırlanmıştır. Senin de ilginç bir fikrin mi var? Katkılarını <a class='ui-button' href='https://github.com/OpenZeppelin/ethernaut'>Bekliyoruz</a></h2>",
   "home": "Ana Sayfa",
   "help": "Yardım",
   "stats": "İstatistikler",
@@ -120,5 +120,8 @@
   "Networks": "Ağlar",
   "Languages": "Diller",
   "PageNotFoundTitle": "404 Error - Sayfa Bulunamadı",
-  "PageNotFoundText": "Tüh! Aradığın sayfa bulunamadı."
+  "PageNotFoundText": "Tüh! Aradığın sayfa bulunamadı.",
+  "leaderboard": "Lider Tablosu",
+  "darkTheme": "Koyu tema",
+  "close": "Kapat"
 }

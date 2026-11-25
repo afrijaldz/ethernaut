@@ -245,9 +245,6 @@ importers:
       react-markdown:
         specifier: ^8.0.0
         version: 8.0.7(@types/react@19.3.0)(react@18.3.1)(supports-color@6.1.0)
-      react-onclickoutside:
-        specifier: ^6.12.2
-        version: 6.13.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-paginate:
         specifier: ^8.1.4
         version: 8.3.0(react@18.3.1)
@@ -6398,12 +6395,6 @@ packages:
     peerDependencies:
       '@types/react': '>=16'
       react: '>=16'
-
-  react-onclickoutside@6.13.2:
-    resolution: {integrity: sha512-h6Hbf1c8b7tIYY4u90mDdBLY4+AGQVMFtIE89HgC0DtVCh/JfKl477gYqUtGLmjZBKK3MJxomP/lFiLbz4sq9A==}
-    peerDependencies:
-      react: ^15.5.x || ^16.x || ^17.x || ^18.x
-      react-dom: ^15.5.x || ^16.x || ^17.x || ^18.x
 
   react-paginate@8.3.0:
     resolution: {integrity: sha512-TptZE37HPkT3R+7AszWA++LOTIsIHXcCSWMP9WW/abeF8sLpJzExFB/dVs7xbtqteJ5njF6kk+udTDC0AR3y5w==}
@@ -16904,11 +16895,6 @@ snapshots:
       vfile: 5.3.7
     transitivePeerDependencies:
       - supports-color
-
-  react-onclickoutside@6.13.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
-    dependencies:
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
 
   react-paginate@8.3.0(react@18.3.1):
     dependencies:
