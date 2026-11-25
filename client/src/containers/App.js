@@ -144,45 +144,23 @@ class App extends React.Component {
     }
 
     return (
-      <div className="appcontainer">
-        {/* Parent container */}
+      <div>
         <main>
           {/* Main title and buttons */}
-          <section className="titles">
-            <a href={constants.PATH_ROOT}>
-              <img
-                src="../../imgs/the-ethernaut.svg"
-                alt="The-Ethernaut"
-                className="the-ethernaut"
-              />
-            </a>
-            <svg
-              className="arrow"
-              width="29"
-              height="10"
-              viewBox="0 0 29 10"
-              fill="none"
-              aria-hidden="true"
+          <section className="home-intro">
+            <h1>{strings.title}</h1>
+            <button
+              onClick={() => {
+                if (!store.getState().gamedata.readOnly) {
+                  this.navigateToFirstIncompleteLevel();
+                } else {
+                  this.displayConnectionWindow();
+                }
+              }}
+              className="ui-button home-intro__play"
             >
-              <path
-                d="M27.7822 0.443248L14.3906 8.8865L0.999 0.443248"
-                stroke="currentColor"
-              />
-            </svg>
-            <div>
-              <button
-                onClick={() => {
-                  if (!store.getState().gamedata.readOnly) {
-                    this.navigateToFirstIncompleteLevel();
-                  } else {
-                    this.displayConnectionWindow();
-                  }
-                }}
-                className="ui-button"
-              >
-                {strings.playNow}
-              </button>
-            </div>
+              {strings.playNow}
+            </button>
           </section>
           {/*not Account Connected window*/}
           <div className="account-connection-window-bg ui-dialog-backdrop">
@@ -198,7 +176,7 @@ class App extends React.Component {
               >
                 ×
               </button>
-              <h1 className="ui-dialog__icon">{randBadIcon()}</h1>
+              <p className="ui-dialog__icon">{randBadIcon()}</p>
               <h2 id="account-connection-title" className="ui-dialog__title">
                 {strings.accountNotConnectedTitle}
               </h2>
@@ -225,7 +203,7 @@ class App extends React.Component {
                 aria-labelledby="deploy-title"
               >
                 {/*deploy window*/}
-                <h1 className="ui-dialog__icon">{randGoodIcon()}</h1>
+                <p className="ui-dialog__icon">{randGoodIcon()}</p>
                 <h2 id="deploy-title" className="ui-dialog__title">
                   {strings.deployMessageTitle}
                 </h2>
@@ -252,7 +230,7 @@ class App extends React.Component {
                 aria-labelledby="deploy-title"
               >
                 {/*deprecation window*/}
-                <h1 className="ui-dialog__icon">{randBadIcon()}</h1>
+                <p className="ui-dialog__icon">{randBadIcon()}</p>
                 <h2 id="deploy-title" className="ui-dialog__title">
                   {isDeprecatedNetwork(this.state.chainId)
                     ? strings.deprecatedNetwork
@@ -279,12 +257,7 @@ class App extends React.Component {
           {/* Levels */}
           <Mosaic></Mosaic>
           {/* Game description */}
-          <section className="Description">
-            <center>
-              <hr />
-            </center>
-            {parse(strings.info)}
-          </section>
+          <section className="ui-prose">{parse(strings.info)}</section>
         </main>
       </div>
     );

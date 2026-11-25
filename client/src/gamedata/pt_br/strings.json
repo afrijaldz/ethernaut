@@ -3,7 +3,7 @@
   "title": "Ethernaut",
   "ctfRegister": "Registrar agora!",
   "ctfInfo": "<strong>Estamos hospedando o Ethernaut CTF:</strong> Um evento de captura da bandeira de 48 horas com prêmios e desafios de blockchain, começando em 16/03.",
-  "info": "<h2>O Ethernaut é um jogo baseado em Web3/Solidity inspirado no <a href='https://overthewire.org' target='_blank' rel='noopener noreferrer'>overthewire.org</a>, jogado na Ethereum Virtual Machine. Cada nível é um contrato inteligente que precisa ser 'hackeado'. O jogo é 100% de código aberto e todos os níveis são contribuições feitas por outros jogadores. Você tem uma ideia interessante? PRs são <a class='ui-button' href='https://github.com/OpenZeppelin/ethernaut'>Bem Vindos</a></h2>",
+  "info": "<p>O Ethernaut é um jogo baseado em Web3/Solidity inspirado no <a href='https://overthewire.org' target='_blank' rel='noopener noreferrer'>overthewire.org</a>, jogado na Ethereum Virtual Machine. Cada nível é um contrato inteligente que precisa ser 'hackeado'. O jogo é 100% de código aberto e todos os níveis são contribuições feitas por outros jogadores. Você tem uma ideia interessante? PRs são <a class='ui-button ui-button--secondary' href='https://github.com/OpenZeppelin/ethernaut'>Bem Vindos</a></p>",
   "home": "Home",
   "help": "Ajuda",
   "stats": "Estatísticas",

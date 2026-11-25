@@ -2,6 +2,8 @@ import React from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { loadTranslations } from "../../utils/translations";
+import { Link } from "../../router";
+import * as constants from "../../constants";
 import { randBadIcon } from "../../utils/^^";
 
 class NotFound404 extends React.Component {
@@ -12,9 +14,14 @@ class NotFound404 extends React.Component {
     return (
       <div>
         <main className="page-not-found-container">
-          <h1>{randBadIcon()}</h1>
-          <h3 className="page-not-found-title">{strings.PageNotFoundTitle}</h3>
-          <h4 className="page-not-found-text">{strings.PageNotFoundText}</h4>
+          <p className="page-not-found-icon" aria-hidden="true">
+            {randBadIcon()}
+          </p>
+          <h1>{strings.PageNotFoundTitle}</h1>
+          <p>{strings.PageNotFoundText}</p>
+          <Link className="ui-button" to={constants.PATH_ROOT}>
+            {strings.home}
+          </Link>
         </main>
       </div>
     );
