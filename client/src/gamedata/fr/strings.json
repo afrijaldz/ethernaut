@@ -37,6 +37,7 @@
   "walletConnectionFailed": "Le portefeuille ne s'est pas connecté. Ouvrez-le et déverrouillez-le, répondez à toute demande en attente, puis réessayez.",
   "baseSepoliaNotSupported": "Ce portefeuille n'a pas pu passer sur Base Sepolia. Utilisez un portefeuille EVM compatible avec Base Sepolia.",
   "connectAccount": "Connecter",
+  "disconnect": "Déconnecter",
   "deployMessageTitle": "Jeu non déployé",
   "deprecatedNetwork": "Réseau obsolète",
   "networkBeingDeprecated": "Réseau désaffecté",

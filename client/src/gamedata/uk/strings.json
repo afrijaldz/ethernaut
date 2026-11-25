@@ -131,5 +131,6 @@
   "continueInReadOnly": "Продовжити в режимі тільки для читання",
   "walletConnectionFailed": "Гаманець не підключився. Відкрийте та розблокуйте його, дайте відповідь на відкриті запити й спробуйте ще раз.",
   "baseSepoliaNotSupported": "Цей гаманець не зміг перемкнутися на Base Sepolia. Використовуйте EVM-гаманець із підтримкою Base Sepolia.",
-  "connectAccount": "Підключити"
+  "connectAccount": "Підключити",
+  "disconnect": "Відключити"
 }

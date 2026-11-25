@@ -37,6 +37,7 @@
   "walletConnectionFailed": "La billetera no se conectó. Ábrela y desbloquéala, responde a cualquier solicitud pendiente e inténtalo de nuevo.",
   "baseSepoliaNotSupported": "Esta billetera no pudo cambiar a Base Sepolia. Usa una billetera EVM compatible con Base Sepolia.",
   "connectAccount": "Conectar",
+  "disconnect": "Desconectar",
   "deployMessageTitle": "Juego no desplegado",
   "deprecatedNetwork": "Red obsoleta",
   "networkBeingDeprecated": "Red en desuso",

@@ -2,6 +2,8 @@ packages:
   - client
   - deps/hljs
 
-# This install script is not needed for the browser build.
+# These install scripts are not needed for the browser build.
 allowBuilds:
   fsevents: false
+  # This script only compares the AppKit versions of the project.
+  "@reown/appkit": false

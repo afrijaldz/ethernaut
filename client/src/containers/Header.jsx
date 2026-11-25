@@ -8,7 +8,12 @@ import * as constants from "../constants";
 import { loadTranslations } from "../utils/translations";
 import PropTypes from "prop-types";
 import { ProgressBar } from "react-loader-spinner";
-import { RESULT, switchNetwork } from "../utils/wallet";
+import {
+  RESULT,
+  disconnectWalletConnect,
+  isWalletConnectSelected,
+  switchNetwork,
+} from "../utils/wallet";
 
 const NETWORKS_SECTION = "networks";
 const LANGUAGES_SECTION = "languages";
@@ -231,6 +236,18 @@ class Header extends React.Component {
                     {strings.contributeTranslation}
                   </a>
                 </div>
+                {this.props.isConnected && isWalletConnectSelected() && (
+                  <button
+                    type="button"
+                    className="ui-menu__item"
+                    onClick={() => {
+                      this.closeMenu();
+                      disconnectWalletConnect();
+                    }}
+                  >
+                    {strings.disconnect}
+                  </button>
+                )}
                 {readOnly && (
                   <button
                     type="button"

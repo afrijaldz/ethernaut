@@ -4,6 +4,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@walletconnect/ethereum-provider": "2.26.0",
     "bootstrap": "^5.0.0",
     "color-map": "0.4.3",
     "colors": "1.4.0",

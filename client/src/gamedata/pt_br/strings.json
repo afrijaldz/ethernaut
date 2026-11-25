@@ -37,6 +37,7 @@
   "walletConnectionFailed": "A carteira não se conectou. Abra-a e desbloqueie-a, responda a qualquer solicitação pendente e tente novamente.",
   "baseSepoliaNotSupported": "Esta carteira não conseguiu mudar para Base Sepolia. Use uma carteira EVM compatível com Base Sepolia.",
   "connectAccount": "Ligar",
+  "disconnect": "Desligar",
   "deployMessageTitle": "Jogo não implantado",
   "deprecatedNetwork": "Rede obsoleta",
   "networkBeingDeprecated": "Rede sendo obsoleta",

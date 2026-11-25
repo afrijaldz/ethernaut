@@ -37,6 +37,7 @@
   "walletConnectionFailed": "ウォレットに接続できませんでした。ウォレットを開いてロックを解除し、保留中のリクエストに応答してから、もう一度お試しください。",
   "baseSepoliaNotSupported": "このウォレットは Base Sepolia に切り替えられませんでした。Base Sepolia に対応した EVM ウォレットを使用してください。",
   "connectAccount": "接続する",
+  "disconnect": "切断する",
   "deployMessageTitle": "ゲームが展開されていません",
   "deployMessage": "現在、ゲームはこれらのネットワークのみをサポートしています:",
   "deprecatedNetwork": "ネットワークは放棄されています",

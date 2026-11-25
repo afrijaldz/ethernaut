@@ -66,6 +66,10 @@ The same as using the local network but steps 2, 3 and 6 are not necessary.
 In this case, replace point 5 with:
 5. Set `client/src/constants.js` `ACTIVE_NETWORK` to `NETWORKS.BASE_SEPOLIA`
 
+### WalletConnect
+
+Players can connect a mobile wallet with WalletConnect when `REACT_APP_WALLETCONNECT_PROJECT_ID` is set. For a local client, set it in `client/.env`. For the deployed client, set it in the build variables of Cloudflare Workers and build again. The project ID comes from the [WalletConnect Developer Dashboard](https://dashboard.walletconnect.com). It is visible in the client bundle, so allow only your domain in the dashboard. Without a project ID, the connection dialog does not show WalletConnect.
+
 ### Running tests
 
 ```bash

@@ -66,6 +66,9 @@ export const NETWORKS_DEPRECATION = {
   },
 };
 
+// WalletConnect is off when this is not set.
+export const WALLETCONNECT_PROJECT_ID = process.env.REACT_APP_WALLETCONNECT_PROJECT_ID;
+
 // Misc
 export const CLEAR_CONSOLE = !DEBUG;
 

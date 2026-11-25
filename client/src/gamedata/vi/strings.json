@@ -37,6 +37,7 @@
   "walletConnectionFailed": "Ví chưa kết nối được. Hãy mở và mở khóa ví, trả lời các yêu cầu đang chờ rồi thử lại.",
   "baseSepoliaNotSupported": "Ví này không thể chuyển sang Base Sepolia. Hãy dùng ví EVM hỗ trợ Base Sepolia.",
   "connectAccount": "Kết nối",
+  "disconnect": "Ngắt kết nối",
   "deployMessageTitle": "Trò chơi chưa được triển khai",
   "deprecatedNetwork": "Mạng đã bị ngừng hỗ trợ",
   "networkBeingDeprecated": "Mạng đang bị ngừng hỗ trợ",
