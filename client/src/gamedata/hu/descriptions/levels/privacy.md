@@ -8,4 +8,4 @@ Dolgok, amelyek segíthetnek:
 * A típuskonverzió működésének megértése
 
 Tippek:
-* Ne feledd, hogy a metamask csak egy kényelmi eszköz. Használj másik eszközt, ha problémákat okoz. A haladó játékmenet magában foglalhatja a remix vagy a saját web3 provider használatát.
+* Ne feledd, hogy a tárca csak egy kényelmi eszköz. Használj másik eszközt, ha problémákat okoz. A haladó játékmenet magában foglalhatja a remix vagy a saját web3 provider használatát.

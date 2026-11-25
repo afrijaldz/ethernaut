@@ -8,4 +8,4 @@ Coisas que podem ser úteis:
 * Entendendo como funciona o `casting`
 
 Dicas:
-* Lembre-se que a metamask é apenas uma comodidade. Use outra ferramenta se ela estiver apresentando problemas. O avançado do jogo pode envolver o uso de remix ou seu próprio provedor web3.
+* Lembre-se que a sua carteira é apenas uma comodidade. Use outra ferramenta se ela estiver apresentando problemas. O avançado do jogo pode envolver o uso de remix ou seu próprio provedor web3.

@@ -15,19 +15,15 @@ import {
   deprecationDate,
 } from "../utils/networkDeprecation";
 import { store } from "./../store";
-import * as actions from "../../src/actions";
+import * as actions from "../actions";
+import { RESULT, switchNetwork } from "../utils/wallet";
 
 class App extends React.Component {
   constructor() {
     super();
     this.state = {
-      chainId: 0,
+      networkError: false,
     };
-    if (window.ethereum) {
-      window.ethereum.request({ method: "eth_chainId" }).then((id) => {
-        this.setState({ chainId: Number(id) });
-      });
-    }
   }
 
   componentDidUpdate(prevProps) {
@@ -60,29 +56,14 @@ class App extends React.Component {
     deployWindow[0].style.display = "none";
   }
 
-  async continueInReadOnly() {
-    store.dispatch(actions.loadGamedata());
-    store.dispatch(actions.setGameReadOnly(true));
-    const accountConnectionWindow = document.querySelectorAll(
-      ".account-connection-window-bg"
-    );
-    accountConnectionWindow[0].style.display = "none";
-  }
-
-  async displayConnectionWindow() {
-    const accountConnectionWindow = document.querySelectorAll(
-      ".account-connection-window-bg"
-    );
-    accountConnectionWindow[0].style.display = "block";
-  }
-
-  async requestAccounts() {
-    await window.ethereum.request({ method: "eth_requestAccounts" });
-    const accountConnectionWindow = document.querySelectorAll(
-      ".account-connection-window-bg"
-    );
-    accountConnectionWindow[0].style.display = "none";
-  }
+  switchToBaseSepolia = async () => {
+    this.setState({ networkError: false });
+    const result = await switchNetwork(constants.NETWORKS_INGAME.BASE_SEPOLIA);
+    if (result === RESULT.DONE) {
+      document.querySelector(".deploy-window-bg").style.display = "none";
+    }
+    this.setState({ networkError: result === RESULT.FAILED });
+  };
 
   render() {
     let language = localStorage.getItem("lang");
@@ -91,57 +72,11 @@ class App extends React.Component {
       (key) => key !== "LOCAL" && key !== "UNDEFINED"
     );
 
-    // change the network to Base Sepolia
-    async function switchToBaseSepolia() {
-      let elements = document.querySelectorAll(".progress-bar-wrapper");
-      const deployWindow = document.querySelectorAll(".deploy-window-bg");
-      try {
-        await window.ethereum.request({
-          method: "wallet_switchEthereumChain",
-          params: [
-            {
-              chainId: `0x${Number(
-                constants.NETWORKS.BASE_SEPOLIA.id
-              ).toString(16)}`,
-            },
-          ], //if on wrong network giving option to switch to Base Sepolia.
-        });
-        deployWindow[0].style.display = "none";
-      } catch (switchError) {
-        // This error code indicates that the chain has not been added to MetaMask.
-        if (switchError.code === 4902) {
-          const baseSepolia = constants.NETWORKS_INGAME.BASE_SEPOLIA;
-          try {
-            await window.ethereum.request({
-              method: "wallet_addEthereumChain",
-              params: [
-                {
-                  chainId: `0x${Number(baseSepolia.id).toString(16)}`,
-                  chainName: baseSepolia.name,
-                  rpcUrls: [baseSepolia.rpcUrl],
-                  nativeCurrency: {
-                    name: baseSepolia.currencyName,
-                    symbol: baseSepolia.currencySymbol,
-                    decimals: 18,
-                  },
-                  blockExplorerUrls: [baseSepolia.blockExplorer],
-                },
-              ],
-            });
-            deployWindow[0].style.display = "none";
-          } catch (addError) {
-            if (addError.code === 4001) {
-              //User has rejected changing the request
-              elements[0].style.display = "none";
-            }
-            console.error("Can't add nor switch to the selected network");
-          }
-        } else if (switchError.code === 4001) {
-          //User has rejected changing the request
-          if (elements[0]) elements[0].style.display = "none";
-        }
-      }
-    }
+    const networkError = this.state.networkError && (
+      <p className="ui-alert ui-alert--danger" role="alert">
+        {strings.baseSepoliaNotSupported}
+      </p>
+    );
 
     return (
       <div>
@@ -154,7 +89,7 @@ class App extends React.Component {
                 if (!store.getState().gamedata.readOnly) {
                   this.navigateToFirstIncompleteLevel();
                 } else {
-                  this.displayConnectionWindow();
+                  this.props.setConnectionDialogOpen(true);
                 }
               }}
               className="ui-button home-intro__play"
@@ -162,41 +97,9 @@ class App extends React.Component {
               {strings.playNow}
             </button>
           </section>
-          {/*not Account Connected window*/}
-          <div className="account-connection-window-bg ui-dialog-backdrop">
-            <div
-              className="ui-dialog"
-              role="dialog"
-              aria-labelledby="account-connection-title"
-            >
-              <button
-                className="ui-button ui-button--secondary ui-dialog__close"
-                aria-label={strings.close}
-                onClick={this.continueInReadOnly}
-              >
-                ×
-              </button>
-              <p className="ui-dialog__icon">{randBadIcon()}</p>
-              <h2 id="account-connection-title" className="ui-dialog__title">
-                {strings.accountNotConnectedTitle}
-              </h2>
-              <p>{strings.accountNotConnectedMessage}</p>
-              <div className="ui-dialog__actions">
-                <button
-                  className="ui-button"
-                  onClick={async () => {
-                    await this.requestAccounts();
-                    window.location.reload();
-                  }}
-                >
-                  {strings.connectAccount}
-                </button>
-              </div>
-            </div>
-          </div>
           {/*not Deployed window*/}
           <div className="deploy-window-bg ui-dialog-backdrop">
-            {!networkOnDeprecationOrDeprecated(this.state.chainId) ? (
+            {!networkOnDeprecationOrDeprecated(this.props.networkId) ? (
               <div
                 className="ui-dialog"
                 role="dialog"
@@ -210,6 +113,7 @@ class App extends React.Component {
                 {strings.deployMessage}
                 {supportedNetworksList(supportedNetworks)}
                 <p>{strings.deployConfirmation}</p>
+                {networkError}
                 <div className="ui-dialog__actions">
                   <button
                     className="ui-button ui-button--secondary"
@@ -217,7 +121,7 @@ class App extends React.Component {
                   >
                     {strings.deployGame}
                   </button>
-                  <button className="ui-button" onClick={switchToBaseSepolia}>
+                  <button className="ui-button" onClick={this.switchToBaseSepolia}>
                     {strings.switchToBaseSepolia}
                   </button>
                 </div>
@@ -232,17 +136,18 @@ class App extends React.Component {
                 {/*deprecation window*/}
                 <p className="ui-dialog__icon">{randBadIcon()}</p>
                 <h2 id="deploy-title" className="ui-dialog__title">
-                  {isDeprecatedNetwork(this.state.chainId)
+                  {isDeprecatedNetwork(this.props.networkId)
                     ? strings.deprecatedNetwork
                     : strings.networkBeingDeprecated}
                 </h2>
                 {strings.deployMessage}
                 {supportedNetworksList(supportedNetworks)}
+                {networkError}
                 <div className="ui-dialog__actions">
-                  <button className="ui-button" onClick={switchToBaseSepolia}>
+                  <button className="ui-button" onClick={this.switchToBaseSepolia}>
                     {strings.switchToBaseSepolia}
                   </button>
-                  {!isDeprecatedNetwork(this.state.chainId) && (
+                  {!isDeprecatedNetwork(this.props.networkId) && (
                     <button
                       className="ui-button ui-button--secondary"
                       onClick={this.continueAnyway}
@@ -266,13 +171,17 @@ class App extends React.Component {
 
 function mapStateToProps(state) {
   return {
+    networkId: state.network.networkId,
     levels: state.gamedata.levels,
     completedLevels: state.player.completedLevels,
   };
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({}, dispatch);
+  return bindActionCreators(
+    { setConnectionDialogOpen: actions.setConnectionDialogOpen },
+    dispatch
+  );
 }
 
 function supportedNetworksList(_supportedNetworks) {

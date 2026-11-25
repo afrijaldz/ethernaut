@@ -1,6 +1,9 @@
 export const CONNECT_WEB3 = "CONNECT_WEB3";
 export const connectWeb3 = web3 => ({ type: CONNECT_WEB3, web3 })
 
+export const SET_CONNECTION_DIALOG_OPEN = "SET_CONNECTION_DIALOG_OPEN";
+export const setConnectionDialogOpen = open => ({ type: SET_CONNECTION_DIALOG_OPEN, open })
+
 export const SET_GAS_PRICE = "SET_GAS_PRICE";
 export const setGasPrice = gasPrice => ({ type: SET_GAS_PRICE, gasPrice })
 

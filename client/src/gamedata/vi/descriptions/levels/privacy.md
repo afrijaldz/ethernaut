@@ -8,4 +8,4 @@ Những điều có thể hữu ích:
 * Hiểu cách casting hoạt động
 
 Mẹo:
-* Hãy nhớ rằng metamask chỉ là một hàng hóa. Sử dụng công cụ khác nếu nó gây ra vấn đề. Gameplay nâng cao có thể liên quan đến việc sử dụng remix, hoặc web3 provider của riêng bạn.
+* Hãy nhớ rằng ví chỉ là một hàng hóa. Sử dụng công cụ khác nếu nó gây ra vấn đề. Gameplay nâng cao có thể liên quan đến việc sử dụng remix, hoặc web3 provider của riêng bạn.

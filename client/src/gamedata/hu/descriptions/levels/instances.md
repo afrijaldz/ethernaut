@@ -1,9 +1,9 @@
 Ez a szint végigvezet a játék alapjain.
 
 &nbsp;
-#### 1. MetaMask beállítása
-Ha még nincs meg, telepítsd a [MetaMask böngésző bővítményt](https://metamask.io/) (Chrome-ban, Firefox-ban, Brave-ben vagy Opera-ban asztali gépeden).
-Állítsd be a bővítmény tárcáját és használd a hálózat választót, hogy a preferált hálózatra mutathasson a bővítmény felületének bal felső sarkában. Alternatívaként használhatod a UI gombot a hálózatok közötti váltáshoz. Ha nem támogatott hálózatot választasz, a játék értesít és elvisz az alapértelmezett Base Sepolia testnet-re.
+#### 1. Tárca beállítása
+Ha még nincs, telepíts egy EVM tárcát, amely támogatja a Base Sepolia hálózatot (böngésző bővítményt vagy saját böngészővel rendelkező tárca alkalmazást).
+Állítsd be a tárcát, és válassz benne egy támogatott hálózatot. Alternatívaként használhatod a UI gombot a hálózatok közötti váltáshoz. Ha nem támogatott hálózatot választasz, a játék értesít és elvisz az alapértelmezett Base Sepolia testnet-re.
 
 #### 2. Nyisd meg a böngésző konzolját
 Nyisd meg a böngésző konzolját: `Eszközök > Fejlesztői eszközök`.
@@ -54,7 +54,7 @@ Amint látsz néhány érmét az egyenlegedben, lépj tovább a következő lép
 #### 7. Szint példány megszerzése
 Amikor egy szintet játszol, nem közvetlenül az ethernaut szerződéssel lépsz interakcióba. Ehelyett megkéred, hogy generáljon egy **szint példányt** neked. Ehhez kattints a "Új példány kérése" gombra az oldal alján. Tedd meg most és gyere vissza!
 
-A MetaMask-nak kérnie kell, hogy engedélyezd a tranzakciót. Tedd meg, és látnod kell néhány üzenetet a konzolon. Vedd figyelembe, hogy ez egy új szerződést telepít a blokkláncra, és eltarthat néhány másodpercig, szóval légy türelmes, amikor új szint példányokat kérsz!
+A tárcádnak kérnie kell, hogy engedélyezd a tranzakciót. Tedd meg, és látnod kell néhány üzenetet a konzolon. Vedd figyelembe, hogy ez egy új szerződést telepít a blokkláncra, és eltarthat néhány másodpercig, szóval légy türelmes, amikor új szint példányokat kérsz!
 
 #### 8. A szerződés vizsgálata
 Ahogy az ethernaut szerződéssel tetted, megvizsgálhatod ennek a szerződésnek az ABI-ját a konzolon keresztül a `contract` változóval.

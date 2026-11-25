@@ -1,9 +1,9 @@
 Ce niveau vous permet d'apprendre les bases du jeu.
 
 &nbsp;
-#### 1. Configurer MetaMask
-Si vous ne l'avez pas déjà, installez [l'extension Metamask](https://metamask.io/) (sur Chrome, Firefox, Brave, ou Opera sur votre ordinateur).
-Configurez un portefeuille dans l'extension et utilisez le sélecteur de réseau pour pointer vers "le réseau de test Rinkeby" en haut à gauche de l'interface. 
+#### 1. Configurer un portefeuille
+Si vous n'en avez pas déjà un, installez un portefeuille EVM compatible avec Base Sepolia (une extension de navigateur, ou une application de portefeuille avec son propre navigateur).
+Configurez le portefeuille et sélectionnez-y le réseau de test Base Sepolia.
 
 &nbsp;
 #### 2. Ouvrir la console du navigateur
@@ -62,7 +62,7 @@ Une fois que vous voyez des éthers sur votre sole, passons à l'étape suivante
 #### 7. Créer une instance de niveau
 Quand vous jouez sur un niveau, vous n'interagissez pas directement avec le contrat ethernaut. Vous lui demandez plutôt de générer une **instance de niveau** pour vous. Pour ce faire, cliquez sur le bouton bleu en bas de la page. Allez le faire maintenat et revenez. !
 
-Metamask devrez vous demander d'autoriser la transaction. Faites-le, et vous devriez voir quelques messages dans la console. Notez que cela déploie un nouveau contrat dans la blockchain et que cela peut prendre quelques secondes, donc soyez patient lorsque vous demandez de nouvelles instances de niveau.
+Votre portefeuille devrait vous demander d'autoriser la transaction. Faites-le, et vous devriez voir quelques messages dans la console. Notez que cela déploie un nouveau contrat dans la blockchain et que cela peut prendre quelques secondes, donc soyez patient lorsque vous demandez de nouvelles instances de niveau.
 
 &nbsp;
 #### 8. Inspecter le contract

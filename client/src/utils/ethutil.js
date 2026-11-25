@@ -4,7 +4,6 @@ import * as constants from "../constants.js";
 import { NETWORKS_INGAME } from '../constants.js'
 
 let web3;
-let duplicateTransactions = new Map();
 
 export const setWeb3 = (_web3) => {
   web3 = _web3;
@@ -15,7 +14,6 @@ export const getWeb3 = () => web3;
 export const getTruffleContract = (jsonABI, defaults = {}) => {
   // // HACK: Doing this here instead of `import` so that the project uses the web3.js version
   // // defined in `package.json` instead of relying on Truffle dependencies (that use an old version).
-  // // With this, MetaMask v9 deprecation warnings are removed. 
   // const TruffleContract = require('@truffle/contract');
 
   const truffleContract = TruffleContract({ abi: jsonABI.abi, bytecode: jsonABI.bytecode.object });
@@ -167,63 +165,6 @@ export const verifySignature = (json) => {
   catch (err) {
     return false;
   }
-}
-
-export const signMessageWithMetamask = (addr, message, callback) => {
-  const msg = ethjs.bufferToHex(new Buffer(message, 'utf8'));
-  web3.currentProvider.sendAsync({
-    method: 'personal_sign',
-    params: [msg, addr],
-    addr
-  }, function (err, res) {
-    callback({
-      address: addr,
-      msg: message,
-      sig: res.result,
-      version: '2'
-    });
-  });
-}
-
-export const logger = (req, res, next, end) => {
-  next((cb) => {
-    // HACK: do not log known error when setting event log filters
-    if (res.error && !res.error.message.includes("TypeError: Cannot read property 'filter' of undefined")) {
-      console.error('Error in RPC response:\n', res.error.message);
-    } else if (req.method === 'eth_sendTransaction') {
-      console.mineInfo('Sent transaction', res.result);
-    } else if (req.method === 'eth_getTransactionReceipt' && res.result) {
-      if (duplicateTransactions.size > 1000) duplicateTransactions.clear()
-      if (!duplicateTransactions.get(res.result.transactionHash)) {
-        duplicateTransactions.set(res.result.transactionHash, true);
-        console.mineInfo('Mined transaction', res.result.transactionHash);
-      }
-    }
-    cb();
-  })
-}
-
-export const attachLogger = () => {
-  if (web3.currentProvider._rpcEngine) {
-    web3.currentProvider._rpcEngine._middleware.unshift(logger);
-    return;
-  }  //If the current provider hasn't an RPC Engine look for other providers
-  else if (web3.currentProvider.providers) {
-    var providers = web3.currentProvider.providers;
-    for (var i = 0; i < providers.length; i++) {
-      if (providers[i]._rpcEngine) {
-        providers[i]._rpcEngine._middleware.unshift(logger);
-
-        // Set this provider as current provider
-        web3.currentProvider = providers[i];
-        return;
-      }
-    }
-  }
-
-  //If still there's no RPC Engine throw error
-  console.error("Can't find a valid provider, make sure you have Metamask installed and that any other wallet plugin is disabled");
-  return;
 }
 
 export const getGasFeeDetails = async (network, multiplier) => {

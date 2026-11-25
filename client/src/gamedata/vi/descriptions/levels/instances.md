@@ -1,9 +1,9 @@
 Cấp độ này sẽ hướng dẫn bạn những điều cơ bản về cách chơi trò chơi.
 
 &nbsp;
-#### 1. Thiết lập MetaMask
-Nếu bạn chưa có thì hãy cài đặt [tiện ích mở rộng trình duyệt MetaMask](https://metamask.io/) (trong Chrome, Firefox, Brave hoặc Opera trên máy tính để bàn của bạn).
-Thiết lập ví của tiện ích mở rộng và sử dụng bộ chọn mạng để trỏ đến mạng ưa thích ở phía trên bên trái giao diện của tiện ích mở rộng. Ngoài ra, bạn có thể sử dụng nút UI để chuyển đổi giữa các mạng. Nếu bạn chọn mạng không được hỗ trợ, trò chơi sẽ thông báo cho bạn và đưa bạn đến mạng thử nghiệm Base Sepolia mặc định.
+#### 1. Thiết lập ví
+Nếu bạn chưa có thì hãy cài đặt một ví EVM hỗ trợ Base Sepolia (tiện ích mở rộng trình duyệt hoặc ứng dụng ví có trình duyệt riêng).
+Thiết lập ví và chọn một mạng được hỗ trợ trong ví. Ngoài ra, bạn có thể sử dụng nút UI để chuyển đổi giữa các mạng. Nếu bạn chọn mạng không được hỗ trợ, trò chơi sẽ thông báo cho bạn và đưa bạn đến mạng thử nghiệm Base Sepolia mặc định.
 
 #### 2. Mở bảng điều khiển của trình duyệt
 Mở bảng điều khiển của trình duyệt của bạn: `Tools > Developer Tools`.
@@ -54,7 +54,7 @@ Khi bạn thấy một số xu trong số dư của mình, hãy chuyển sang b�
 #### 7. Lấy một phiên bản cấp độ
 Khi chơi một cấp độ, bạn không tương tác trực tiếp với hợp đồng ethernaut. Thay vào đó, bạn yêu cầu nó tạo một **phiên bản cấp độ** cho bạn. Để làm như vậy, hãy nhấp vào nút "Nhận phiên bản mới" ở cuối trang. Hãy làm điều đó ngay bây giờ và quay lại!
 
-Bạn sẽ được MetaMask nhắc nhở ủy quyền giao dịch. Làm như vậy và bạn sẽ thấy một số thông báo trong bảng điều khiển. Lưu ý rằng quá trình này đang triển khai một hợp đồng mới trong chuỗi khối và có thể mất vài giây, vì vậy hãy kiên nhẫn khi yêu cầu các phiên bản cấp mới!
+Bạn sẽ được ví nhắc nhở ủy quyền giao dịch. Làm như vậy và bạn sẽ thấy một số thông báo trong bảng điều khiển. Lưu ý rằng quá trình này đang triển khai một hợp đồng mới trong chuỗi khối và có thể mất vài giây, vì vậy hãy kiên nhẫn khi yêu cầu các phiên bản cấp mới!
 
 #### 8. Kiểm tra hợp đồng
 Giống như bạn đã làm với hợp đồng ethernaut, bạn có thể kiểm tra ABI của hợp đồng này thông qua bảng điều khiển bằng cách sử dụng biến `hợp đồng`.

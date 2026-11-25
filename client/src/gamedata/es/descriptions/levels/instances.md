@@ -1,8 +1,8 @@
 Este nivel te guiará a través de los conceptos básicos de cómo jugar.
 
-#### 1. Configurar MetaMask
-Si aún no lo tienes, instala la [extensión del navegador MetaMask](https://metamask.io/).
-Configura la billetera de la extensión y usa el selector de red para apuntar a tu red preferida en la parte superior izquierda de la interfaz de la extensión. De forma alternativa, puedes usar el botón en la interfaz de usuario para cambiar entre diferentes redes. Si seleccionas una red no soportada, el juego te notificarà y llevarà a la red de test por defecto de Base Sepolia.
+#### 1. Configurar una billetera
+Si aún no la tienes, instala una billetera EVM compatible con Base Sepolia (una extensión del navegador o una aplicación de billetera con su propio navegador).
+Configura la billetera y selecciona en ella una red soportada. De forma alternativa, puedes usar el botón en la interfaz de usuario para cambiar entre diferentes redes. Si seleccionas una red no soportada, el juego te notificará y te llevará a la red de test por defecto de Base Sepolia.
 
 #### 2. Abre la consola del navegador
 Abre la consola de tu navegador: `Herramientas > Herramientas de desarrollo`.
@@ -59,7 +59,7 @@ Una vez que vea algunas monedas en su saldo, continúe con el siguiente paso.
 #### 7. Obtener una instancia de nivel
 Al jugar un nivel, no interactúas directamente con el contrato de ethernaut. En su lugar, le pides que genere una **instancia de nivel** para ti. Para hacerlo, haz clic en el botón azul en la parte inferior de la página. ¡Hazlo ahora y vuelve!
 
-MetaMask debería solicitarle que autorices la transacción. Hazlo y deberías ver algunos mensajes en la consola. Ten en cuenta que esto está implementando un nuevo contrato en la red y puede demorar unos segundos, ¡así que ten paciencia al solicitar nuevas instancias!
+Tu billetera debería solicitarle que autorices la transacción. Hazlo y deberías ver algunos mensajes en la consola. Ten en cuenta que esto está implementando un nuevo contrato en la red y puede demorar unos segundos, ¡así que ten paciencia al solicitar nuevas instancias!
 
 #### 8. Inspección del contrato
 Tal como lo hiciste con el contrato de ethernaut, puedes inspeccionar el ABI de este contrato a través de la consola usando la variable `contract`.

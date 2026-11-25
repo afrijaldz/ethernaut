@@ -229,6 +229,29 @@
   }
 }
 
+/* Wallet list */
+
+.wallet-list {
+  display: grid;
+  gap: var(--space-3);
+  margin-block: var(--space-4);
+  padding: 0;
+  list-style: none;
+}
+
+.wallet-list__button {
+  justify-content: flex-start;
+  gap: var(--space-3);
+  width: 100%;
+  text-align: start;
+}
+
+.wallet-list__icon {
+  flex: none;
+  width: 24px;
+  height: 24px;
+}
+
 /* Alert */
 
 .ui-alert {

@@ -4,13 +4,17 @@ const initialState = {
   web3: undefined,
   gasPrice: 20000000,
   blockNum: undefined,
-  networkId: undefined
+  networkId: undefined,
+  connectionDialogOpen: false
 }
 
 const networkReducer = function(state = initialState, action) {
   switch(action.type) {
     case actions.CONNECT_WEB3:
       return { ...state, web3: action.web3 }
+
+    case actions.SET_CONNECTION_DIALOG_OPEN:
+      return { ...state, connectionDialogOpen: action.open }
 
     case actions.SET_GAS_PRICE:
       return { ...state, gasPrice: action.gasPrice }

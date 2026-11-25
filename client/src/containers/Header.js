@@ -8,7 +8,7 @@ import * as constants from "../constants";
 import { loadTranslations } from "../utils/translations";
 import PropTypes from "prop-types";
 import { ProgressBar } from "react-loader-spinner";
-import { store } from "../store";
+import { RESULT, switchNetwork } from "../utils/wallet";
 
 const NETWORKS_SECTION = "networks";
 const LANGUAGES_SECTION = "languages";
@@ -19,18 +19,12 @@ class Header extends React.Component {
     this.state = {
       dark: document.documentElement.dataset.theme === "dark",
       lang: localStorage.getItem("lang"),
-      chainId: 0,
+      networkError: false,
       openSection: null,
       menuOpen: false,
     };
     this.menuContainerRef = createRef();
     this.menuButtonRef = createRef();
-
-    if (this.props.web3 && !store.getState().gamedata.readOnly) {
-      window.ethereum.request({ method: "eth_chainId" }).then((id) => {
-        this.setState({ chainId: Number(id) });
-      });
-    }
   }
 
   static propTypes = {
@@ -75,51 +69,15 @@ class Header extends React.Component {
   }
 
   async changeNetwork(network) {
-    const chainId = await window.ethereum.request({ method: "eth_chainId" });
-    if (Number(chainId) === Number(network.id)) return;
-    const elements = document.querySelectorAll(".progress-bar-wrapper");
-    elements[0].style.display = "flex";
-    try {
-      await window.ethereum.request({
-        method: "wallet_switchEthereumChain",
-        params: [
-          {
-            chainId: `0x${Number(network.id).toString(16)}`,
-          },
-        ],
-      });
-    } catch (switchError) {
-      // This error code indicates that the chain has not been added to MetaMask.
-      if (switchError.code === 4902) {
-        try {
-          await window.ethereum.request({
-            method: "wallet_addEthereumChain",
-            params: [
-              {
-                chainId: `0x${Number(network.id).toString(16)}`,
-                chainName: network.name,
-                rpcUrls: [network.rpcUrl],
-                nativeCurrency: {
-                  name: network.currencyName,
-                  symbol: network.currencySymbol,
-                  decimals: 18,
-                },
-                blockExplorerUrls: [network.blockExplorer],
-              },
-            ],
-          });
-        } catch (addError) {
-          if (addError.code === 4001) {
-            //User has rejected changing the request
-            elements[0].style.display = "none";
-          }
-          console.error("Can't add nor switch to the selected network");
-        }
-      } else if (switchError.code === 4001) {
-        //User has rejected changing the request
-        elements[0].style.display = "none";
-      }
-    }
+    if (Number(network.id) === this.props.networkId) return;
+    this.closeMenu();
+    this.setState({ networkError: false });
+    const progressBar = document.querySelector(".progress-bar-wrapper");
+    progressBar.style.display = "flex";
+    const result = await switchNetwork(network);
+    // After a switch the page reloads, see the setNetwork middleware.
+    if (result !== RESULT.DONE) progressBar.style.display = "none";
+    this.setState({ networkError: result === RESULT.FAILED });
   }
 
   toggleTheme = () => {
@@ -150,7 +108,7 @@ class Header extends React.Component {
     };
 
     const { menuOpen, openSection } = this.state;
-    const readOnly = store.getState().gamedata.readOnly;
+    const { readOnly } = this.props;
     const isHome = window.location.pathname === constants.PATH_ROOT;
 
     return (
@@ -232,7 +190,7 @@ class Header extends React.Component {
                             type="button"
                             className="ui-menu__item"
                             aria-current={
-                              Number(network.id) === this.state.chainId
+                              Number(network.id) === this.props.networkId
                             }
                             onClick={() => this.changeNetwork(network)}
                           >
@@ -277,11 +235,9 @@ class Header extends React.Component {
                   <button
                     type="button"
                     className="ui-menu__item"
-                    onClick={async () => {
-                      await window.ethereum.request({
-                        method: "eth_requestAccounts",
-                      });
-                      window.location.reload();
+                    onClick={() => {
+                      this.closeMenu();
+                      this.props.setConnectionDialogOpen(true);
                     }}
                   >
                     {strings.connectAccount}
@@ -301,11 +257,18 @@ class Header extends React.Component {
           wrapperClass="progress-bar-wrapper"
           visible={true}
         />
-        {!this.props.web3 && !readOnly && (
+        {readOnly && (
           <div className="site-alert">
             <div className="ui-alert ui-alert--warning">
               <strong>{strings.warning}! </strong>
               <span>{strings.warningMessage}</span>
+            </div>
+          </div>
+        )}
+        {this.state.networkError && (
+          <div className="site-alert">
+            <div className="ui-alert ui-alert--danger" role="alert">
+              {strings.baseSepoliaNotSupported}
             </div>
           </div>
         )}
@@ -317,6 +280,8 @@ class Header extends React.Component {
 function mapStateToProps(state) {
   return {
     web3: state.network.web3,
+    networkId: state.network.networkId,
+    readOnly: state.gamedata.readOnly,
     allLevelsCompleted: state.player.allLevelsCompleted,
   };
 }
@@ -325,6 +290,7 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     {
       setLang: actions.setLang,
+      setConnectionDialogOpen: actions.setConnectionDialogOpen,
     },
     dispatch
   );
