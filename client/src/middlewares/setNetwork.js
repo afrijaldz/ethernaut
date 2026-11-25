@@ -16,9 +16,8 @@ const setNetwork = store => next => action => {
   window.deployAllContracts = deployRemainingContracts;
   if (action.type !== actions.SET_NETWORK_ID) return next(action) //we need to reload the window here
   elements = document.querySelectorAll('.progress-bar-wrapper');
-  const hasBeenLocalDeployed = isLocalDeployed(action.id);
 
-  if ((!onPredeployedNetwork(action.id) || networkOnDeprecationOrDeprecated(action.id)) && !hasBeenLocalDeployed) {
+  if (!isSupportedNetwork(action.id)) {
     const deployWindow = document.querySelectorAll('.deploy-window-bg');
     if (deployWindow[0]) deployWindow[0].style.display = 'block';
   }
@@ -38,6 +37,11 @@ export function onPredeployedNetwork(id) {
   let allNetworkIds = Object.keys(constants.ID_TO_NETWORK).map((key) => Number(key))
   onRightNetwork = allNetworkIds.includes(Number(id));
   return onRightNetwork;
+}
+
+// A network is supported when the game is deployed on it, by this project or by the player
+export function isSupportedNetwork(id) {
+  return (onPredeployedNetwork(id) && !networkOnDeprecationOrDeprecated(id)) || isLocalDeployed(id);
 }
 
 export default setNetwork

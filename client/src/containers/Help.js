@@ -15,8 +15,8 @@ class Help extends React.Component {
           <h1>{strings.help}</h1>
 
           <section>
-            <h2>Setup Metamask</h2>
-            <MarkdownComponent target={strings.setupMetamask} />
+            <h2>Set up a wallet</h2>
+            <MarkdownComponent target={strings.setupWallet} />
           </section>
 
           <section>

@@ -1,9 +1,9 @@
 Bu seviye, oyunun nasıl oynanacağına dair temel bilgileri size öğretecek.
 
 &nbsp;
-#### 1. MetaMask’i Kurun
-Eğer hâlâ yüklemediyseniz, masaüstü tarayıcınızda (Chrome, Firefox, Brave veya Opera) [MetaMask eklentisini](https://metamask.io/) indirin ve kurun.
-Eklentinin cüzdanını oluşturun ve sol üstteki ağ seçicisinden istediğiniz ağa geçiş yapın. Alternatif olarak arayüzdeki butonu kullanarak ağlar arasında geçiş yapabilirsiniz. Eğer desteklenmeyen bir ağ seçerseniz, oyun size bildirim verecek ve varsayılan Base Sepolia test ağına yönlendirecektir.
+#### 1. Bir cüzdan kurun
+Eğer hâlâ yüklemediyseniz, Base Sepolia destekleyen bir EVM cüzdanı (tarayıcı eklentisi veya kendi tarayıcısı olan bir cüzdan uygulaması) kurun.
+Cüzdanı oluşturun ve içinden desteklenen bir ağ seçin. Alternatif olarak arayüzdeki butonu kullanarak ağlar arasında geçiş yapabilirsiniz. Eğer desteklenmeyen bir ağ seçerseniz, oyun size bildirim verecek ve varsayılan Base Sepolia test ağına yönlendirecektir.
 
 #### 2. Tarayıcı konsolunu açın
 Tarayıcınızın konsolunu açın: `Araçlar (Tools) > Geliştirici Araçları (Developer Tools)`.
@@ -54,7 +54,7 @@ Bakiyende birkaç coin gördüğünde bir sonraki adıma geçebilirsin.
 #### 7. Seviye örneği alma
 Bir seviyeyi oynarken doğrudan ethernaut kontratıyla etkileşime girmezsin. Onun yerine, senden bir **seviye örneği (level instance)** oluşturmasını istersin. Bunu yapmak için sayfanın altındaki “Seviye örneği al” düğmesine tıkla. Hadi şimdi dene ve geri gel!
 
-MetaMask senden işlemi onaylamanı isteyecek. Onayladıktan sonra konsolda bazı mesajlar göreceksin. Bu işlemin aslında blok zincirine yeni bir kontrat deploy ettiğini unutma. Bu yüzden yeni seviye örneği oluştururken birkaç saniye sürebilir — sabırlı ol!
+Cüzdanın senden işlemi onaylamanı isteyecek. Onayladıktan sonra konsolda bazı mesajlar göreceksin. Bu işlemin aslında blok zincirine yeni bir kontrat deploy ettiğini unutma. Bu yüzden yeni seviye örneği oluştururken birkaç saniye sürebilir — sabırlı ol!
 
 #### 8. Kontratı inceleme
 Tıpkı ethernaut kontratında yaptığın gibi, bu kontratın ABI’sini de konsol üzerinden `contract` değişkenini kullanarak inceleyebilirsin.

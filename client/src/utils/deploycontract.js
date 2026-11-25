@@ -5,7 +5,7 @@ import { getGasFeeDetails } from "../utils/ethutil.js";
 import {
   cacheContract,
   fetchLevelABI,
-  getInjectedProvider,
+  getWalletWeb3,
   restoreContract,
   updateCachedContract,
 } from "./contractutil";
@@ -84,8 +84,8 @@ export async function deployAndRegisterLevel(level) {
 
 export async function deployAdminContracts() {
   try {
-    // -- get instance of metamask injected into the environment
-    const web3 = getInjectedProvider();
+    // -- get instance of the selected wallet
+    const web3 = getWalletWeb3();
     const chainId = await web3.eth.getChainId();
     if (!confirmMainnetDeployment(chainId)) {
       return false;

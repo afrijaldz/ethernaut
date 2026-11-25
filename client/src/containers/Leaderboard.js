@@ -1,8 +1,10 @@
 import LeaderList from "../components/leaderboard/LeaderList";
 import { useEffect, useState, useCallback } from "react";
+import { useSelector } from "react-redux";
 import ReactPaginate from "react-paginate";
 import Search from "../components/leaderboard/Search";
 import { getNetworkNamefromId } from "../utils/ethutil";
+import { getProvider } from "../utils/wallet";
 import { NETWORKS } from "client/src/constants";
 import { loadTranslations } from "../utils/translations";
 import axios from "axios";
@@ -29,6 +31,8 @@ function Leaderboard() {
   const [searchKeyword, setSearchKeyword] = useState("");
   const [currentNetworkName, setCurrentNetworkName] = useState("");
 
+  const web3 = useSelector((state) => state.network.web3);
+
   const isKeywordMatching = (player) => {
     const keyword = searchKeyword.toLowerCase();
     return (
@@ -51,24 +55,16 @@ function Leaderboard() {
     setCurrentNetworkName(networkName);
   }, []);
 
-  const initateCurrentlySelectedChain = useCallback(async () => {
-    const networkId = await window.ethereum.request({ method: "eth_chainId" });
-    handleNetworkChange(networkId);
-  }, [handleNetworkChange]);
-
-  // During the initial render
+  // When a wallet is connected
   useEffect(() => {
-    if (!window.ethereum) return;
-    initateCurrentlySelectedChain();
-  }, [initateCurrentlySelectedChain]);
-
-  useEffect(() => {
-    if (!window.ethereum) return;
-    window.ethereum.on("networkChanged", handleNetworkChange);
+    if (!web3) return;
+    const provider = getProvider();
+    provider.request({ method: "eth_chainId" }).then(handleNetworkChange);
+    provider.on("chainChanged", handleNetworkChange);
     return () => {
-      window.ethereum.removeListener("networkChanged", handleNetworkChange);
+      provider.removeListener("chainChanged", handleNetworkChange);
     };
-  }, [handleNetworkChange]);
+  }, [web3, handleNetworkChange]);
 
   const fetchAndUpdate = useCallback(async () => {
     setPlayersWithRank([]);

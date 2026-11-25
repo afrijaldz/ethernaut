@@ -1,9 +1,9 @@
 Este nível mostra os passos para aprender a jogar o jogo.
 
 &nbsp;
-#### 1. Configure o MetaMask
-Se você ainda não instalou, adicione o [MetaMask browser extension](https://metamask.io/) (no Chrome, Firefox, Brave ou Opera no seu computador).
-Configure a carteira da extensão e use o seletor de rede para apontar para a rede preferida no canto superior esquerdo da interface da extensão. Alternativamente, você pode usar o botão para alternar entre as redes. Se você selecionar uma rede não suportada, o jogo irá notificá-lo e levá-lo para a Base Sepolia Testnet padrão.
+#### 1. Configure uma carteira
+Se você ainda não tem uma, instale uma carteira EVM compatível com Base Sepolia (uma extensão do navegador ou um aplicativo de carteira com seu próprio navegador).
+Configure a carteira e selecione nela uma rede suportada. Alternativamente, você pode usar o botão para alternar entre as redes. Se você selecionar uma rede não suportada, o jogo irá notificá-lo e levá-lo para a Base Sepolia Testnet padrão.
 
 #### 2. Abra o console do navegador
 Abra o console do seu navegador: `Tools > Developer Tools`.
@@ -54,7 +54,7 @@ Depois de obter algum valor no seu saldo, passe para a próxima etapa.
 #### 7. Obtendo a instância de um nível
 Ao jogar um nível, você não interage diretamente com o contrato ethernaut. Em vez disso, você solicita que ele gere a **instância de um nível** para você. Para fazer isso, clique no botão azul na parte inferior da página. Que tal fazer isso agora e voltar depois?
 
-O MetaMask deve solicitar que você autorize a transação. Faça isso e você verá algumas mensagens no console. Note que isso está fazendo o deploy de um novo contrato na blockchain e pode levar alguns segundos, então por favor seja paciente quando solicitar novas instâncias dos níveis!
+A sua carteira deve solicitar que você autorize a transação. Faça isso e você verá algumas mensagens no console. Note que isso está fazendo o deploy de um novo contrato na blockchain e pode levar alguns segundos, então por favor seja paciente quando solicitar novas instâncias dos níveis!
 
 #### 8. Inspecionando o contrato
 Assim como você fez com o contrato ethernaut, você pode inspecionar a ABI desse contrato através do console usando a variável `contract`.

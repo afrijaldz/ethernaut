@@ -8,4 +8,4 @@ Cosas que pueden ayudar:
 * Entender cómo funciona el casting
 
 Consejos:
-* Recuerda que MetaMask solo es una herramienta que facilita algunas operaciones. Utilice otra herramienta si presenta problemas. El juego podría ser avanzado a veces e implicar el uso de Remix o de tu propio proveedor de Web3.
+* Recuerda que tu billetera solo es una herramienta que facilita algunas operaciones. Utilice otra herramienta si presenta problemas. El juego podría ser avanzado a veces e implicar el uso de Remix o de tu propio proveedor de Web3.

@@ -1,9 +1,9 @@
 このレベルでは、ゲームをプレイするための基本的な方法を説明します。
 
-#### 1. Set up MetaMask
+#### 1. ウォレットを設定する
 
-If you don't have it already, install the [MetaMask browser extension](https://metamask.io/) (in Chrome, Firefox, Brave or Opera on your desktop machine).
-Set up the extension's wallet and use the network selector to point to the preferred network in the top left of the extension's interface. Alternatively you can use the UI button to switch between networks. If you select an unsupported network, the game will notify you and bring you to the default Base Sepolia testnet.
+まだお持ちでない場合は、Base Sepolia に対応した EVM ウォレット（ブラウザ拡張機能、または独自のブラウザを持つウォレットアプリ）をインストールしてください。
+ウォレットを設定し、対応ネットワークを選択してください。UI のボタンでネットワークを切り替えることもできます。対応していないネットワークを選択すると、ゲームが通知し、デフォルトの Base Sepolia テストネットに案内します。
 
 #### 2. ブラウザのコンソールを開く
 
@@ -71,7 +71,7 @@ Once you see some coins in your balance, move on to the next step.
 
 レベルをプレイする際には、ethernaut コントラクトと直接対話することはありません。代わりに、**レベルインスタンス**の生成をします。そのためには、ページの下にある青いボタンをクリックします。今すぐ実行して、戻ってきてください。
 
-MetaMask からトランザクションを承認するよう促されるはずです。そうすると、コンソールにいくつかのメッセージが表示されるはずです。これはブロックチェーンに新しいコントラクトをデプロイするもので、数秒かかることがありますので、新しいレベルのインスタンスをリクエストする際には気長にお待ちください
+ウォレットからトランザクションを承認するよう促されるはずです。そうすると、コンソールにいくつかのメッセージが表示されるはずです。これはブロックチェーンに新しいコントラクトをデプロイするもので、数秒かかることがありますので、新しいレベルのインスタンスをリクエストする際には気長にお待ちください
 
 #### 8. コントラクトの検査
 

@@ -1,10 +1,16 @@
-import React, { Suspense, lazy } from "react";
+import React, { Suspense, lazy, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import { Provider } from "react-redux";
 import { store, history } from "./store";
 import { syncHistoryWithStore } from "react-router-redux";
 import { BrowserRouter as Router, Route, Routes } from "./router";
 import * as ethutil from "./utils/ethutil";
+import {
+  discoverWallets,
+  getChainId,
+  getProvider,
+  restoreWallet,
+} from "./utils/wallet";
 import "bootstrap/dist/css/bootstrap.css";
 import "./styles/app.css";
 import * as actions from "../src/actions";
@@ -13,6 +19,7 @@ import "./utils/^^";
 import App from "./containers/App";
 import NotFound404 from "./components/not-found/NotFound404";
 import Header from "./containers/Header";
+import ConnectionDialog from "./components/common/ConnectionDialog";
 import Footer from "./components/common/Footer";
 import Leaderboard from "./containers/Leaderboard";
 
@@ -23,126 +30,77 @@ const Level = nonlazy(import("./containers/Level"));
 const Help = nonlazy(import("./containers/Help"));
 const Stats = nonlazy(import("./containers/Stats"));
 
-// store.dispatch(actions.setNetworkId(id));
-store.dispatch(actions.connectWeb3(window.ethereum));
 const container = document.getElementById("root");
 const root = createRoot(container);
 
-if (!window.ethereum) {
-  //root.render(<h3>Hey, You dont have the supported wallet!</h3>);
-  // let language = localStorage.getItem("lang");
-  // let strings = loadTranslations(language);
-  // store.dispatch(actions.setNetworkId(parseInt("5")));
+async function startGame() {
+  discoverWallets();
+  if (!(await restoreWallet())) {
+    store.dispatch(actions.loadGamedata());
+    store.dispatch(actions.setConnectionDialogOpen(true));
+    return;
+  }
+
+  window.web3 = new constants.Web3(getProvider());
+  ethutil.setWeb3(window.web3);
+
+  // Initial web3 related actions
+  const chainId = await getChainId();
+  store.dispatch(actions.connectWeb3(window.web3));
+  store.dispatch(actions.setNetworkId(chainId));
   store.dispatch(actions.loadGamedata());
-} else {
-  window.ethereum.request({ method: "eth_accounts" }).then((res) => {
-    if (res.length !== 0) {
-      window.ethereum.request({ method: "eth_chainId" }).then((res) => {
-        store.dispatch(actions.setNetworkId(parseInt(res)));
-        store.dispatch(actions.loadGamedata());
-      });
-    } else {
-      const accountConnectionWindow = document.querySelectorAll('.account-connection-window-bg');
-      if (accountConnectionWindow[0]) accountConnectionWindow[0].style.display = 'block';
-      store.dispatch(actions.loadGamedata());
-    }
+  window.web3.eth.getAccounts(function (error, accounts) {
+    let player;
+    if (accounts.length !== 0 && !error) player = accounts[0];
+    store.dispatch(actions.setPlayerAddress(player));
+    store.dispatch(actions.loadEthernautContract());
+    ethutil.watchAccountChanges((acct) => {
+      store.dispatch(actions.setPlayerAddress(acct));
+    }, player);
+    ethutil.watchNetwork({
+      gasPrice: (price) =>
+        store.dispatch(actions.setGasPrice(Math.floor(price * 1.1))),
+      networkId: (id) => {
+        if (id !== store.getState().network.networkId)
+          store.dispatch(actions.setNetworkId(id));
+      },
+      blockNum: (num) => {
+        if (num !== store.getState().network.blockNum)
+          store.dispatch(actions.setBlockNum(num));
+      },
+    });
   });
 }
 
-root.render(
-  <Provider store={store}>
-    <Router history={syncHistoryWithStore(history, store)}>
-      <Suspense fallback={<div>Loading...</div>}>
-        <div className="app-shell">
-          <Header></Header>
-          <div className="app-shell__content">
-            <Routes>
-              <Route path={constants.PATH_HELP} element={<Help />} />
-              <Route path={constants.PATH_LEVEL} element={<Level />} />
-              <Route path={constants.PATH_STATS} element={<Stats />} />
-              <Route path={constants.PATH_LEADERBOARD} element={<Leaderboard />} />
-              <Route exact path="/" element={<App />} />
-              <Route path="*" element={<NotFound404 />} />
-            </Routes>
+function Root() {
+  // The dialogs must be on the page before the game starts.
+  useEffect(() => {
+    startGame();
+  }, []);
+
+  return (
+    <Provider store={store}>
+      <Router history={syncHistoryWithStore(history, store)}>
+        <Suspense fallback={<div>Loading...</div>}>
+          <div className="app-shell">
+            <Header></Header>
+            <div className="app-shell__content">
+              <Routes>
+                <Route path={constants.PATH_HELP} element={<Help />} />
+                <Route path={constants.PATH_LEVEL} element={<Level />} />
+                <Route path={constants.PATH_STATS} element={<Stats />} />
+                <Route path={constants.PATH_LEADERBOARD} element={<Leaderboard />} />
+                <Route exact path="/" element={<App />} />
+                <Route path="*" element={<NotFound404 />} />
+              </Routes>
+            </div>
+            <Footer></Footer>
+            <ConnectionDialog />
           </div>
-          <Footer></Footer>
-        </div>
-      </Suspense>
-    </Router>
-  </Provider>
-);
+        </Suspense>
+      </Router>
+    </Provider>
+  );
+}
 
-// Post-load actions.
-window.addEventListener("load", async () => {
-  // Check if any MetaMask account is connected to the frontend
-  let accountConnected = false;
-  if(window.ethereum) {
-    const eth_accounts = await window.ethereum.request({ method: "eth_accounts" });
-    accountConnected = eth_accounts.length !== 0;
-  }
-  if (accountConnected) {
-    window.web3 = new constants.Web3(window.ethereum);
-    try {
-      await window.ethereum.request({ method: `eth_requestAccounts` });
-    } catch (error) {
-      console.error(error);
-      console.error(`Refresh the page to approve/reject again`);
-      window.web3 = null;
-    }
-  }
-  if (window.web3 && accountConnected) {
-    ethutil.setWeb3(window.web3);
-    // ethutil.attachLogger();
-
-    // Initial web3 related actions
-    store.dispatch(actions.connectWeb3(window.web3));
-    window.web3.eth.getAccounts(function (error, accounts) {
-      let player;
-      if (accounts.length !== 0 && !error) player = accounts[0];
-      store.dispatch(actions.setPlayerAddress(player));
-      store.dispatch(actions.loadEthernautContract());
-      ethutil.watchAccountChanges((acct) => {
-        store.dispatch(actions.setPlayerAddress(acct));
-      }, player);
-      ethutil.watchNetwork({
-        gasPrice: (price) =>
-          store.dispatch(actions.setGasPrice(Math.floor(price * 1.1))),
-        networkId: (id) => {
-          // checkWrongNetwork(id);
-          if (id !== store.getState().network.networkId)
-            store.dispatch(actions.setNetworkId(id));
-        },
-        blockNum: (num) => {
-          if (num !== store.getState().network.blockNum)
-            store.dispatch(actions.setBlockNum(num));
-        },
-      });
-    });
-  }
-});
-
-// function checkWrongNetwork(id) {
-//   let onWrongNetwork = false;
-//   if (constants.ACTIVE_NETWORK.id === constants.NETWORKS.LOCAL.id) {
-//     onWrongNetwork = Number(id) < 1000;
-//   } else {
-//     onWrongNetwork =  !constants.ACTIVE_NETWORK.includes(Number(id)) ;
-//   }
-
-//   if (onWrongNetwork) {
-//     console.error(
-//       `Heads up, you're on the wrong network!! @bad Please switch to the << ${constants.ACTIVE_NETWORK.name.toUpperCase()} >> network.`
-//     );
-//     console.error(
-//       `1) From November 2 you can turn on privacy mode (off by default) in settings if you don't want to expose your info by default. 2) If privacy mode is turn on you have to authorized metamask to use this page. 3) then refresh.`
-//     );
-
-//     if (id === constants.NETWORKS.ROPSTEN.id) {
-//       console.error(
-//         `If you want to play on Ropsten, check out https://ropsten.ethernaut.openzeppelin.com/`
-//       );
-//     }
-//   }
-
-//   return onWrongNetwork;
-// }
+root.render(<Root />);

@@ -75,6 +75,7 @@ with a 2px offset on `:focus-visible`; on menu items the offset is -2px because 
 | Input | `ui-input` |
 | Menu | `ui-menu`, `ui-menu__item`, `ui-menu__group` |
 | Dialog | `ui-dialog-backdrop`, `ui-dialog`, `ui-dialog__icon`, `ui-dialog__title`, `ui-dialog__close`, `ui-dialog__actions` |
+| Wallet list | `wallet-list`, `wallet-list__button`, `wallet-list__icon` (24px): one full-width secondary button for each wallet |
 | Alert | `ui-alert`, `ui-alert--success`, `ui-alert--warning`, `ui-alert--danger` |
 | Table | `ui-table-wrapper` (horizontal scroll), `ui-table` |
 | Toast | `ui-toast`, `ui-toast--visible` (`useToast`) |
@@ -136,8 +137,9 @@ click. Without players the page shows `leaderboard-empty`.
 column of at least `100dvh`. The footer is in normal flow: at the bottom on short pages, after
 the content on long pages.
 
-Scripts show and hide `progress-bar-wrapper`, `deploy-window-bg`, and
-`account-connection-window-bg` with `style.display`.
+Scripts show and hide `progress-bar-wrapper` and `deploy-window-bg` with `style.display`.
+`ConnectionDialog` is also rendered once in the shell. It shows when
+`state.network.connectionDialogOpen` is true.
 
 ## Responsive rules
 

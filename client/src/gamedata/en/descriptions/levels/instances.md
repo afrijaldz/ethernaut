@@ -1,9 +1,9 @@
 This level walks you through the very basics of how to play the game.
 
 &nbsp;
-#### 1. Set up MetaMask
-If you don't have it already, install the [MetaMask browser extension](https://metamask.io/) (in Chrome, Firefox, Brave or Opera on your desktop machine).
-Set up the extension's wallet and use the network selector to point to the preferred network in the top left of the extension's interface. Alternatively you can use the UI button to switch between networks. If you select an unsupported network, the game will notify you and bring you to the default Base Sepolia testnet.
+#### 1. Set up a wallet
+If you don't have it already, install an EVM wallet that supports Base Sepolia (a browser extension, or a wallet app with its own browser).
+Set up the wallet and select a supported network in it. Alternatively you can use the UI button to switch between networks. If you select an unsupported network, the game will notify you and bring you to the default Base Sepolia testnet.
 
 #### 2. Open the browser's console
 Open your browser's console: `Tools > Developer Tools`.
@@ -54,7 +54,7 @@ Once you see some coins in your balance, move on to the next step.
 #### 7. Getting a level instance
 When playing a level, you don't interact directly with the ethernaut contract. Instead, you ask it to generate a **level instance** for you. To do so, click the "Get New Instance" button at the bottom of the page. Go do it now and come back!
 
-You should be prompted by MetaMask to authorize the transaction. Do so, and you should see some messages in the console. Note that this is deploying a new contract in the blockchain and might take a few seconds, so please be patient when requesting new level instances!
+You should be prompted by your wallet to authorize the transaction. Do so, and you should see some messages in the console. Note that this is deploying a new contract in the blockchain and might take a few seconds, so please be patient when requesting new level instances!
 
 #### 8. Inspecting the contract
 Just as you did with the ethernaut contract, you can inspect this contract's ABI through the console using the `contract` variable.

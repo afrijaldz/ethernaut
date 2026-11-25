@@ -2,12 +2,15 @@ import Headers from "./Headers";
 import LeaderTile from "./LeaderTile";
 import AliasModal from "./AliasModal";
 import { useToast } from "../utils/Toast";
+import { getProvider } from "../../utils/wallet";
+import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 
 function LeaderList(props) {
   const { players } = props;
   const [show, setShow] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
+  const web3 = useSelector((state) => state.network.web3);
   const { toast, Toast } = useToast();
 
   const showEditModal = () => {
@@ -19,11 +22,11 @@ function LeaderList(props) {
   };
 
   useEffect(() => {
-    if (!window.ethereum) return;
-    window.ethereum.request({ method: "eth_requestAccounts" }).then((address) => {
-      setCurrentUser(address[0]);
-    });
-  });
+    if (!web3) return;
+    getProvider()
+      .request({ method: "eth_accounts" })
+      .then((accounts) => setCurrentUser(accounts[0]));
+  }, [web3]);
 
   return (
     <>

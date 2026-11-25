@@ -39,7 +39,7 @@ In order to install, build, and run Ethernaut locally, follow these instructions
     pnpm network
     ```
 
-3. Import one of the private keys from the ganache-cli output to your Metamask wallet.
+3. Import one of the private keys from the ganache-cli output to your wallet.
 4. Compile contracts
 
     ```bash

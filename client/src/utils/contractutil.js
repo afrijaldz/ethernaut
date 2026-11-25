@@ -1,5 +1,6 @@
 import * as constants from "../constants";
 import { getWeb3, setWeb3, getTruffleContract, getNetworkFromId } from "./ethutil";
+import { getProvider } from "./wallet";
 import { newGithubIssueUrl } from "./github";
 import * as LocalFactoryABI from "../contracts/out/LocalFactory.sol/Factory.json";
 import { deployAdminContracts, deployAndRegisterLevel } from "./deploycontract";
@@ -34,11 +35,8 @@ export function isLevelDeployed(levelDeployId, chainId) {
 
 // -- Utils
 
-export function getInjectedProvider() {
-  let web3Instance = window.web3;
-  if (window.ethereum) {
-    web3Instance = new constants.Web3(window.ethereum);
-  }
+export function getWalletWeb3() {
+  const web3Instance = new constants.Web3(getProvider());
   if (!getWeb3()) setWeb3(web3Instance);
   return web3Instance;
 }
@@ -69,7 +67,7 @@ export function fetchLevelABI(level) {
 window.transferOwnerShip = async function (newOwnerAddress) {
   console.log(`Transferring ownership of contracts to:${newOwnerAddress}`);
   // -- fetch the required provider parameters
-  const web3 = getInjectedProvider();
+  const web3 = getWalletWeb3();
   const chainId = await web3.eth.getChainId();
   const from = (await web3.eth.getAccounts())[0];
 
@@ -88,7 +86,7 @@ window.transferOwnerShip = async function (newOwnerAddress) {
 
 // write helper function to load the contracts from localstorage for the current chain
 window.loadContracts = async function () {
-  const web3 = getInjectedProvider();
+  const web3 = getWalletWeb3();
   const chainId = await web3.eth.getChainId();
   return restoreContract(chainId);
 };
