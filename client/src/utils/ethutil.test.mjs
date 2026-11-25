@@ -1,217 +1,164 @@
 // Run with: node --test client/src/utils/ethutil.test.mjs
 import assert from "node:assert/strict";
 import { EventEmitter } from "node:events";
-import { beforeEach, describe, it } from "node:test";
-import Web3 from "web3";
+import { afterEach, beforeEach, describe, it, mock } from "node:test";
 import * as ethutil from "./ethutil.js";
 
-const PLAYER = "0x0000000000000000000000000000000000000001";
-const CONTRACT = "0x0000000000000000000000000000000000000002";
+const PLAYER = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266";
+const OTHER = "0x70997970C51812dc3A010C7d01b50e0d17dc79C8";
 const HASH = `0x${"ab".repeat(32)}`;
-const ZERO_HASH = `0x${"00".repeat(32)}`;
-const BLOOM = `0x${"00".repeat(256)}`;
-const EVENTS = ["message", "connect", "error", "disconnect"];
-const VALUE_TOPIC = Web3.utils.keccak256("ValueSet(uint256)");
-const WORD_SEVEN = `0x${"7".padStart(64, "0")}`;
 
-const CONTRACT_JSON = {
-  abi: [
-    {
-      type: "function",
-      name: "value",
-      inputs: [],
-      outputs: [{ name: "", type: "uint256" }],
-      stateMutability: "view",
-    },
-    {
-      type: "function",
-      name: "setValue",
-      inputs: [{ name: "value", type: "uint256" }],
-      outputs: [],
-      stateMutability: "nonpayable",
-    },
-    {
-      type: "event",
-      name: "ValueSet",
-      anonymous: false,
-      inputs: [{ name: "value", type: "uint256", indexed: false }],
-    },
-  ],
-  bytecode: { object: "0x6000" },
-};
-
-const log = {
-  address: CONTRACT,
-  topics: [VALUE_TOPIC],
-  data: WORD_SEVEN,
-  blockNumber: "0x1",
-  blockHash: HASH,
-  transactionHash: HASH,
-  transactionIndex: "0x0",
-  logIndex: "0x0",
-  removed: false,
-};
-
-const receipt = {
-  transactionHash: HASH,
-  transactionIndex: "0x0",
-  blockHash: HASH,
-  blockNumber: "0x1",
-  from: PLAYER,
-  to: CONTRACT,
-  contractAddress: null,
-  cumulativeGasUsed: "0x1",
-  gasUsed: "0x1",
-  logs: [log],
-  logsBloom: BLOOM,
-  status: "0x1",
-};
-
-const block = {
-  number: "0x1",
-  hash: HASH,
-  parentHash: ZERO_HASH,
-  gasLimit: "0x1c9c380",
-  gasUsed: "0x1",
-  timestamp: "0x1",
-  size: "0x1",
-  difficulty: "0x0",
-  totalDifficulty: "0x0",
-  nonce: "0x0000000000000000",
-  logsBloom: BLOOM,
-  miner: PLAYER,
-  transactions: [],
-};
-
-// A wallet that mines a transaction in the block after it is sent.
 class FakeProvider extends EventEmitter {
-  isMined = false;
-  sendError = null;
-  subscriptionCount = 0;
+  accounts = [PLAYER.toLowerCase()];
   answers = {
     eth_chainId: () => "0x14a34",
-    net_version: () => "84532",
-    eth_getCode: () => "0x6000",
-    eth_getBlockByNumber: () => block,
-    eth_estimateGas: () => "0x5208",
-    eth_call: () => WORD_SEVEN,
-    eth_getTransactionReceipt: () => (this.isMined ? receipt : null),
-    eth_unsubscribe: () => true,
-    eth_subscribe: ([type]) => this.subscribe(type),
-    eth_sendTransaction: () => {
-      if (this.sendError) throw this.sendError;
-      return HASH;
-    },
+    eth_accounts: () => this.accounts,
+    eth_blockNumber: () => "0x10",
+    eth_gasPrice: () => "0x64",
+    eth_getBalance: () => "0xde0b6b3a7640000",
+    eth_sendTransaction: () => HASH,
+    eth_getBlockByNumber: () => ({
+      number: "0x10",
+      baseFeePerGas: "0xa",
+      transactions: [],
+    }),
   };
 
-  subscribe(type) {
-    const subscription = `0x${++this.subscriptionCount}`;
-    setTimeout(() => {
-      this.isMined = true;
-      const result = type === "newHeads" ? block : log;
-      this.emit("message", {
-        type: "eth_subscription",
-        data: { subscription, result },
-      });
-    }, 10);
-    return subscription;
-  }
-
-  async request({ method, params }) {
+  request = mock.fn(async ({ method, params }) => {
     if (!this.answers[method]) throw new Error(`Unexpected method ${method}`);
-    // web3 changes the objects that it receives, so it gets a copy.
-    return structuredClone(this.answers[method](params));
-  }
-
-  // Wallets also offer this legacy method. Truffle calls it to find a revert reason.
-  send(payload, callback) {
-    this.request(payload).then(
-      (result) => callback(null, { id: payload.id, jsonrpc: "2.0", result }),
-      callback
-    );
-  }
+    return this.answers[method](params);
+  });
 }
-
-const countListeners = (provider) =>
-  EVENTS.map((event) => provider.listenerCount(event));
-
-const getInstance = () =>
-  ethutil.getTruffleContract(CONTRACT_JSON, { from: PLAYER }).at(CONTRACT);
 
 let provider;
 
 beforeEach(() => {
   provider = new FakeProvider();
-  ethutil.setWeb3(new Web3(provider));
+  ethutil.connectProvider(provider, 84532, PLAYER);
 });
 
-describe("getTruffleContract", () => {
-  it("does not add listeners to the wallet provider", async () => {
-    const before = countListeners(provider);
-    assert.ok(before.every((count) => count > 0));
-    for (let i = 0; i < 20; i++) {
-      const instance = await getInstance();
-      assert.equal((await instance.value()).toString(), "7");
-    }
-    assert.deepEqual(countListeners(provider), before);
+afterEach(() => mock.timers.reset());
+
+// Runs the pending promises of a request.
+const settle = async () => {
+  for (let i = 0; i < 50; i++) await Promise.resolve();
+};
+
+describe("console helpers", () => {
+  it("read from the wallet provider", async () => {
+    assert.equal(await ethutil.getBalance(PLAYER), "1");
+    assert.equal(await ethutil.getBlockNumber(), 16);
+    assert.equal(await ethutil.getNetworkId(), 84532);
   });
 
-  it("sends a transaction and gets its receipt and logs", async () => {
-    const instance = await getInstance();
-    const before = countListeners(provider);
-    const tx = await instance.setValue(7);
-    assert.equal(tx.receipt.transactionHash, HASH);
-    assert.equal(tx.receipt.status, true);
-    assert.equal(tx.logs[0].event, "ValueSet");
-    assert.equal(tx.logs[0].args.value.toString(), "7");
-    assert.ok(provider.subscriptionCount > 0);
-    assert.deepEqual(countListeners(provider), before);
+  it("convert units", () => {
+    assert.equal(ethutil.toWei("0.001"), 10n ** 15n);
+    assert.equal(ethutil.toWei(1), 10n ** 18n);
+    assert.equal(ethutil.fromWei("1500000000000000000"), "1.5");
+    assert.equal(ethutil.fromWei(10n ** 18n), "1");
+    assert.equal(ethutil.fromWei(0n), "0");
   });
 
-  it("deploys a contract", async () => {
-    const Contract = ethutil.getTruffleContract(CONTRACT_JSON, { from: PLAYER });
-    provider.answers.eth_getTransactionReceipt = () => ({
-      ...receipt,
-      to: null,
-      contractAddress: CONTRACT,
-      logs: [],
-    });
-    const before = countListeners(provider);
-    const instance = await Contract.new();
-    assert.equal(instance.address, CONTRACT);
-    assert.deepEqual(countListeners(provider), before);
+  it("send a transaction and return its hash", async () => {
+    assert.equal(
+      await ethutil.sendTransaction({ to: OTHER, value: "10", gas: 21000 }),
+      HASH
+    );
+    assert.deepEqual(provider.request.mock.calls[0].arguments[0].params, [
+      { from: PLAYER, to: OTHER, value: "0xa", gas: "0x5208" },
+    ]);
   });
+});
 
-  it("receives contract events", async () => {
-    const instance = await getInstance();
-    const event = await new Promise((resolve, reject) => {
-      instance.ValueSet().on("data", resolve).on("error", reject);
-    });
-    assert.equal(event.args.value.toString(), "7");
-  });
-
-  it("passes a wallet rejection to the caller", async () => {
-    provider.sendError = Object.assign(new Error("User rejected"), { code: 4001 });
-    const instance = await getInstance();
-    await assert.rejects(instance.setValue(7), {
-      code: 4001,
-      message: /User rejected/,
-    });
-  });
-
-  it("keeps the defaults of each contract", async () => {
-    const other = "0x0000000000000000000000000000000000000003";
-    const first = ethutil.getTruffleContract(CONTRACT_JSON, { from: PLAYER });
-    const second = ethutil.getTruffleContract(CONTRACT_JSON, { from: other });
-    assert.equal(first.defaults().from, PLAYER);
-    assert.equal(second.defaults().from, other);
-  });
-
-  it("uses the provider of the last web3 that was set", async () => {
+describe("connectProvider", () => {
+  it("uses the last provider", async () => {
     const second = new FakeProvider();
-    second.answers.eth_call = () => `0x${"8".padStart(64, "0")}`;
-    ethutil.setWeb3(new Web3(second));
-    const instance = await getInstance();
-    assert.equal((await instance.value()).toString(), "8");
+    second.answers.eth_getBalance = () => "0x0";
+    ethutil.connectProvider(second, 84532, OTHER);
+    assert.equal(await ethutil.getBalance(PLAYER), "0");
+    assert.equal(provider.request.mock.callCount(), 0);
+  });
+
+  it("gives the player a wallet client that can send", async () => {
+    const client = ethutil.getWalletClient();
+    assert.equal(client.account.address, PLAYER);
+    assert.equal(await client.sendTransaction({ to: OTHER, value: 1n }), HASH);
+  });
+
+  it("does not add listeners to the wallet provider", async () => {
+    await ethutil.getBalance(PLAYER);
+    await ethutil.sendTransaction({ to: OTHER });
+    assert.deepEqual(provider.eventNames(), []);
+  });
+});
+
+describe("gas fees", () => {
+  it("multiply the gas price", async () => {
+    assert.deepEqual(await ethutil.getGasFeeDetails(84532, 2), { gasPrice: 200n });
+  });
+
+  it("multiply the base fee on EIP-1559 networks", async () => {
+    assert.deepEqual(await ethutil.getGasFeeDetails(11155111, 10), {
+      maxPriorityFeePerGas: 2500000000n,
+      maxFeePerGas: 2500000100n,
+    });
+  });
+});
+
+describe("watchers", () => {
+  it("report each account change once", async () => {
+    mock.timers.enable({ apis: ["setInterval"] });
+    const callback = mock.fn();
+    ethutil.watchAccountChanges(callback, PLAYER);
+    mock.timers.tick(1000);
+    await settle();
+    assert.equal(callback.mock.callCount(), 0);
+
+    provider.accounts = [OTHER.toLowerCase()];
+    mock.timers.tick(1000);
+    await settle();
+    mock.timers.tick(1000);
+    await settle();
+    assert.deepEqual(
+      callback.mock.calls.map((call) => call.arguments),
+      [[OTHER]]
+    );
+
+    provider.accounts = [];
+    mock.timers.tick(1000);
+    await settle();
+    assert.deepEqual(callback.mock.calls[1].arguments, [undefined]);
+    assert.deepEqual(provider.eventNames(), []);
+  });
+
+  it("report the network", async () => {
+    mock.timers.enable({ apis: ["setInterval"] });
+    const networkId = mock.fn();
+    const gasPrice = mock.fn();
+    const blockNum = mock.fn();
+    ethutil.watchNetwork({ networkId, gasPrice, blockNum });
+    await settle();
+    assert.deepEqual(networkId.mock.calls[0].arguments, [84532]);
+    assert.deepEqual(gasPrice.mock.calls[0].arguments, [100n]);
+    assert.deepEqual(blockNum.mock.calls[0].arguments, [16]);
+
+    provider.answers.eth_chainId = () => "0x1";
+    mock.timers.tick(5000);
+    await settle();
+    assert.deepEqual(networkId.mock.calls[1].arguments, [1]);
+  });
+});
+
+describe("validateAddress", () => {
+  it("accepts checksummed, lowercase and uppercase addresses", () => {
+    assert.equal(ethutil.validateAddress(PLAYER), true);
+    assert.equal(ethutil.validateAddress(PLAYER.toLowerCase()), true);
+    assert.equal(ethutil.validateAddress(`0x${PLAYER.slice(2).toUpperCase()}`), true);
+  });
+
+  it("rejects a wrong checksum and the zero address", () => {
+    assert.equal(ethutil.validateAddress(PLAYER.replace("0xf", "0xF")), false);
+    assert.equal(ethutil.validateAddress(`0x${"0".repeat(40)}`), false);
+    assert.equal(ethutil.validateAddress(""), false);
   });
 });

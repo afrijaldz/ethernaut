@@ -1,5 +1,3 @@
-import pkgWeb3 from "web3";
-
 export const DEBUG = process.env.NODE_ENV !== "production";
 export const DEBUG_REDUX = DEBUG;
 
@@ -67,9 +65,6 @@ export const NETWORKS_DEPRECATION = {
     date: "april-2024",
   },
 };
-
-// Web3
-export const Web3 = pkgWeb3;
 
 // Misc
 export const CLEAR_CONSOLE = !DEBUG;

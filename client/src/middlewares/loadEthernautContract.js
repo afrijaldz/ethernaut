@@ -1,4 +1,4 @@
-import * as ethutil from '../utils/ethutil'
+import { getContractAt } from '../utils/contract'
 import EthernautABI from '../contracts/out/Ethernaut.sol/Ethernaut.json'
 import * as actions from '../actions';
 import { loadTranslations } from '../utils/translations'
@@ -12,7 +12,7 @@ const loadEthernautContract = store => next => action => {
 
   const state = store.getState()
   if (
-    !state.network.web3 ||
+    !state.network.isConnected ||
     !state.player.address ||
     !state.gamedata.ethernautAddress
   ) {
@@ -21,17 +21,11 @@ const loadEthernautContract = store => next => action => {
   }
   // console.log(`GETTING ETHERNAUT...`, state.gamedata.ethernautAddress)
 
-  // Get contract template
-  const Ethernaut = ethutil.getTruffleContract(
-    EthernautABI,
-    {
-      from: state.player.address,
-      gasPrice: state.network.gasPrice
-    }
-  )
-
   // Get deployed instance
-  Ethernaut.at(state.gamedata.ethernautAddress)
+  getContractAt(EthernautABI, state.gamedata.ethernautAddress, {
+    from: state.player.address,
+    gasPrice: state.network.gasPrice
+  })
     .then(instance => {
 
       console.info(`=> ${strings.ethernautAddressMessage}\n${instance.address}`)

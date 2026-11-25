@@ -39,7 +39,7 @@ ethernaut
 然后让我们来展开 ethernaut 看看里面都有啥。
 
 #### 5. 和 ABI 互动
-`ethernaut` 是一个 `TruffleContract` 对象， 它包装了部署在区块链上的 `Ethernaut.sol` 合约.
+`ethernaut` 是一个 合约对象， 它包装了部署在区块链上的 `Ethernaut.sol` 合约.
 
 除此之外，合约的 ABI 还提供了所有的 `Ethernaut.sol` 公开方法, 比如 `owner`. 比如输入以下命令:
 ```

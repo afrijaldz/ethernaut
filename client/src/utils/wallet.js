@@ -1,5 +1,7 @@
 // Discovers browser wallets (EIP-6963) and holds the one that the player selected.
 
+import { getAddress } from "viem";
+
 export const STORAGE_WALLET_KEY = "ethernaut_wallet";
 export const BROWSER_WALLET_ID = "browser-wallet";
 export const RESULT = { DONE: "done", REJECTED: "rejected", FAILED: "failed" };
@@ -130,6 +132,12 @@ export async function requestAccounts(wallet) {
 
 export async function getChainId() {
   return Number(await getProvider().request({ method: "eth_chainId" }));
+}
+
+// The connected account, with checksum.
+export async function getAccount() {
+  const [account] = await getProvider().request({ method: "eth_accounts" });
+  return account && getAddress(account);
 }
 
 async function addNetwork(provider, network) {

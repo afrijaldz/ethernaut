@@ -1,6 +1,7 @@
 import * as constants from "../constants";
-import { getWeb3, setWeb3, getTruffleContract, getNetworkFromId } from "./ethutil";
-import { getProvider } from "./wallet";
+import { isAddress } from "viem";
+import { getContractAt } from "./contract";
+import { getNetworkFromId, getNetworkId, getWalletClient } from "./ethutil";
 import { newGithubIssueUrl } from "./github";
 import { loadContractJson } from "./contractjson";
 import { deployAdminContracts, deployAndRegisterLevel } from "./deploycontract";
@@ -37,11 +38,6 @@ export function isLevelDeployed(levelDeployId, chainId) {
 
 // -- Utils
 
-export function getWalletWeb3() {
-  if (!getWeb3()) setWeb3(new constants.Web3(getProvider()));
-  return getWeb3();
-}
-
 // check the localstorage of the object containing address saved in localstorage
 // contains all the core contracts
 export function isLocalDeployed(chainId) {
@@ -54,7 +50,7 @@ export function isLocalDeployed(chainId) {
 // use address if factory is deployed
 // use deployId otherwise
 export function getLevelKey(levelAddress) {
-  return constants.Web3.utils.isAddress(levelAddress)
+  return isAddress(levelAddress)
     ? "deployedAddress"
     : "deployId";
 }
@@ -68,19 +64,15 @@ export function fetchLevelABI(level) {
 window.transferOwnerShip = async function (newOwnerAddress) {
   console.log(`Transferring ownership of contracts to:${newOwnerAddress}`);
   // -- fetch the required provider parameters
-  const web3 = getWalletWeb3();
-  const chainId = await web3.eth.getChainId();
-  const from = (await web3.eth.getAccounts())[0];
+  const chainId = await getNetworkId();
+  const [from] = await getWalletClient().getAddresses();
 
   // -- get the factory contract instance
   const { factory } = restoreContract(chainId);
   const factoryJson = await loadContractJson("LocalFactory.sol", "Factory");
-  const LocalFactory = await getTruffleContract(factoryJson, {
-    from,
-  });
 
   // -- call the transfer ownership method on it
-  const localFactory = await LocalFactory.at(factory);
+  const localFactory = await getContractAt(factoryJson, factory, { from });
   await localFactory.transferContractsOwnership(newOwnerAddress);
   // -- update owner in storage
   updateCachedContract("owner", "newOwnerAddress", chainId);
@@ -88,8 +80,7 @@ window.transferOwnerShip = async function (newOwnerAddress) {
 
 // write helper function to load the contracts from localstorage for the current chain
 window.loadContracts = async function () {
-  const web3 = getWalletWeb3();
-  const chainId = await web3.eth.getChainId();
+  const chainId = await getNetworkId();
   return restoreContract(chainId);
 };
 
@@ -140,7 +131,7 @@ export const contractsDeploymentStatus = (chainId) => {
 }
 
 export const deployRemainingContracts = async () => {
-  const chainId = await window.web3.eth.getChainId();
+  const chainId = await getNetworkId();
 
   try {
     let gamedata = restoreContract(chainId);

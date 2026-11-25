@@ -1,4 +1,5 @@
 import * as actions from '../actions';
+import { getPublicClient } from '../utils/ethutil';
 
 let queuedAction;
 
@@ -17,42 +18,36 @@ const collectStats = store => next => action => {
   const state = store.getState()
   // console.log(`TRY COLLECT_STATS >`, state.contracts.ethernaut !== undefined)
   if(
-    !state.network.web3 ||
+    !state.network.isConnected ||
     !state.contracts.ethernaut
   ) {
     if(!queuedAction) queuedAction = action
     return
   }
 
-  const query = {
-    filter: {},
-    range: {
-      fromBlock: 0,
-      toBlock: state.network.blockNum || 'latest'
-    }
-  }
-  // console.log(`query`, query)
+  const { address, abi } = state.contracts.ethernaut
+  const getLogs = eventName => getPublicClient().getContractEvents({
+    address,
+    abi,
+    eventName,
+    fromBlock: 0n,
+    toBlock: 'latest'
+  })
 
   // Get Level created
   if(!action.createdInstanceLogs) {
-    state.contracts.ethernaut.LevelInstanceCreatedLog(query.filter, query.range).then(
-      (error, result)=> {
-        if(error) return console.log(error)
-        action.createdInstanceLogs = result
-        store.dispatch(action)
-      }
-    )
+    getLogs('LevelInstanceCreatedLog').then(logs => {
+      action.createdInstanceLogs = logs
+      store.dispatch(action)
+    }).catch(console.log)
   }
 
   // Level completed
   if(!action.completedLevelLogs) {
-    state.contracts.ethernaut.LevelCompletedLog(query.filter, query.range).then(
-      (error, result)=> {
-        if(error) return console.log(error)
-        action.completedLevelLogs = result
-        store.dispatch(action)
-      }
-    )
+    getLogs('LevelCompletedLog').then(logs => {
+      action.completedLevelLogs = logs
+      store.dispatch(action)
+    }).catch(console.log)
   }
 
   next(action)

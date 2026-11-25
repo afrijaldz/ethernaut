@@ -1,7 +1,7 @@
-import * as ethutil from '../utils/ethutil';
+import { getContractAt, getCreatedInstance } from '../utils/contract';
 import * as actions from '../actions';
 import { loadTranslations } from '../utils/translations';
-import { getGasFeeDetails } from '../utils/ethutil'
+import { getGasFeeDetails, toWei } from '../utils/ethutil'
 import { loadContractJson } from '../utils/contractjson';
 import { verifyContract } from '../utils/contractutil';
 
@@ -12,7 +12,7 @@ const loadLevelInstance = (store) => (next) => (action) => {
   if (action.type !== actions.LOAD_LEVEL_INSTANCE) return next(action);
 
   const state = store.getState();
-  if (!state.network.web3 || !state.contracts.ethernaut) {
+  if (!state.network.isConnected || !state.contracts.ethernaut) {
     console.error(`@bad ${strings.ethernautNotFoundMessage}`);
     return next(action);
   } else if (!state.player.address) {
@@ -41,29 +41,22 @@ const loadLevelInstance = (store) => (next) => (action) => {
     };
 
     const estimate = parseInt(action.level.instanceGas, 10) || 2000000;
-    const deployFunds = state.network.web3.utils.toWei(
-      parseFloat(action.level.deployFunds, 10).toString(),
-      'ether'
-    );
-    getGasFeeDetails(state.network, 2).then(gasFeeDetails => {
+    const deployFunds = toWei(parseFloat(action.level.deployFunds));
+    getGasFeeDetails(state.network.networkId, 2).then(gasFeeDetails => {
       state.contracts.ethernaut
         .createLevelInstance(action.level.deployedAddress, {
-          gas: 1.8 * estimate.toString(),
+          gas: Math.round(1.8 * estimate),
           ...gasFeeDetails,
           from: state.player.address,
           value: deployFunds,
         })
-        .then((tx) => {
-          for (var i = 0; i < tx.logs.length; i++) {
-            if (tx.logs[i].event === "LevelInstanceCreatedLog") {
-              instanceAddress = tx.logs[i].args.instance;
-              action.instanceAddress = instanceAddress;
-              store.dispatch(action);
-            }
-          }
+        .then((receipt) => {
+          instanceAddress = getCreatedInstance(state.contracts.ethernaut, receipt);
           if (!instanceAddress) {
             showErr(strings.transactionNoLogsMessage)
           } else {
+            action.instanceAddress = instanceAddress;
+            store.dispatch(action);
             // Wait for the contract to index in the explorer
             setTimeout(() => {
               verifyContract(instanceAddress, action.level, state.network.networkId);
@@ -83,12 +76,10 @@ const loadLevelInstance = (store) => (next) => (action) => {
     withoutExtension(action.level.instanceContract)
   )
     .then((contractJson) =>
-      ethutil
-        .getTruffleContract(contractJson, {
-          from: state.player.address,
-          gasPrice: 2 * state.network.gasPrice,
-        })
-        .at(instanceAddress)
+      getContractAt(contractJson, instanceAddress, {
+        from: state.player.address,
+        gasPrice: 2 * state.network.gasPrice,
+      })
     )
     .then((instance) => {
       window.instance = instance.address;

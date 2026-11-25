@@ -38,7 +38,7 @@ This is the game's main smart contract. You don't need to interact with it direc
 Go ahead and expand the ethernaut object to see what's inside.
 
 #### 5. Interact with the ABI
-`ethernaut` is a `TruffleContract` object that wraps the `Ethernaut.sol` contract that has been deployed to the blockchain.
+`ethernaut` is a contract object that wraps the `Ethernaut.sol` contract that has been deployed to the blockchain.
 
 Among other things, the contract's ABI exposes all of `Ethernaut.sol`'s public methods, such as `owner`. Type the following command for example:
 

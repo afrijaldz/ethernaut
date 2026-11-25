@@ -2,15 +2,6 @@ packages:
   - client
   - deps/hljs
 
-# None of these install scripts are needed for the browser build:
-# the native addons have JavaScript fallbacks, the rest only print messages.
+# This install script is not needed for the browser build.
 allowBuilds:
-  bufferutil: false
-  es5-ext: false
   fsevents: false
-  keccak: false
-  secp256k1: false
-  utf-8-validate: false
-  web3: false
-  web3-bzz: false
-  web3-shh: false

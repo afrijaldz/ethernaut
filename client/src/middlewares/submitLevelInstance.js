@@ -1,5 +1,6 @@
 import * as actions from '../actions';
 import { loadTranslations } from '../utils/translations'
+import { isLevelCompleted } from '../utils/contract'
 import { getGasFeeDetails } from '../utils/ethutil'
 import { getPercentageOfLevelsSolvedByPlayer } from '../utils/statsContract'
 
@@ -12,7 +13,7 @@ const submitLevelInstance = store => next => async action => {
 
   const state = store.getState()
   if (
-    !state.network.web3 ||
+    !state.network.isConnected ||
     !state.contracts.ethernaut ||
     !state.contracts.levels[action.level.deployedAddress] ||
     !state.player.address ||
@@ -20,7 +21,7 @@ const submitLevelInstance = store => next => async action => {
   ) return next(action)
 
   console.asyncInfo(`@good ${strings.submitLevelMessage}`)
-  const gasFeeDetails = await getGasFeeDetails(state.network, 2)
+  const gasFeeDetails = await getGasFeeDetails(state.network.networkId, 2)
   let completed = await submitLevelInstanceUtil(
     state.contracts.ethernaut,
     action.level.deployedAddress,
@@ -56,20 +57,8 @@ export default submitLevelInstance
 async function submitLevelInstanceUtil(ethernaut, levelAddress, instanceAddress, player, gasFeeDetails) {
   try {
     const data = { from: player, ...gasFeeDetails }
-    const tx = await ethernaut.submitLevelInstance(instanceAddress, data);
-    if (tx.logs.length === 0) return false
-    else {
-      if (tx.logs.length === 0) return false
-      else {
-        const log = tx.logs[0].args;
-        const ethLevelAddress = log.level;
-        const ethPlayer = log.player;
-        if (player === ethPlayer && levelAddress === ethLevelAddress) {
-          return true
-        }
-        else return false
-      }
-    }
+    const receipt = await ethernaut.submitLevelInstance(instanceAddress, data);
+    return isLevelCompleted(ethernaut, receipt, player, levelAddress)
   } catch (error) {
     console.error(error)
     return false

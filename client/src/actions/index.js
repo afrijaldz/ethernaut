@@ -1,5 +1,5 @@
-export const CONNECT_WEB3 = "CONNECT_WEB3";
-export const connectWeb3 = web3 => ({ type: CONNECT_WEB3, web3 })
+export const CONNECT_WALLET = "CONNECT_WALLET";
+export const connectWallet = () => ({ type: CONNECT_WALLET })
 
 export const SET_CONNECTION_DIALOG_OPEN = "SET_CONNECTION_DIALOG_OPEN";
 export const setConnectionDialogOpen = open => ({ type: SET_CONNECTION_DIALOG_OPEN, open })

@@ -38,7 +38,7 @@ Bu, oyunun ana akıllı kontratı. Konsol üzerinden onunla doğrudan etkileşim
 Hadi, ethernaut nesnesini genişlet ve içinde neler olduğuna bir göz at!
 
 #### 5. ABI ile etkileşim
-`ethernaut`, blockchain’e deploy edilmiş `Ethernaut.sol` kontratını saran bir `TruffleContract` nesnesidir.
+`ethernaut`, blockchain’e deploy edilmiş `Ethernaut.sol` kontratını saran bir kontrat nesnesidir.
 
 Bu kontratın ABI’si, `owner` gibi `Ethernaut.sol` içindeki tüm public metotlara erişim sağlar. Örneğin şu komutları yazabilirsiniz:
 

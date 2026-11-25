@@ -1,3 +1,4 @@
+import * as viem from 'viem'
 import * as ethutil from './ethutil'
 import { createRainbow } from 'rainbow-color'
 import { rgbaString } from 'color-map'
@@ -127,7 +128,7 @@ function interceptConsole() {
     const color = stringToColor(txId)
     const negColor = invertColor(color)
 
-    window.web3.eth.net.getId().then((res) => {
+    ethutil.getNetworkId().then((res) => {
       var network_name = constants.ID_TO_NETWORK[res];
       var networks = Object.values(constants.NETWORKS_INGAME);
       var networkObject;
@@ -224,6 +225,7 @@ function setupConsoleUtils() {
   window.getNetworkId = ethutil.getNetworkId
   window.toWei = ethutil.toWei
   window.fromWei = ethutil.fromWei
+  window.viem = viem
   window.version = constants.VERSION
   window.contract = strings.notContractSetMessage
   window.help = function () {
@@ -240,6 +242,9 @@ function setupConsoleUtils() {
       'getNetworkId()': strings.helperGetNetworkId,
       'toWei(ether)': strings.helperToWei,
       'fromWei(wei)': strings.helperFromWei,
+      'viem': strings.helperViem,
+      'publicClient': strings.helperPublicClient,
+      'walletClient': strings.helperWalletClient,
       'deployAllContracts()': strings.helperDeployAllContracts,
     })
   }

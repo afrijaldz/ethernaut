@@ -1,12 +1,10 @@
-import colors from "colors";
-import * as ethutil from "../utils/ethutil.js";
+import { deployContract, getContractAt } from "./contract";
 import { loadContractJson } from "./contractjson";
 import { getDeployFile } from "./deployfile";
-import { getGasFeeDetails } from "../utils/ethutil.js";
+import { getGasFeeDetails, getNetworkId, getWalletClient } from "./ethutil";
 import {
   cacheContract,
   fetchLevelABI,
-  getWalletWeb3,
   restoreContract,
   updateCachedContract,
 } from "./contractutil";
@@ -14,7 +12,7 @@ import { CORE_CONTRACT_NAMES, ID_TO_NETWORK } from "../constants.js";
 import { loadTranslations } from "../utils/translations";
 
 const logger = (text) => {
-  console.dir(colors.cyan(`<<  ${text.toUpperCase()}  >>`));
+  console.dir(`<<  ${text.toUpperCase()}  >>`);
 };
 
 async function deploySingleContract(
@@ -24,11 +22,7 @@ async function deploySingleContract(
   { deployParams = [] } = {}
 ) {
   logger(`Deploying ${contractABI.contractName} contract`);
-  const Contract = await ethutil.getTruffleContract(contractABI, {
-    from,
-  });
-  const contract = await Contract.new(...deployParams, gasDetails);
-  return contract;
+  return deployContract(contractABI, deployParams, { from, ...gasDetails });
 }
 
 const confirmMainnetDeployment = (chainId) => {
@@ -51,13 +45,12 @@ const confirmMainnetDeployment = (chainId) => {
 export async function deployAndRegisterLevel(level) {
   try {
     const levelABI = await fetchLevelABI(level);
-    const web3 = ethutil.getWeb3();
-    const chainId = await web3.eth.getChainId();
+    const chainId = await getNetworkId();
     if (!confirmMainnetDeployment(chainId)) {
       return false;
     }
-    const gasDetails = await getGasFeeDetails({ networkId: chainId, web3: web3 }, 10);
-    const from = (await web3.eth.getAccounts())[0];
+    const gasDetails = await getGasFeeDetails(chainId, 10);
+    const [from] = await getWalletClient().getAddresses();
     const levelContractAddress = await deploySingleContract(
       levelABI,
       { gas: 10000000, ...gasDetails },
@@ -68,10 +61,7 @@ export async function deployAndRegisterLevel(level) {
     // -- use the factory to register a new level since it owns the ethernaut contract
     const factoryAddress = restoreContract(chainId)["factory"];
     const factoryJson = await loadContractJson("LocalFactory.sol", "Factory");
-    const LocalFactory = await ethutil.getTruffleContract(factoryJson, {
-      from,
-    });
-    const localFactory = await LocalFactory.at(factoryAddress);
+    const localFactory = await getContractAt(factoryJson, factoryAddress, { from });
     await localFactory.registerLevel(levelContractAddress.address, gasDetails);
     // -- add this level factory instance to state
     updateCachedContract(level.deployId, levelContractAddress.address, chainId);
@@ -86,16 +76,14 @@ export async function deployAndRegisterLevel(level) {
 
 export async function deployAdminContracts() {
   try {
-    // -- get instance of the selected wallet
-    const web3 = getWalletWeb3();
-    const chainId = await web3.eth.getChainId();
+    const chainId = await getNetworkId();
     if (!confirmMainnetDeployment(chainId)) {
       return false;
     }
     const gameData = restoreContract(chainId);
 
-    const gasDetails = await getGasFeeDetails({ networkId: chainId, web3: web3 }, 10);
-    const from = (await web3.eth.getAccounts())[0];
+    const gasDetails = await getGasFeeDetails(chainId, 10);
+    const [from] = await getWalletClient().getAddresses();
 
     // -- deploy factory contracts
     const factoryContracts = await deploySingleContract(
