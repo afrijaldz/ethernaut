@@ -21,14 +21,16 @@ class Level extends React.Component {
     this.state = {
       requestedInstance: false,
       submittedIntance: false,
-      dropwDownOpened: false,
+      selectorOpen: false,
     };
-    this.containerRef = createRef();
+    this.selectorRef = createRef();
+    this.selectorButtonRef = createRef();
   }
 
   componentDidMount() {
     this.props.activateLevel(this.props.params.address);
     document.addEventListener("mousedown", this.handleClickOutside);
+    document.addEventListener("keydown", this.handleKeyDown);
   }
 
   componentWillUnmount() {
@@ -36,6 +38,7 @@ class Level extends React.Component {
       this.props.deactivateLevel(this.props.activateLevel);
     }
     document.removeEventListener("mousedown", this.handleClickOutside);
+    document.removeEventListener("keydown", this.handleKeyDown);
   }
 
   componentDidUpdate() {
@@ -64,29 +67,30 @@ class Level extends React.Component {
     }
   };
 
-  toggleDropdown = () => {
-    this.setState({
-      dropwDownOpened: !this.state.dropwDownOpened,
-    });
+  toggleSelector = () => {
+    this.setState({ selectorOpen: !this.state.selectorOpen });
   };
 
-  closeDropdown = () => {
-    if (this.state.dropwDownOpened) {
-      this.setState({
-        dropwDownOpened: false,
-      });
-    }
+  closeSelector = () => {
+    if (this.state.selectorOpen) this.setState({ selectorOpen: false });
   };
 
   handleClickOutside = (event) => {
-    if (this.containerRef.current && !this.containerRef.current.contains(event.target)) {
-      this.closeDropdown();
+    if (this.selectorRef.current && !this.selectorRef.current.contains(event.target)) {
+      this.closeSelector();
     }
-  }
+  };
+
+  handleKeyDown = (event) => {
+    if (event.key === "Escape" && this.state.selectorOpen) {
+      this.closeSelector();
+      this.selectorButtonRef.current.focus();
+    }
+  };
 
   render() {
     const { level, levelCompleted } = this.props;
-    const { submittedIntance } = this.state;
+    const { submittedIntance, selectorOpen } = this.state;
     var [levelData, selectedLevel] = getlevelsdata(this.props, "levelPage");
 
     if (this.props.notFoundAddress === this.props.params.address) {
@@ -133,178 +137,170 @@ class Level extends React.Component {
 
     const nextLevelId = findNextLevelId(this.props.level, this.props.levels);
 
+    const showNext = levelCompleted && nextLevelId;
+    const showSubmit = this.props.levelEmitted && !levelCompleted;
+    const showInstance = !store.getState().gamedata.readOnly && this.props.web3;
+
     return (
-      <main className="main-wrapper">
-        <main className="main-wrapper">
-          {(isDescriptionMissingTranslation ||
-            isCompleteDescriptionMissingTranslation) && (
-              <div style={{ textAlign: "center" }}>
-                <p>
-                  {strings.levelNotTranslated}
-                  <a href="https://github.com/openzeppelin/ethernaut#adding-new-languages">
-                    {strings.contributeTranslation}
-                  </a>
-                </p>
-              </div>
-            )}
-
-          <div ref={this.containerRef} onClick={e => e.stopPropagation()} className="level-selector-nav">
-            <div onClick={this.toggleDropdown} className="dropdown-menu-bar">
-              <p key={level.difficulty}>{selectedLevel.difficulty}</p>
-              <p key={level.name}>{level.name}</p>
-
-              <div className="dropdown-menu-bar-button">
-                <button className="dropdown-button">
-                  <i className={`fa fa-caret-${this.state.dropwDownOpened? "up" : "down"}`}></i>
-                </button>
-              </div>
-            </div>
-            <div style={{ display: this.state.dropwDownOpened ? 'block' : 'none' }} className="level-selector-dropdown-content">
-              {levelData.map((level) => {
-                return (
-                  <Link
-                    key={level.name}
-                    to={`${constants.PATH_LEVEL_ROOT}${level.deployedAddress || level.id
-                      }`}
-                    onClick={this.closeDropdown}
-                  >
-                    <div className="level-selector-dropdown-content-item">
-                      <p key={level.name}>
-                        {level.completed === true && (
-                          <span className="label label-default">✔</span>
-                        )}{" "}
-                        {level.name}
-                      </p>
-                      <p key={level.difficulty}>{level.difficulty}</p>
-                    </div>
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-
-          <section className="descriptors">
-            <img
-              alt={`${level.name} level`}
-              className="level-tile level-img-view"
-              src={selectedLevel.src}
-            />
-          </section>
-
-          {/* TITLE + INFO */}
-          {poweredBy && (
-            <div className="powered-by">
-              <p>
-                {strings.poweredBy}
-                <a href={poweredBy.href}>
-                  <img
-                    className="custom-img"
-                    alt=""
-                    style={{ width: "80px", height: "80px" }}
-                    src={poweredBy.src}
-                  />
-                </a>
-              </p>
-              <h2> </h2>
+      <main className="level-page">
+        {(isDescriptionMissingTranslation ||
+          isCompleteDescriptionMissingTranslation) && (
+            <div className="ui-alert ui-alert--warning">
+              {strings.levelNotTranslated}{" "}
+              <a
+                className="level-page__touch-link"
+                href="https://github.com/openzeppelin/ethernaut#adding-new-languages"
+              >
+                {strings.contributeTranslation}
+              </a>
             </div>
           )}
 
-          <section className="descriptors">
-            <div className="boxes">
-              {/* DESCRIPTION */}
-              {description && !showCompletedDescription && (
-                <MarkdownComponent target={description} />
-              )}
-
-              {/* COMPLETED DESCRIPTION */}
-              {showCompletedDescription && (
-                <div style={{ marginTop: "40px", marginBottom: "40px" }}>
-                  {completedDescription && (
-                    <div className="well">
-                      <MarkdownComponent target={completedDescription} />
-                    </div>
+        {/* LEVEL SELECTOR */}
+        <div ref={this.selectorRef} className="level-selector">
+          <h1 className="level-selector__heading">
+            <button
+              ref={this.selectorButtonRef}
+              type="button"
+              className="ui-button ui-button--secondary level-selector__button"
+              aria-expanded={selectorOpen}
+              aria-controls="level-selector-list"
+              onClick={this.toggleSelector}
+            >
+              <span className="level-selector__name">{level.name}</span>
+              <span className="level-selector__difficulty">
+                <span className="visually-hidden">{strings.difficulty} </span>
+                {selectedLevel.difficulty}
+              </span>
+            </button>
+          </h1>
+          <nav
+            id="level-selector-list"
+            className="ui-menu level-selector__list"
+            aria-label={strings.uLevels}
+            hidden={!selectorOpen}
+          >
+            {levelData.map((item) => (
+              <Link
+                key={item.name}
+                className="ui-menu__item"
+                to={`${constants.PATH_LEVEL_ROOT}${item.deployedAddress || item.id}`}
+                aria-current={item === selectedLevel ? "page" : undefined}
+                onClick={this.closeSelector}
+              >
+                <span className="level-selector__name">
+                  {item.name}
+                  {item.completed && (
+                    <span className="ui-badge ui-badge--success">
+                      ✔ {strings.uCompleted}
+                    </span>
                   )}
-                </div>
-              )}
-            </div>
-          </section>
+                </span>
+                <span className="level-selector__difficulty">
+                  <span className="visually-hidden">{strings.difficulty} </span>
+                  {item.difficulty}
+                </span>
+              </Link>
+            ))}
+          </nav>
+        </div>
 
-          <section className="descriptors source-code">
-            {/* CODE */}
-            {showCode && sourcesFile && (
-              <div>
-                <CodeComponent target={sourcesFile} />
-              </div>
+        <img
+          alt={`${level.name} level`}
+          className="level-tile level-page__art"
+          src={selectedLevel.src}
+        />
+
+        {/* POWERED BY */}
+        {poweredBy && (
+          <a className="level-powered-by" href={poweredBy.href}>
+            {strings.poweredBy}
+            <img
+              className="level-tile level-powered-by__logo"
+              alt=""
+              src={poweredBy.src}
+            />
+          </a>
+        )}
+
+        {/* DESCRIPTION */}
+        {!showCompletedDescription && (
+          <section className="ui-card">
+            <MarkdownComponent target={description} />
+          </section>
+        )}
+
+        {/* COMPLETED DESCRIPTION */}
+        {completedDescription && (
+          <section className="ui-card">
+            <MarkdownComponent target={completedDescription} />
+          </section>
+        )}
+
+        {/* CODE */}
+        {showCode && sourcesFile && <CodeComponent target={sourcesFile} />}
+
+        {/* BUTTONS */}
+        {level.levelContract && (showNext || showSubmit || showInstance) && (
+          <div className="level-actions">
+            {/* NEXT LEVEL */}
+            {showNext && (
+              <button
+                type="button"
+                className="ui-button"
+                onClick={() =>
+                  this.props.navigate(
+                    `${constants.PATH_LEVEL_ROOT}${nextLevelId}`
+                  )
+                }
+              >
+                {strings.nextLevel}
+              </button>
             )}
-          </section>
-          {/* BUTTONS */}
-          <section className="descriptors">
-            {level.levelContract && (
-              <div className="button-sequence">
-                {/* NEXT LEVEL */}
-                {levelCompleted && nextLevelId && (
-                  <button
-                    type="button"
-                    className="ui-button"
-                    onClick={() =>
-                      this.props.navigate(
-                        `${constants.PATH_LEVEL_ROOT}${nextLevelId}`
-                      )
-                    }
-                  >
-                    {strings.nextLevel}
-                  </button>
-                )}
 
-                {/* SUBMIT */}
-                {this.props.levelEmitted && !levelCompleted && (
-                  <button
-                    type="button"
-                    disabled={this.props.levelCompleted}
-                    className="ui-button"
-                    onClick={(evt) => {
-                      if (!submittedIntance && nextLevelId) {
-                        this.props.submitLevelInstance(level);
-                        this.setState({ submittedIntance: true });
-                        setTimeout(
-                          () => this.setState({ submittedIntance: false }),
-                          2000
-                        );
-                      }
-                    }}
-                  >
-                    {strings.submitInstance}
-                  </button>
-                )}
-
-                {/* DEPLOY OR CREATE */}
-                { !store.getState().gamedata.readOnly && this.props.web3 && <button
-                  type="button"
-                  className="ui-button"
-                  onClick={
-                    level.deployedAddress
-                      ? this.createInstance
-                      : this.deployFactoryContract
+            {/* SUBMIT */}
+            {showSubmit && (
+              <button
+                type="button"
+                className="ui-button"
+                onClick={() => {
+                  if (!submittedIntance && nextLevelId) {
+                    this.props.submitLevelInstance(level);
+                    this.setState({ submittedIntance: true });
+                    setTimeout(
+                      () => this.setState({ submittedIntance: false }),
+                      2000
+                    );
                   }
-                >
-                  {level.deployedAddress
-                    ? strings.getNewInstance
-                    : strings.deployLevel}
-                </button>}
-
-              </div>
+                }}
+              >
+                {strings.submitInstance}
+              </button>
             )}
-          </section>
 
-          <section className="descriptors">
-            <div className="boxes">
-              <div className="author-section">
-                {/* AUTHOR */}
-                {level.author && <Author author={level.author} />}
-              </div>
-            </div>
-          </section>
-        </main>
+            {/* DEPLOY OR CREATE */}
+            {showInstance && (
+              <button
+                type="button"
+                className={`ui-button ${
+                  showNext || showSubmit ? "ui-button--secondary" : ""
+                }`}
+                onClick={
+                  level.deployedAddress
+                    ? this.createInstance
+                    : this.deployFactoryContract
+                }
+              >
+                {level.deployedAddress
+                  ? strings.getNewInstance
+                  : strings.deployLevel}
+              </button>
+            )}
+          </div>
+        )}
+
+        {/* AUTHOR */}
+        {level.author && <Author author={level.author} />}
       </main>
     );
   }

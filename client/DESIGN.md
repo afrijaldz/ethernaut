@@ -81,15 +81,17 @@ with a 2px offset on `:focus-visible`; on menu items the offset is -2px because 
 | Code block | `ui-code` on `<pre>`; the syntax theme is dark in both themes |
 
 A modifier class is used together with its base class. `ui-menu__item` shows its state from
-`aria-expanded` (+ or −), and from `aria-checked` or `aria-current` (a check mark).
+`aria-expanded` (+ or −), from `aria-checked` or `aria-current="true"` (a check mark), and from
+`aria-current="page"` (an accent bar and bold text, for the page that is open).
 
 ## Pages
 
-The home, help, and not-found pages each have one `h1`.
+The home, level, help, and not-found pages each have one `main` and one `h1`.
 
 | Page | Layout |
 | --- | --- |
 | Home | Title and play button (`home-intro`), level cards (`level-grid`), description (`ui-prose`). The play button is the only primary button in the page content, and is full width below 640px. |
+| Level | `level-page`: a column of `--width-reading`. Level selector (`level-selector`), art on the plate, description card, source code, actions (`level-actions`), author card (`level-author`). |
 | Help | `help-page`: a column of `--width-reading`. Each `section` has one `h2`, a rule above it, and prose. |
 | Not found | `page-not-found-container`: centered text and a link to the home page. |
 
@@ -97,6 +99,13 @@ A level card is a link with `ui-card level-card`. It always shows the art (`leve
 on the art plate), the name (`level-card__name`), the difficulty (`level-card__difficulty`),
 and, when the level is completed, a success badge. `level-grid` has 2 columns, 3 from 640px,
 and 5 from 1024px.
+
+The `h1` of the level page is the selector button. It shows the name, the difficulty, and + or −
+from `aria-expanded`. The list is a `ui-menu` over the page, at most 60dvh tall. The name wraps
+and the difficulty does not. A completed level has a success badge.
+
+`level-actions` has one primary button: next or submit when it is shown, otherwise the instance
+button. The buttons are stacked and full width below 640px, and in a row from 640px.
 
 ## Shell
 
