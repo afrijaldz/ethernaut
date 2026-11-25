@@ -1,17 +1,23 @@
-// Discovers browser wallets (EIP-6963) and holds the one that the player selected.
+// Discovers browser wallets (EIP-6963), offers WalletConnect next to them, and holds the wallet
+// that the player selected.
 
 import { getAddress } from "viem";
+import { createWalletConnect } from "./walletconnect.js";
+import { RESULT } from "./walletresult.js";
+
+export { RESULT };
 
 export const STORAGE_WALLET_KEY = "ethernaut_wallet";
 export const BROWSER_WALLET_ID = "browser-wallet";
-export const RESULT = { DONE: "done", REJECTED: "rejected", FAILED: "failed" };
 
-const USER_REJECTED_CODE = 4001;
+// EIP-1193, and the code that WalletConnect wallets use.
+const USER_REJECTED_CODES = [4001, 5000];
 const ANNOUNCE_TIMEOUT = 1000;
 
 const announcedWallets = [];
 const listeners = new Set();
 let selectedWallet = null;
+let walletConnect = null;
 
 function notify() {
   listeners.forEach((listener) => listener());
@@ -43,7 +49,21 @@ export function discoverWallets() {
   window.dispatchEvent(new Event("eip6963:requestProvider"));
 }
 
-export function getWallets() {
+// Without a project ID there is no WalletConnect entry.
+export function enableWalletConnect(projectId, loadPackage) {
+  if (!projectId) return;
+  walletConnect = createWalletConnect({
+    projectId,
+    loadPackage,
+    onSessionEnd: () => {
+      if (!isWalletConnectSelected()) return;
+      forgetWallet();
+      window.location.reload();
+    },
+  });
+}
+
+function getBrowserWallets() {
   if (announcedWallets.length > 0) return [...announcedWallets];
   if (!window.ethereum) return [];
   return [
@@ -52,6 +72,10 @@ export function getWallets() {
       provider: window.ethereum,
     },
   ];
+}
+
+export function getWallets() {
+  return walletConnect ? [...getBrowserWallets(), walletConnect] : getBrowserWallets();
 }
 
 // Calls the listener when the list of wallets changes. Returns the unsubscribe function.
@@ -70,6 +94,31 @@ export function getProvider() {
 export function selectWallet(wallet) {
   selectedWallet = wallet;
   localStorage.setItem(STORAGE_WALLET_KEY, wallet.info.rdns);
+}
+
+function forgetWallet() {
+  selectedWallet = null;
+  localStorage.removeItem(STORAGE_WALLET_KEY);
+}
+
+export function isWalletConnect(wallet) {
+  return Boolean(wallet) && wallet === walletConnect;
+}
+
+export function isWalletConnectSelected() {
+  return isWalletConnect(selectedWallet);
+}
+
+// Ends the WalletConnect session and returns to the connection dialog.
+export async function disconnectWalletConnect() {
+  try {
+    await walletConnect.disconnect();
+  } catch (error) {
+    // The wallet could not be told. Its session is replaced by the next connection.
+    console.error(error);
+  }
+  forgetWallet();
+  window.location.reload();
 }
 
 // Only an icon that is embedded as an image is safe to show.
@@ -102,6 +151,7 @@ export async function restoreWallet() {
   const wallet = await waitForWallet(rdns);
   if (!wallet) return false;
   try {
+    if (isWalletConnect(wallet) && !(await walletConnect.restore())) return false;
     const accounts = await wallet.provider.request({ method: "eth_accounts" });
     if (accounts.length === 0) return false;
   } catch (error) {
@@ -112,14 +162,19 @@ export async function restoreWallet() {
   return true;
 }
 
+function isRejection(error) {
+  return USER_REJECTED_CODES.includes(error?.code);
+}
+
 function getFailure(error) {
-  if (error?.code === USER_REJECTED_CODE) return RESULT.REJECTED;
+  if (isRejection(error)) return RESULT.REJECTED;
   console.error(error);
   return RESULT.FAILED;
 }
 
 // Prompts the player to connect an account of the wallet.
 export async function requestAccounts(wallet) {
+  if (isWalletConnect(wallet)) return walletConnect.connect();
   try {
     const accounts = await wallet.provider.request({
       method: "eth_requestAccounts",
@@ -170,7 +225,7 @@ export async function switchNetwork(network) {
         params: [{ chainId: `0x${Number(network.id).toString(16)}` }],
       });
     } catch (switchError) {
-      if (switchError?.code === USER_REJECTED_CODE) return RESULT.REJECTED;
+      if (isRejection(switchError)) return RESULT.REJECTED;
       await addNetwork(provider, network);
     }
     const chainId = await provider.request({ method: "eth_chainId" });

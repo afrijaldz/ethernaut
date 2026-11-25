@@ -7,6 +7,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router";
 import * as ethutil from "./utils/ethutil";
 import {
   discoverWallets,
+  enableWalletConnect,
   getAccount,
   getChainId,
   getProvider,
@@ -35,6 +36,10 @@ const container = document.getElementById("root");
 const root = createRoot(container);
 
 async function startGame() {
+  enableWalletConnect(
+    constants.WALLETCONNECT_PROJECT_ID,
+    () => import("@walletconnect/ethereum-provider")
+  );
   discoverWallets();
   if (!(await restoreWallet())) {
     store.dispatch(actions.loadGamedata());

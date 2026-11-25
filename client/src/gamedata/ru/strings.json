@@ -37,6 +37,7 @@
   "walletConnectionFailed": "Кошелёк не подключился. Открой и разблокируй его, ответь на ожидающие запросы и попробуй ещё раз.",
   "baseSepoliaNotSupported": "Этот кошелёк не смог переключиться на Base Sepolia. Используй EVM-кошелёк с поддержкой Base Sepolia.",
   "connectAccount": "Подключить",
+  "disconnect": "Отключить",
   "deployMessageTitle": "Игра не развернута",
   "deprecatedNetwork": "заброшенная сеть",
   "networkBeingDeprecated": "сеть в процессе закрытия",

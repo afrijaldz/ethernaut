@@ -10,6 +10,7 @@ import {
   getChainId,
   getSafeIcon,
   getWallets,
+  isWalletConnect,
   requestAccounts,
   selectWallet,
   subscribeToWallets,
@@ -28,6 +29,7 @@ function OpenDialog() {
   const [icon] = useState(randBadIcon);
   // Only the last choice counts: an older wallet prompt can be answered later.
   const lastAttempt = useRef(0);
+  const connecting = useRef(null);
   const strings = loadTranslations(localStorage.getItem("lang"));
 
   useEffect(() => {
@@ -43,6 +45,8 @@ function OpenDialog() {
 
   useEffect(() => {
     const handleKeyDown = (event) => {
+      // Escape closes the WalletConnect modal, not this dialog.
+      if (isWalletConnect(connecting.current)) return;
       if (event.key === "Escape") continueInReadOnly();
     };
     document.addEventListener("keydown", handleKeyDown);
@@ -60,9 +64,15 @@ function OpenDialog() {
     const attempt = ++lastAttempt.current;
     setError(null);
 
+    connecting.current = wallet;
     const connection = await requestAccounts(wallet);
     if (attempt !== lastAttempt.current) return;
+    connecting.current = null;
     if (connection === RESULT.REJECTED) return;
+    if (connection === RESULT.WRONG_NETWORK) {
+      setError(strings.baseSepoliaNotSupported);
+      return;
+    }
     if (connection === RESULT.FAILED) {
       setError(strings.walletConnectionFailed);
       return;

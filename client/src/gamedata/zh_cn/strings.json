@@ -37,6 +37,7 @@
   "walletConnectionFailed": "钱包未能连接。请打开并解锁钱包，处理待处理的请求，然后重试。",
   "baseSepoliaNotSupported": "此钱包无法切换到 Base Sepolia。请使用支持 Base Sepolia 的 EVM 钱包。",
   "connectAccount": "连接",
+  "disconnect": "断开连接",
   "deployMessageTitle": "游戏尚未部署",
   "deprecatedNetwork": "网络已弃用",
   "networkBeingDeprecated": "网络即将被弃用",

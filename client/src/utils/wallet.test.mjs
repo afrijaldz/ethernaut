@@ -8,6 +8,7 @@ globalThis.window = new EventTarget();
 globalThis.localStorage = {
   getItem: (key) => storage.get(key) ?? null,
   setItem: (key, value) => storage.set(key, value),
+  removeItem: (key) => storage.delete(key),
 };
 
 const NETWORK = {
@@ -219,6 +220,7 @@ describe("connection", () => {
         createWallet("first", createProvider({ eth_requestAccounts: { code } }))
       );
     assert.equal(await request(4001), wallet.RESULT.REJECTED);
+    assert.equal(await request(5000), wallet.RESULT.REJECTED);
     assert.equal(await request(-32002), wallet.RESULT.FAILED);
   });
 });
@@ -277,5 +279,188 @@ describe("network switch", () => {
       eth_chainId: "0x1",
     });
     assert.equal(result, wallet.RESULT.FAILED);
+  });
+});
+
+describe("WalletConnect", () => {
+  const ACCOUNT = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266";
+  const ACCEPTED = { namespaces: { eip155: { accounts: [`eip155:84532:${ACCOUNT}`] } } };
+  const REFUSED = { namespaces: { eip155: { accounts: [`eip155:1:${ACCOUNT}`] } } };
+
+  let provider;
+  let init;
+  let loadPackage;
+
+  // `connect` is what the wallet answers to the connection: a session or an error message.
+  function enable({ session, connect, disconnect = async () => {} } = {}) {
+    const listeners = new Map();
+    provider = {
+      ...createProvider({ eth_accounts: [ACCOUNT], eth_chainId: 84532 }),
+      session,
+      signer: { client: {} },
+      modal: { setThemeMode: mock.fn() },
+      on: (event, listener) => listeners.set(event, listener),
+      emit: (event) => listeners.get(event)(),
+      connect: mock.fn(async () => {
+        if (typeof connect === "string") throw new Error(connect);
+        provider.session = await connect;
+      }),
+      disconnect: mock.fn(async () => {
+        await disconnect();
+        provider.session = undefined;
+      }),
+    };
+    init = mock.fn(async () => provider);
+    loadPackage = mock.fn(async () => ({ EthereumProvider: { init } }));
+    wallet.enableWalletConnect("project", loadPackage);
+  }
+
+  beforeEach(() => {
+    window.location = { origin: "https://example.com", reload: mock.fn() };
+    globalThis.document = { documentElement: { dataset: { theme: "dark" } } };
+  });
+
+  const getEntry = () => wallet.getWallets().at(-1);
+
+  it("is not offered without a project ID", () => {
+    wallet.enableWalletConnect(undefined, loadPackage);
+    wallet.enableWalletConnect("", loadPackage);
+    assert.deepEqual(wallet.getWallets(), []);
+  });
+
+  it("is listed after the browser wallets and loads nothing", async () => {
+    enable();
+    const first = createWallet("first");
+    announce(first);
+    assert.deepEqual(wallet.getWallets(), [first, getEntry()]);
+    assert.equal(getEntry().info.name, "WalletConnect");
+    assert.equal(await wallet.restoreWallet(), false);
+    assert.equal(loadPackage.mock.callCount(), 0);
+  });
+
+  it("connects on Base Sepolia and sends the requests to its provider", async () => {
+    enable({ connect: ACCEPTED });
+    assert.equal(await wallet.requestAccounts(getEntry()), wallet.RESULT.DONE);
+    wallet.selectWallet(getEntry());
+
+    const [options] = init.mock.calls[0].arguments;
+    assert.deepEqual(options.optionalChains, [84532]);
+    assert.deepEqual(options.rpcMap, { 84532: "https://sepolia.base.org" });
+    assert.equal(options.showQrModal, true);
+    assert.deepEqual(provider.modal.setThemeMode.mock.calls[0].arguments, ["dark"]);
+    assert.deepEqual(getMethods(provider), ["wallet_switchEthereumChain"]);
+    assert.equal(wallet.getProvider(), provider);
+    assert.equal(await wallet.getAccount(), ACCOUNT);
+    assert.equal(wallet.isWalletConnectSelected(), true);
+    assert.equal(localStorage.getItem(wallet.STORAGE_WALLET_KEY), "walletconnect");
+  });
+
+  it("opens one connection for two clicks", async () => {
+    enable({ connect: ACCEPTED });
+    const results = await Promise.all([
+      wallet.requestAccounts(getEntry()),
+      wallet.requestAccounts(getEntry()),
+    ]);
+    assert.deepEqual(results, [wallet.RESULT.DONE, wallet.RESULT.DONE]);
+    assert.equal(provider.connect.mock.callCount(), 1);
+  });
+
+  it("ends the session of a wallet that does not accept Base Sepolia", async () => {
+    enable({ connect: REFUSED });
+    assert.equal(await wallet.requestAccounts(getEntry()), wallet.RESULT.WRONG_NETWORK);
+    assert.equal(provider.disconnect.mock.callCount(), 1);
+  });
+
+  for (const [message, result] of [
+    ["Connection request reset. Please try again.", "REJECTED"],
+    ["User rejected.", "REJECTED"],
+    ["User disapproved requested methods", "REJECTED"],
+    ["User disapproved requested chains", "WRONG_NETWORK"],
+    ["Unsupported chains.", "WRONG_NETWORK"],
+    ["Proposal expired", "FAILED"],
+  ]) {
+    it(`reports "${message}" as ${result} and can try again`, async () => {
+      enable({ connect: message });
+      for (let i = 0; i < 2; i++) {
+        assert.equal(await wallet.requestAccounts(getEntry()), wallet.RESULT[result]);
+      }
+      assert.equal(provider.connect.mock.callCount(), 2);
+      assert.equal(init.mock.callCount(), 1);
+      assert.equal(wallet.getProvider(), undefined);
+      assert.equal(window.location.reload.mock.callCount(), 0);
+    });
+  }
+
+  it("fails when the package does not load", async () => {
+    wallet.enableWalletConnect("project", async () => {
+      throw new Error("Failed to fetch dynamically imported module");
+    });
+    assert.equal(await wallet.requestAccounts(getEntry()), wallet.RESULT.FAILED);
+  });
+
+  describe("saved session", () => {
+    beforeEach(() => {
+      localStorage.setItem(wallet.STORAGE_WALLET_KEY, "walletconnect");
+    });
+
+    it("is restored without a prompt", async () => {
+      enable({ session: ACCEPTED });
+      assert.equal(await wallet.restoreWallet(), true);
+      assert.equal(wallet.getProvider(), provider);
+      assert.equal(init.mock.calls[0].arguments[0].showQrModal, false);
+      assert.equal(provider.connect.mock.callCount(), 0);
+    });
+
+    it("is not restored without a project ID", async () => {
+      mock.timers.enable({ apis: ["setTimeout"] });
+      const restored = wallet.restoreWallet();
+      mock.timers.runAll();
+      mock.timers.reset();
+      assert.equal(await restored, false);
+    });
+
+    for (const [name, session] of [["ended", undefined], ["without Base Sepolia", REFUSED]]) {
+      it(`that is ${name} is not restored`, async () => {
+        enable({ session, connect: ACCEPTED });
+        assert.equal(await wallet.restoreWallet(), false);
+        assert.equal(wallet.getProvider(), undefined);
+
+        // The next connection reuses the client and replaces the session.
+        assert.equal(await wallet.requestAccounts(getEntry()), wallet.RESULT.DONE);
+        assert.equal(init.mock.calls[1].arguments[0].client, provider.signer.client);
+        assert.equal(provider.disconnect.mock.callCount(), session ? 1 : 0);
+      });
+    }
+
+    it("that the wallet ends returns to the connection dialog", async () => {
+      enable({ session: ACCEPTED });
+      await wallet.restoreWallet();
+      provider.emit("disconnect");
+      assert.equal(localStorage.getItem(wallet.STORAGE_WALLET_KEY), null);
+      assert.equal(window.location.reload.mock.callCount(), 1);
+    });
+
+    it("that the wallet ends does not touch another selected wallet", async () => {
+      enable({ session: ACCEPTED });
+      await wallet.restoreWallet();
+      wallet.selectWallet(createWallet("first"));
+      provider.emit("disconnect");
+      assert.equal(localStorage.getItem(wallet.STORAGE_WALLET_KEY), "com.first");
+      assert.equal(window.location.reload.mock.callCount(), 0);
+    });
+
+    for (const [name, disconnect] of [
+      ["", undefined],
+      [" also when the wallet cannot be told", () => Promise.reject(new Error("offline"))],
+    ]) {
+      it(`is closed by a disconnect${name}`, async () => {
+        enable({ session: ACCEPTED, disconnect });
+        await wallet.restoreWallet();
+        await wallet.disconnectWalletConnect();
+        assert.equal(provider.disconnect.mock.callCount(), 1);
+        assert.equal(localStorage.getItem(wallet.STORAGE_WALLET_KEY), null);
+        assert.equal(window.location.reload.mock.callCount(), 1);
+      });
+    }
   });
 });

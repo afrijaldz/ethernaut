@@ -37,6 +37,7 @@
   "walletConnectionFailed": "The wallet did not connect. Open and unlock it, answer any open request, and try again.",
   "baseSepoliaNotSupported": "This wallet could not switch to Base Sepolia. Use an EVM wallet that supports Base Sepolia.",
   "connectAccount": "Connect",
+  "disconnect": "Disconnect",
   "deployMessageTitle": "Game not deployed",
   "deprecatedNetwork": "Network deprecated",
   "networkBeingDeprecated": "Network being deprecated",

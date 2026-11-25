@@ -37,6 +37,7 @@
   "walletConnectionFailed": "A tárca nem csatlakozott. Nyisd meg és oldd fel, válaszolj a függőben lévő kérésekre, majd próbáld újra.",
   "baseSepoliaNotSupported": "Ez a tárca nem tudott a Base Sepolia hálózatra váltani. Használj olyan EVM tárcát, amely támogatja a Base Sepolia hálózatot.",
   "connectAccount": "Csatlakozás",
+  "disconnect": "Leválasztás",
   "deployMessageTitle": "A játék nincs telepítve",
   "deprecatedNetwork": "Elavult hálózat",
   "networkBeingDeprecated": "A hálózat elavul",

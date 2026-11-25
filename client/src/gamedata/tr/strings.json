@@ -37,6 +37,7 @@
   "walletConnectionFailed": "Cüzdan bağlanmadı. Cüzdanı aç, kilidini kaldır, bekleyen istekleri yanıtla ve tekrar dene.",
   "baseSepoliaNotSupported": "Bu cüzdan Base Sepolia ağına geçemedi. Base Sepolia destekleyen bir EVM cüzdanı kullan.",
   "connectAccount": "Bağla",
+  "disconnect": "Bağlantıyı kes",
   "deployMessageTitle": "Oyun başlatılamadı",
   "deprecatedNetwork": "Ağ artık desteklenmiyor",
   "networkBeingDeprecated": "Bu ağ desteği yakında sonlandırılacak",
