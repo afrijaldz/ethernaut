@@ -13,6 +13,7 @@ import "./utils/^^";
 import App from "./containers/App";
 import NotFound404 from "./components/not-found/NotFound404";
 import Header from "./containers/Header";
+import Footer from "./components/common/Footer";
 import Leaderboard from "./containers/Leaderboard";
 
 // For bundle splitting without lazy loading.
@@ -52,15 +53,20 @@ root.render(
   <Provider store={store}>
     <Router history={syncHistoryWithStore(history, store)}>
       <Suspense fallback={<div>Loading...</div>}>
-        <Header></Header>
-        <Routes>
-          <Route path={constants.PATH_HELP} element={<Help />} />
-          <Route path={constants.PATH_LEVEL} element={<Level />} />
-          <Route path={constants.PATH_STATS} element={<Stats />} />
-          <Route path={constants.PATH_LEADERBOARD} element={<Leaderboard />} />
-          <Route exact path="/" element={<App />} />
-          <Route path="*" element={<NotFound404 />} />
-        </Routes>
+        <div className="app-shell">
+          <Header></Header>
+          <div className="app-shell__content">
+            <Routes>
+              <Route path={constants.PATH_HELP} element={<Help />} />
+              <Route path={constants.PATH_LEVEL} element={<Level />} />
+              <Route path={constants.PATH_STATS} element={<Stats />} />
+              <Route path={constants.PATH_LEADERBOARD} element={<Leaderboard />} />
+              <Route exact path="/" element={<App />} />
+              <Route path="*" element={<NotFound404 />} />
+            </Routes>
+          </div>
+          <Footer></Footer>
+        </div>
       </Suspense>
     </Router>
   </Provider>

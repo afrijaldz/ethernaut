@@ -32,6 +32,19 @@
       content="https://ethernaut.afrijal.dev/imgs/metatag.png"
     />
     <link rel="shortcut icon" href="%PUBLIC_URL%/imgs/favicon.ico?v=1" />
+    <script>
+      // Set the theme before the first paint.
+      document.documentElement.dataset.theme =
+        localStorage.getItem("theme") ||
+        (window.matchMedia("(prefers-color-scheme: dark)").matches
+          ? "dark"
+          : "light");
+    </script>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+    />
     <link
       rel="stylesheet"
       href="https://fonts.googleapis.com/icon?family=Material+Icons"

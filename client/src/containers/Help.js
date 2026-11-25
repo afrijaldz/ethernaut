@@ -3,7 +3,6 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import MarkdownComponent from "../components/common/Markdown";
 import { loadTranslations } from "../utils/translations";
-import Footer from "../components/common/Footer";
 
 class Help extends React.Component {
   render() {
@@ -11,8 +10,7 @@ class Help extends React.Component {
     let strings = loadTranslations(language);
 
     return (
-      <div className="helpcontainer main-wrapper">
-        <div className="lines"></div>
+      <div className="main-wrapper">
         <main className="boxes">
           <h3>Setup Metamask</h3>
           <section>
@@ -39,8 +37,6 @@ class Help extends React.Component {
             <MarkdownComponent target={strings.troubleshooting} linkTarget="_blank" />
           </section>
         </main>
-        {/* Footer */}
-        <Footer></Footer>
       </div>
     );
   }

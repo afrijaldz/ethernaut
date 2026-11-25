@@ -6,11 +6,12 @@ const Search = (props) => {
     }
 
     return (
-        <div className='leaderboard-search-outer-container'>
-            <div className="leaderboard-search stats-input-container">
+        <div>
+            <div>
                 <input
                     type="text"
-                    className="stats-input form-control"
+                    className="ui-input"
+                    aria-label="Search player address / alias"
                     placeholder="Search player address / alias"
                     value={keyword}
                     onChange={handleChange}

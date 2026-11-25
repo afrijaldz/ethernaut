@@ -2,7 +2,6 @@ import React, { createRef } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import CodeComponent from "../components/levels/Code";
-import Footer from "../components/common/Footer";
 import NotFound404 from "../components/not-found/NotFound404";
 import Author from "../components/levels/Author";
 import MarkdownComponent from "../components/common/Markdown";
@@ -14,7 +13,6 @@ import getlevelsdata from "../utils/getlevelsdata";
 import { withRouter } from "../hoc/withRouter";
 import { getLevelKey } from "../utils/contractutil";
 import { deployAndRegisterLevel } from "../utils/deploycontract";
-import { svgFilter } from "../utils/svg";
 import { store } from "../store";
 
 class Level extends React.Component {
@@ -48,12 +46,6 @@ class Level extends React.Component {
     ) {
       this.props.activateLevel(this.props.params.address);
     }
-    var codeElement = document.getElementsByClassName("hljs")[0];
-    var black = getComputedStyle(document.documentElement).getPropertyValue(
-      "--black"
-    );
-    if (codeElement && codeElement.style.background !== black)
-      codeElement.style.background = black;
   }
 
   // use arrow function to prevent this binding
@@ -89,21 +81,6 @@ class Level extends React.Component {
   handleClickOutside = (event) => {
     if (this.containerRef.current && !this.containerRef.current.contains(event.target)) {
       this.closeDropdown();
-    }
-  }
-
-  handleImageLoad = () => { 
-    const styles = getComputedStyle(document.documentElement);
-
-    const bgColor = styles.getPropertyValue('--primary-color');
-    const black = styles.getPropertyValue('--black');
-
-    const isCurrentlyDarkMode = bgColor === black;
-
-    if (isCurrentlyDarkMode) { 
-      let levelTiles = document.getElementsByClassName("level-tile");
-      const levelTile = levelTiles[0]
-      levelTile.style.filter = svgFilter();
     }
   }
 
@@ -206,7 +183,7 @@ class Level extends React.Component {
             </div>
           </div>
 
-          <section onLoad={this.handleImageLoad}>
+          <section className="descriptors">
             <img
               alt={`${level.name} level`}
               className="level-tile level-img-view"
@@ -263,12 +240,12 @@ class Level extends React.Component {
           {/* BUTTONS */}
           <section className="descriptors">
             {level.levelContract && (
-              <div className=" button-sequence">
+              <div className="button-sequence">
                 {/* NEXT LEVEL */}
                 {levelCompleted && nextLevelId && (
                   <button
                     type="button"
-                    className="button-actions"
+                    className="ui-button"
                     onClick={() =>
                       this.props.navigate(
                         `${constants.PATH_LEVEL_ROOT}${nextLevelId}`
@@ -284,7 +261,7 @@ class Level extends React.Component {
                   <button
                     type="button"
                     disabled={this.props.levelCompleted}
-                    className="button-actions"
+                    className="ui-button"
                     onClick={(evt) => {
                       if (!submittedIntance && nextLevelId) {
                         this.props.submitLevelInstance(level);
@@ -303,7 +280,7 @@ class Level extends React.Component {
                 {/* DEPLOY OR CREATE */}
                 { !store.getState().gamedata.readOnly && this.props.web3 && <button
                   type="button"
-                  className="button-actions"
+                  className="ui-button"
                   onClick={
                     level.deployedAddress
                       ? this.createInstance
@@ -320,7 +297,7 @@ class Level extends React.Component {
           </section>
 
           <section className="descriptors">
-            <div className="boxes author-section-border">
+            <div className="boxes">
               <div className="author-section">
                 {/* AUTHOR */}
                 {level.author && <Author author={level.author} />}
@@ -328,9 +305,6 @@ class Level extends React.Component {
             </div>
           </section>
         </main>
-
-        {/* Footer */}
-        <Footer></Footer>
       </main>
     );
   }

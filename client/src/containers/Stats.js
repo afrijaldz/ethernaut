@@ -1,13 +1,11 @@
 import React from 'react'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
-import '../styles/page.css'
 import * as actions from '../actions';
 import { getLevelsSolvedByPlayer, checkIfPlayerExist, getTotalCompleted, getTotalFailures, getTotalCreated, getTotalPlayers } from '../utils/statsContract'
 import { validateAddress } from '../utils/ethutil'
 import Statistic from '../components/stats/Statistic';
 import StatisticPanel from '../components/stats/Panel';
-import Footer from "../components/common/Footer";
 
 class Stats extends React.Component {
 
@@ -102,7 +100,7 @@ class Stats extends React.Component {
   }
 
   render() {
-      return <div className="stats-page page-container main-wrapper">
+      return <div className="stats-page main-wrapper">
       <div className='stats-header'>
         <Statistic heading="Total number of players" value={this.state.totalPlayers} />
         <Statistic heading="Total number of instances created" value={this.state.totalCreated} />
@@ -111,10 +109,11 @@ class Stats extends React.Component {
       </div>
        <div>
         <form>
-           <div className="stats-input-container form-group">
+           <div>
              <input
                type="text"
-               className="stats-input form-control"
+               className="ui-input"
+               aria-label="Player address"
                placeholder="Player address"
                onChange={async(evt) => {
                  evt.preventDefault();
@@ -144,8 +143,6 @@ class Stats extends React.Component {
           </StatisticPanel>
         </div>
        </div>
-       {/* footer */}
-       <Footer></Footer>
      </div> 
 
 }}

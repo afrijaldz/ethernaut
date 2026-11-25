@@ -39,10 +39,12 @@ class HubspotForm extends React.Component{
     const ethernautAddressLabel = spans[4]
     const checkboxLabel = spans[5]
 
+    // HubSpot renders the form in an iframe, where the page stylesheet and its variables do not apply.
     const styles = getComputedStyle(document.documentElement);
 
-    const textColor = styles.getPropertyValue('--secondary-color');
-    const bgColor = styles.getPropertyValue('--primary-color');
+    const textColor = styles.getPropertyValue('--color-text');
+    const accentColor = styles.getPropertyValue('--color-accent');
+    const onAccentColor = styles.getPropertyValue('--color-on-accent');
 
     emailElement.style.color = textColor;
     usernameElement.style.color = textColor;
@@ -52,9 +54,9 @@ class HubspotForm extends React.Component{
     label.style.color = textColor;
     label.style.opacity = 0.7;
 
-    buttons[0].style.backgroundColor = textColor;
+    buttons[0].style.backgroundColor = accentColor;
     buttons[0].style.border = "none";
-    buttons[0].style.color = bgColor;
+    buttons[0].style.color = onAccentColor;
     buttons[0].style.padding = '8px';
     buttons[0].style.borderRadius = '5px';
     buttons[0].style.cursor = 'pointer';
@@ -89,12 +91,9 @@ class HubspotForm extends React.Component{
 
   onFormSubmitted = (form) => { 
     form.remove();
-    const styles = getComputedStyle(document.documentElement);
-    const textColor = styles.getPropertyValue('--secondary-color');
     const outerElement = document.querySelector('#hubspotForm')
     const element = document.createElement('div')
     element.innerHTML = "Thanks for submitting the form."
-    element.style.color = textColor
     element.style.position = 'relative'
     element.style.fontSize = '17px'
     outerElement.insertAdjacentElement('afterbegin', element)

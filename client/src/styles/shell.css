@@ -1,0 +1,139 @@
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
+.app-shell__content,
+.site-header__inner,
+.site-footer__inner,
+.site-alert {
+  width: 100%;
+  max-width: var(--width-page);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.app-shell__content {
+  flex: 1;
+  padding-block: var(--space-5);
+}
+
+/* Header */
+
+.site-header {
+  border-block-end: 1px solid var(--color-border);
+  background-color: var(--color-surface);
+}
+
+.site-header__inner {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  column-gap: var(--space-4);
+  padding-block: var(--space-2);
+}
+
+.site-header__wordmark,
+.site-header__wordmark:hover {
+  color: var(--color-text);
+}
+
+.site-header__wordmark {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--touch-target);
+  font-family: var(--font-mono);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.site-header__notice,
+.site-header__notice:hover {
+  color: var(--color-text-muted);
+}
+
+.site-header__notice {
+  display: flex;
+  align-items: center;
+  order: 1;
+  width: 100%;
+  min-height: var(--touch-target);
+  font-size: var(--text-xs);
+}
+
+.site-header__menu {
+  position: absolute;
+  inset-block-start: 100%;
+  inset-inline: var(--gutter);
+  z-index: 20;
+  max-height: calc(100dvh - 2 * var(--touch-target) - var(--space-7));
+}
+
+@media (min-width: 640px) {
+  .site-header__notice {
+    order: 0;
+    flex: 1;
+    width: auto;
+    font-size: var(--text-sm);
+  }
+
+  .site-header__menu {
+    inset-inline-start: auto;
+    width: 320px;
+    max-height: calc(100dvh - var(--touch-target) - var(--space-6));
+  }
+}
+
+.site-alert {
+  margin-block-start: var(--space-4);
+}
+
+/* Loading indicator. It does not take clicks, so a pending wallet request never locks the page. */
+
+.progress-bar-wrapper {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  margin: auto;
+  padding: var(--space-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background-color: var(--color-surface);
+  color: var(--color-accent);
+  pointer-events: none;
+}
+
+/* Footer */
+
+.site-footer {
+  border-block-start: 1px solid var(--color-border);
+  background-color: var(--color-surface);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.site-footer__inner {
+  padding-block: var(--space-4);
+  overflow-wrap: anywhere;
+  text-align: center;
+}
+
+.site-footer a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--touch-target);
+}
+
+/* The translated footer strings set their own icon colors. */
+.site-footer .fa-heart {
+  color: var(--color-danger) !important;
+}
+
+.site-footer .fa-flash {
+  color: var(--color-warning) !important;
+}

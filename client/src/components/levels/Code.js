@@ -53,7 +53,7 @@ class Code extends React.Component {
 
   render() {
     return (
-      <pre><code className='hljs' dangerouslySetInnerHTML={this.getHighlightedCode()}></code></pre>
+      <pre className="ui-code"><code className='hljs' dangerouslySetInnerHTML={this.getHighlightedCode()}></code></pre>
     )
   }
 }

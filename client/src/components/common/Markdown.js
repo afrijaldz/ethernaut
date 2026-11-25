@@ -40,7 +40,7 @@ class Markdown extends React.Component {
 
   render() {
     const children = this.state.source;
-    return <div>{ children && <ReactMarkdown children={children} linkTarget={this.props.linkTarget}/> }</div>
+    return <div className="ui-prose">{ children && <ReactMarkdown children={children} linkTarget={this.props.linkTarget}/> }</div>
   }
 }
 

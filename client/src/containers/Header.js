@@ -1,28 +1,30 @@
-import React from "react";
-import onClickOutside from "react-onclickoutside";
+import React, { createRef } from "react";
 import { connect } from "react-redux";
 import { withRouter } from "../hoc/withRouter";
-import { Link} from "../router";
+import { Link } from "../router";
 import { bindActionCreators } from "redux";
 import * as actions from "../actions";
 import * as constants from "../constants";
 import { loadTranslations } from "../utils/translations";
 import PropTypes from "prop-types";
 import { ProgressBar } from "react-loader-spinner";
-import { svgFilter } from "../utils/svg";
-import LeaderIcon from "../components/leaderboard/LeaderIcon";
 import { store } from "../store";
+
+const NETWORKS_SECTION = "networks";
+const LANGUAGES_SECTION = "languages";
 
 class Header extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      dark: false,
+      dark: document.documentElement.dataset.theme === "dark",
       lang: localStorage.getItem("lang"),
       chainId: 0,
-      activeDropdown: null,
-      multiDDOpen: false,
+      openSection: null,
+      menuOpen: false,
     };
+    this.menuContainerRef = createRef();
+    this.menuButtonRef = createRef();
 
     if (this.props.web3 && !store.getState().gamedata.readOnly) {
       window.ethereum.request({ method: "eth_chainId" }).then((id) => {
@@ -35,79 +37,41 @@ class Header extends React.Component {
     location: PropTypes.object.isRequired,
   };
 
-  setActiveTab(tabIndex) {
-    const { activeDropdown } = this.state;
-    const newState =
-      activeDropdown === tabIndex && activeDropdown ? null : tabIndex;
-    this.setState({ activeDropdown: newState });
-  }
-
-  getDDClassName(tabdcurrentTabIndex) {
-    const { activeDropdown } = this.state;
-    const className = tabdcurrentTabIndex === activeDropdown ? "show" : "hide";
-    return className;
-  }
-
-  toggleDropdownState() {
-    this.setState({
-      multiDDOpen: !this.state.multiDDOpen,
-    });
-  }
-
-  closeDropdown() {
-    if (!this.state.multiDDOpen) return;
-    this.setState({
-      multiDDOpen: false,
-    });
-  }
-
   componentDidMount() {
-    // var black = getComputedStyle(document.documentElement).getPropertyValue(
-    //   "--black"
-    // );
-    // var primaryColor = getComputedStyle(document.documentElement).getPropertyValue(
-    //   "--primary-color"
-    // );
-    // if(primaryColor === black) this.toggleDarkMode()
+    document.addEventListener("mousedown", this.handleClickOutside);
+    document.addEventListener("keydown", this.handleKeyDown);
   }
 
-  componentDidUpdate(prevProps) {
-    if (prevProps && this.props.location !== prevProps.location) {
-      let elements = document.getElementsByClassName("level-tile");
-      if (elements.length !== 0) {
-        for (let i = 0; i < elements.length; i++) {
-          let element = elements[i];
-          if (element && element.style)
-            element.style.filter = this.state.dark ? svgFilter() : null;
-        }
-      }
+  componentWillUnmount() {
+    document.removeEventListener("mousedown", this.handleClickOutside);
+    document.removeEventListener("keydown", this.handleKeyDown);
+  }
 
-      // Change The Ethernaut logo
-      var theEthernaut = document.getElementById("the-ethernaut");
-      if (theEthernaut && theEthernaut.style)
-        theEthernaut.style.filter = this.state.dark ? svgFilter() : null;
-
-      // Change Arrow
-      let isArrowInPage = document.getElementById("arrow");
-      if (isArrowInPage && isArrowInPage.style)
-        isArrowInPage.style.filter = this.state.dark ? svgFilter() : null;
-
-      // Change all custom images
-      var imageElements = document.getElementsByClassName("custom-img");
-      if (imageElements.length !== 0) {
-        for (let i = 0; i < imageElements.length; i++) {
-          let element = imageElements[i];
-          if (imageElements.length === 0) element = imageElements;
-          if (element && element.style)
-            element.style.filter = this.state.dark ? svgFilter() : null;
-        }
-      }
+  handleClickOutside = (event) => {
+    if (!this.menuContainerRef.current.contains(event.target)) {
+      this.closeMenu();
     }
-  }
+  };
 
-  changeLanguage(e, value) {
-    e.preventDefault();
-    this.props.setLang(value);
+  handleKeyDown = (event) => {
+    if (event.key === "Escape" && this.state.menuOpen) {
+      this.closeMenu();
+      this.menuButtonRef.current.focus();
+    }
+  };
+
+  toggleMenu = () => {
+    this.setState({ menuOpen: !this.state.menuOpen });
+  };
+
+  closeMenu = () => {
+    if (this.state.menuOpen) this.setState({ menuOpen: false });
+  };
+
+  toggleSection(section) {
+    this.setState({
+      openSection: this.state.openSection === section ? null : section,
+    });
   }
 
   async changeNetwork(network) {
@@ -158,65 +122,11 @@ class Header extends React.Component {
     }
   }
 
-  toggleDarkMode() {
-    var documentElement = document.documentElement;
-    if (documentElement && documentElement.style) {
-      var pink = getComputedStyle(document.documentElement).getPropertyValue(
-        "--pink"
-      );
-      var black = getComputedStyle(document.documentElement).getPropertyValue(
-        "--black"
-      );
-
-      var newPrimary = this.state.dark ? pink : black;
-      var newSecondary = this.state.dark ? black : pink;
-
-      document.documentElement.style.setProperty("--primary-color", newPrimary);
-      document.documentElement.style.setProperty(
-        "--secondary-color",
-        newSecondary
-      );
-
-      // // Change OpenZeppelin logo
-      // var theChristmashat = document.getElementById("christmas-hat")
-      // if (theChristmashat && theChristmashat.style) theChristmashat.style.filter = !this.state.dark
-      //   ? svgFilter()
-      //   : null;
-
-      // Change The Ethernaut logo
-      var theEthernaut = document.getElementById("the-ethernaut");
-      if (theEthernaut && theEthernaut.style)
-        theEthernaut.style.filter = !this.state.dark ? svgFilter() : null;
-
-      // Change Arrow
-      let isArrowInPage = document.getElementById("arrow");
-      if (isArrowInPage && isArrowInPage.style)
-        isArrowInPage.style.filter = !this.state.dark ? svgFilter() : null;
-
-      // Change Mosaic and levels logo
-      let elements = document.getElementsByClassName("level-tile");
-      for (let i = 0; i < elements.length; i++) {
-        let element = elements[i];
-        if (element && element.style)
-          element.style.filter = !this.state.dark ? svgFilter() : null;
-      }
-
-      // Change all custom images
-      elements = document.getElementsByClassName("custom-img");
-      for (let i = 0; i < elements.length; i++) {
-        let element = elements[i];
-        if (element && element.style)
-          element.style.filter = !this.state.dark ? svgFilter() : null;
-      }
-
-      this.setState({
-        dark: !this.state.dark,
-      });
-    }
-  }
-
-  handleClickOutside = () => {
-    this.closeDropdown();
+  toggleTheme = () => {
+    const theme = this.state.dark ? "light" : "dark";
+    document.documentElement.dataset.theme = theme;
+    localStorage.setItem("theme", theme);
+    this.setState({ dark: theme === "dark" });
   };
 
   render() {
@@ -239,219 +149,167 @@ class Header extends React.Component {
       hu: strings.hungarian,
     };
 
-    const ddOpen = Boolean(this.state.multiDDOpen);
-    return (
-      <div className="header-container" onClick={() => this.closeDropdown()}>
-        {/* <div className="lines">
-          <center>
-            <hr className="top" />
-          </center>
-          <center>
-            <hr className="top" />
-          </center>
-        </div> */}
-        {/* <div className="top-banner">
-           <div className="top-banner-text">{parse(strings.ctfInfo)}</div>
-            <a
-              href="https://ctf.openzeppelin.com"
-            >
-              <button>{strings.ctfRegister}</button>
-            </a>
-        </div> */}
+    const { menuOpen, openSection } = this.state;
+    const readOnly = store.getState().gamedata.readOnly;
+    const isHome = window.location.pathname === constants.PATH_ROOT;
 
-        <center>
-          <header>
+    return (
+      <>
+        <header className="site-header">
+          <div className="site-header__inner">
+            <Link className="site-header__wordmark" to={constants.PATH_ROOT}>
+              The Ethernaut
+            </Link>
             <a
-              className="logo-container unofficial-fork"
+              className="site-header__notice"
               href="https://github.com/OpenZeppelin/ethernaut"
             >
               Unofficial fork, not affiliated with OpenZeppelin.
             </a>
-            {/* ---- Multi Dropdown Container */}
-            <div
-              onClick={(e) => e.stopPropagation()}
-              className="multi-dropdown"
-            >
-              {/* dropdown icon */}
-              <div
-                onClick={() => this.toggleDropdownState()}
-                className="multi-dropdown__icon"
+            <div ref={this.menuContainerRef}>
+              <button
+                ref={this.menuButtonRef}
+                type="button"
+                className="ui-button ui-button--secondary"
+                aria-expanded={menuOpen}
+                aria-controls="site-menu"
+                onClick={this.toggleMenu}
               >
-                <i className="fas fa-bars"></i>
-              </div>
-              {/* dropdown icon */}
-              {/* dropdown content */}
-              <ul
-                className={`multi-dropdown__dropdown ${
-                  ddOpen ? "--open" : "--closed"
-                }`}
+                {strings.Menu}
+              </button>
+              <nav
+                id="site-menu"
+                className="site-header__menu ui-menu"
+                aria-label={strings.Menu}
+                hidden={!menuOpen}
               >
-                <div className="dropdown-pill --left">
-                  <div>
-                    <div onClick={() => this.toggleDropdownState()}>
-                      <Link
-                        to={
-                          window.location.pathname !== constants.PATH_ROOT
-                            ? constants.PATH_ROOT
-                            : constants.PATH_HELP
-                        }
-                      >
-                        <div className="filled-icon">
-                          {window.location.pathname !== constants.PATH_ROOT ? (
-                            <>
-                              <i className="fas fa-home"></i>
-                            </>
-                          ) : (
-                            <>
-                              <i className="fas fa-question"></i>
-                            </>
-                          )}
-                        </div>
-                      </Link>
-                    </div>
-                    {window.location.pathname === constants.PATH_ROOT &&
-                      !!this.props.web3 &&
-                      !store.getState().gamedata.readOnly && (
-                        <Link
-                          onClick={() => this.toggleDropdownState()}
-                          to={constants.PATH_LEADERBOARD}
-                        >
-                          <div className="element-in-row filled-icon">
-                            <LeaderIcon />
-                          </div>
-                        </Link>
-                      )}
-                    <input
-                      onClick={() => {
-                        this.toggleDarkMode();
-                      }}
-                      className="element-in-row toggle --small"
-                      type="checkbox"
-                    />
-                    <div className="connect-button">
-                    {store.getState().gamedata.readOnly && (
-                      <button
-                        className="buttons"
-                        onClick={async () => {
-                          await window.ethereum.request({ method: "eth_requestAccounts" });
-                          window.location.reload();
-                         }}
-                      >
-                        {strings.connectAccount}
-                      </button>
-                    )}
-                    </div>
-                  </div>
-                </div>
-                {this.props.web3 && !store.getState().gamedata.readOnly && (
-                  <div className={`single-dropdown`}>
-                    <p onClick={() => this.setActiveTab(2)}>
-                      <i className="fas fa-network-wired"></i>
-                      <span>{strings.Networks}</span>
-                    </p>
-                    <div className={this.getDDClassName(2)}>
-                      {Object.values(constants.NETWORKS_INGAME).map(
-                        (network, index) => {
-                          if (network && network.name !== "local") {
-                            const isCurrent =
-                              Number(network.id) === this.state.chainId;
-                            return (
-                              <div
-                                key={index}
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  this.changeNetwork(network);
-                                }}
-                                className="dropdown-pill"
-                              >
-                                <a
-                                  id={network.name}
-                                  key={network.name}
-                                  href="/"
-                                  aria-current={isCurrent}
-                                >
-                                  {network.name}
-                                  {isCurrent && (
-                                    <i className="fas fa-check ms-2"></i>
-                                  )}
-                                </a>
-                              </div>
-                            );
-                          }
-                          return null;
-                        }
-                      )}
-                    </div>
-                  </div>
+                <Link
+                  className="ui-menu__item"
+                  to={isHome ? constants.PATH_HELP : constants.PATH_ROOT}
+                  onClick={this.closeMenu}
+                >
+                  {isHome ? strings.help : strings.home}
+                </Link>
+                {isHome && !!this.props.web3 && !readOnly && (
+                  <Link
+                    className="ui-menu__item"
+                    to={constants.PATH_LEADERBOARD}
+                    onClick={this.closeMenu}
+                  >
+                    {strings.leaderboard}
+                  </Link>
                 )}
-                <div className="single-dropdown">
-                  <p onClick={() => this.setActiveTab(1)}>
-                    <i className="fas fa-globe-americas"></i>
-                    <span>{strings.Languages}</span>
-                  </p>
-                  <div className={this.getDDClassName(1)}>
-                    {Object.keys(LANGUAGES_MAP).map((languageString, index) => (
-                      <div
-                        key={index}
-                        onClick={(e) => {
-                          this.changeLanguage(e, languageString);
-                        }}
-                        className="dropdown-pill"
-                      >
-                        <a href="/">{LANGUAGES_MAP[languageString]}</a>
-                      </div>
-                    ))}
-                    <div className="dropdown-pill">
-                      <a
-                        className="contr"
-                        href="https://github.com/openzeppelin/ethernaut#modify-or-add-new-languages"
-                      >
-                        {strings.contributeTranslation}
-                      </a>
+                <button
+                  type="button"
+                  className="ui-menu__item"
+                  role="switch"
+                  aria-checked={this.state.dark}
+                  onClick={this.toggleTheme}
+                >
+                  {strings.darkTheme}
+                </button>
+                {this.props.web3 && !readOnly && (
+                  <>
+                    <button
+                      type="button"
+                      className="ui-menu__item"
+                      aria-expanded={openSection === NETWORKS_SECTION}
+                      aria-controls="site-menu-networks"
+                      onClick={() => this.toggleSection(NETWORKS_SECTION)}
+                    >
+                      {strings.Networks}
+                    </button>
+                    <div
+                      id="site-menu-networks"
+                      className="ui-menu__group"
+                      hidden={openSection !== NETWORKS_SECTION}
+                    >
+                      {Object.values(constants.NETWORKS_INGAME)
+                        .filter((network) => network && network.name !== "local")
+                        .map((network) => (
+                          <button
+                            key={network.name}
+                            type="button"
+                            className="ui-menu__item"
+                            aria-current={
+                              Number(network.id) === this.state.chainId
+                            }
+                            onClick={() => this.changeNetwork(network)}
+                          >
+                            {network.name}
+                          </button>
+                        ))}
                     </div>
-                  </div>
+                  </>
+                )}
+                <button
+                  type="button"
+                  className="ui-menu__item"
+                  aria-expanded={openSection === LANGUAGES_SECTION}
+                  aria-controls="site-menu-languages"
+                  onClick={() => this.toggleSection(LANGUAGES_SECTION)}
+                >
+                  {strings.Languages}
+                </button>
+                <div
+                  id="site-menu-languages"
+                  className="ui-menu__group"
+                  hidden={openSection !== LANGUAGES_SECTION}
+                >
+                  {Object.keys(LANGUAGES_MAP).map((language) => (
+                    <button
+                      key={language}
+                      type="button"
+                      className="ui-menu__item"
+                      onClick={() => this.props.setLang(language)}
+                    >
+                      {LANGUAGES_MAP[language]}
+                    </button>
+                  ))}
+                  <a
+                    className="ui-menu__item"
+                    href="https://github.com/openzeppelin/ethernaut#modify-or-add-new-languages"
+                  >
+                    {strings.contributeTranslation}
+                  </a>
                 </div>
-              </ul>
-              {/* dropdown content */}
+                {readOnly && (
+                  <button
+                    type="button"
+                    className="ui-menu__item"
+                    onClick={async () => {
+                      await window.ethereum.request({
+                        method: "eth_requestAccounts",
+                      });
+                      window.location.reload();
+                    }}
+                  >
+                    {strings.connectAccount}
+                  </button>
+                )}
+              </nav>
             </div>
-          </header>
-          <ProgressBar
-            height="100"
-            width="100"
-            borderColor={
-              this.state.dark
-                ? getComputedStyle(document.documentElement).getPropertyValue(
-                    "--pink"
-                  )
-                : getComputedStyle(document.documentElement).getPropertyValue(
-                    "--black"
-                  )
-            }
-            barColor={
-              this.state.dark
-                ? getComputedStyle(document.documentElement).getPropertyValue(
-                    "--pink"
-                  )
-                : getComputedStyle(document.documentElement).getPropertyValue(
-                    "--black"
-                  )
-            }
-            ariaLabel="progress-bar-loading"
-            wrapperStyle={{}}
-            wrapperClass="progress-bar-wrapper"
-            visible={true}
-          />
-          {!this.props.web3 && !store.getState().gamedata.readOnly && (
-            <div
-              style={{ backgroundColor: "#eddfd6", border: "none" }}
-              className="alert alert-warning"
-            >
+          </div>
+        </header>
+        <ProgressBar
+          height="100"
+          width="100"
+          borderColor="currentColor"
+          barColor="currentColor"
+          ariaLabel="progress-bar-loading"
+          wrapperStyle={{}}
+          wrapperClass="progress-bar-wrapper"
+          visible={true}
+        />
+        {!this.props.web3 && !readOnly && (
+          <div className="site-alert">
+            <div className="ui-alert ui-alert--warning">
               <strong>{strings.warning}! </strong>
               <span>{strings.warningMessage}</span>
             </div>
-          )}
-        </center>
-      </div>
+          </div>
+        )}
+      </>
     );
   }
 }
@@ -473,5 +331,5 @@ function mapDispatchToProps(dispatch) {
 }
 
 export default withRouter(
-  connect(mapStateToProps, mapDispatchToProps)(onClickOutside(Header))
+  connect(mapStateToProps, mapDispatchToProps)(Header)
 );
