@@ -4,6 +4,7 @@ import * as constants from '../constants';
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import getlevelsdata from '../utils/getlevelsdata';
+import { loadTranslations } from '../utils/translations';
 //import moment from 'moment'
 
 class Mosaic extends React.Component {
@@ -20,29 +21,37 @@ class Mosaic extends React.Component {
     // Array for tiles in the Mosaic
     var [levelData,] = getlevelsdata(this.props, 'mosaic');
 
+    const strings = loadTranslations(this.state.lang);
+
     return (
-      <section className="game">
-        {levelData.map((level) => {
-          return (
-            <Link
-              key={level.name}
-              to={
-                this.props.web3 && level.deployedAddress //on read only mode in custom network this field 'deployedAddress' isnt present
-                  ? `${constants.PATH_LEVEL_ROOT}${level.deployedAddress}`
-                  : `${constants.PATH_LEVEL_ROOT}${level.id}`
-              }
-            >
-              <div className="content_img">
-                <img className='level-tile' alt={`${level.name} level  icon`} src={level.src} />
-                <div>
-                  {`${level.completed ? ' ✔' : ''}`}{' '}
-                  {level.name}
-                  <br /> {level.difficulty}
-                </div>
-              </div>
-            </Link>
-          )
-        })}
+      <section className="levels">
+        <h2>{strings.uLevels}</h2>
+        <ul className="level-grid">
+          {levelData.map((level) => {
+            return (
+              <li key={level.name}>
+                <Link
+                  className="ui-card level-card"
+                  to={
+                    this.props.web3 && level.deployedAddress //on read only mode in custom network this field 'deployedAddress' isnt present
+                      ? `${constants.PATH_LEVEL_ROOT}${level.deployedAddress}`
+                      : `${constants.PATH_LEVEL_ROOT}${level.id}`
+                  }
+                >
+                  <img className="level-tile level-card__art" alt="" src={level.src} />
+                  <h3 className="level-card__name">{level.name}</h3>
+                  <span className="level-card__difficulty">
+                    <span className="visually-hidden">{strings.difficulty} </span>
+                    {level.difficulty}
+                  </span>
+                  {level.completed && (
+                    <span className="ui-badge ui-badge--success">✔ {strings.uCompleted}</span>
+                  )}
+                </Link>
+              </li>
+            )
+          })}
+        </ul>
       </section>
     );
   }

@@ -10,30 +10,32 @@ class Help extends React.Component {
     let strings = loadTranslations(language);
 
     return (
-      <div className="main-wrapper">
-        <main className="boxes">
-          <h3>Setup Metamask</h3>
+      <div>
+        <main className="help-page">
+          <h1>{strings.help}</h1>
+
           <section>
+            <h2>Setup Metamask</h2>
             <MarkdownComponent target={strings.setupMetamask} />
           </section>
 
-          <h3>Game Mechanics</h3>
           <section>
+            <h2>Game Mechanics</h2>
             <MarkdownComponent target={strings.gameMechanics} />
           </section>
 
-          <h3>Using the console</h3>
           <section>
+            <h2>Using the console</h2>
             <MarkdownComponent target={strings.usingConsole} />
           </section>
 
-          <h3>Beyond the console</h3>
           <section>
+            <h2>Beyond the console</h2>
             <MarkdownComponent target={strings.beyondConsole} />
           </section>
 
-          <h3>Troubleshooting</h3>
           <section>
+            <h2>Troubleshooting</h2>
             <MarkdownComponent target={strings.troubleshooting} linkTarget="_blank" />
           </section>
         </main>

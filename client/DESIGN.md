@@ -16,7 +16,7 @@ All files are in `src/styles/`.
 | `base.css` | Element defaults, focus, reduced motion |
 | `components.css` | Components (`ui-*` classes) |
 | `shell.css` | Header, footer, page shell, loading indicator |
-| `app.css` | Imports, rules shared by pages, and the 404 page |
+| `app.css` | Imports, rules shared by pages, and the help and 404 pages |
 | `home.css`, `level.css`, `stats.css`, `leaderboard.css` | Page styles |
 
 ## Theme
@@ -82,6 +82,21 @@ with a 2px offset on `:focus-visible`; on menu items the offset is -2px because 
 
 A modifier class is used together with its base class. `ui-menu__item` shows its state from
 `aria-expanded` (+ or −), and from `aria-checked` or `aria-current` (a check mark).
+
+## Pages
+
+The home, help, and not-found pages each have one `h1`.
+
+| Page | Layout |
+| --- | --- |
+| Home | Title and play button (`home-intro`), level cards (`level-grid`), description (`ui-prose`). The play button is the only primary button in the page content, and is full width below 640px. |
+| Help | `help-page`: a column of `--width-reading`. Each `section` has one `h2`, a rule above it, and prose. |
+| Not found | `page-not-found-container`: centered text and a link to the home page. |
+
+A level card is a link with `ui-card level-card`. It always shows the art (`level-card__art`,
+on the art plate), the name (`level-card__name`), the difficulty (`level-card__difficulty`),
+and, when the level is completed, a success badge. `level-grid` has 2 columns, 3 from 640px,
+and 5 from 1024px.
 
 ## Shell
 

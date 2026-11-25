@@ -1,20 +1,10 @@
-.titles {
-  text-align: center;
+.home-intro {
+  overflow-wrap: anywhere;
 }
 
-.the-ethernaut {
-  display: block;
+.home-intro__play {
   width: 100%;
-  max-width: 480px;
-  margin: var(--space-5) auto;
-  padding: var(--space-4);
-  border-radius: var(--radius-card);
-  background-color: var(--color-art);
-}
-
-.arrow {
-  display: block;
-  margin: 0 auto var(--space-5);
+  margin-block-start: var(--space-3);
 }
 
 .account-connection-window-bg,
@@ -22,58 +12,70 @@
   display: none;
 }
 
-.game {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: var(--space-1);
-  margin-block-start: var(--space-5);
+.levels {
+  margin-block: var(--space-6);
 }
 
-.content_img {
-  position: relative;
-  width: 80px;
-  height: 80px;
-  overflow: hidden;
-  border-radius: var(--radius-control);
+.level-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+  margin: var(--space-4) 0 0;
+  padding: 0;
+  list-style: none;
 }
 
-.content_img img {
-  width: 80px;
-  height: 80px;
+.level-card,
+.level-card:hover {
+  color: var(--color-text);
 }
 
-.content_img div {
-  position: absolute;
-  inset: 0;
+.level-card {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background-color: var(--color-surface);
-  color: var(--color-text);
-  font-size: var(--text-xs);
-  font-weight: 600;
-  line-height: 1.25;
-  text-align: center;
-  word-break: break-all;
-  opacity: 0;
-  transition: opacity var(--duration);
+  align-items: flex-start;
+  gap: var(--space-2);
+  height: 100%;
+  padding: var(--space-3);
+  overflow-wrap: anywhere;
+  text-decoration: none;
+  transition: border-color var(--duration);
 }
 
-.content_img:hover div,
-a:focus-visible .content_img div {
-  opacity: 1;
+.level-card:hover {
+  border-color: var(--color-accent);
 }
 
-.Description {
-  max-width: var(--width-reading);
-  margin-inline: auto;
-  padding-block: var(--space-4);
+.level-card__art {
+  width: 100%;
+  aspect-ratio: 1;
 }
 
-.Description h2 {
+.level-card__name {
+  margin: 0;
   font-size: var(--text-md);
-  line-height: var(--line-height);
-  text-align: center;
+  font-weight: 600;
+}
+
+.level-card__difficulty {
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+}
+
+@media (min-width: 640px) {
+  .home-intro__play {
+    width: auto;
+  }
+
+  .level-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-4);
+  }
+}
+
+@media (min-width: 1024px) {
+  .level-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
 }

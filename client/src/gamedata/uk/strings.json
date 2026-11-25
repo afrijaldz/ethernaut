@@ -1,7 +1,7 @@
 {
   "ethernaut": "Ethernaut",
   "title": "Ethernaut",
-  "info": "<h2>Ethernaut це Web3/Solidity варгейм на базі Ethereum Virtual Machine, натхненний <a href='https://overthewire.org' target='_blank' rel='noopener noreferrer'>overthewire.org</a>. Кожен рівень є смарт-контрактом, який потрібно 'зламати'. Вихідний код гри повністю відкритий, а всі рівні створені іншими гравцями. У тебе є цікава ідея для нового рівня? <a class='ui-button' href='https://github.com/OpenZeppelin/ethernaut'>Ласкаво просимо</a></h2>",
+  "info": "<p>Ethernaut це Web3/Solidity варгейм на базі Ethereum Virtual Machine, натхненний <a href='https://overthewire.org' target='_blank' rel='noopener noreferrer'>overthewire.org</a>. Кожен рівень є смарт-контрактом, який потрібно 'зламати'. Вихідний код гри повністю відкритий, а всі рівні створені іншими гравцями. У тебе є цікава ідея для нового рівня? <a class='ui-button ui-button--secondary' href='https://github.com/OpenZeppelin/ethernaut'>Ласкаво просимо</a></p>",
   "home": "Назад",
   "help": "Допомога",
   "stats": "Статистика",
