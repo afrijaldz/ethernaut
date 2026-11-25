@@ -1,7 +1,7 @@
 {
   "ethernaut": "Ethernaut",
   "title": "Ethernaut",
-  "info": "<p>Ethernaut це Web3/Solidity варгейм на базі Ethereum Virtual Machine, натхненний <a href='https://overthewire.org' target='_blank' rel='noopener noreferrer'>overthewire.org</a>. Кожен рівень є смарт-контрактом, який потрібно 'зламати'. Вихідний код гри повністю відкритий, а всі рівні створені іншими гравцями. У тебе є цікава ідея для нового рівня? <a class='ui-button ui-button--secondary' href='https://github.com/OpenZeppelin/ethernaut'>Ласкаво просимо</a></p>",
+  "info": "<p>Ethernaut це Web3/Solidity варгейм на базі Ethereum Virtual Machine, натхненний <a href='https://overthewire.org' target='_blank' rel='noopener noreferrer'>overthewire.org</a>. Кожен рівень є смарт-контрактом, який потрібно 'зламати'. Вихідний код гри повністю відкритий, а всі рівні створені іншими гравцями. У тебе є цікава ідея для нового рівня? <a class='ui-button ui-button--secondary' href='https://github.com/afrijaldz/ethernaut'>Ласкаво просимо</a></p>",
   "home": "Назад",
   "help": "Допомога",
   "stats": "Статистика",
@@ -36,7 +36,7 @@
   "deployLevel": "Рівень розгортання",
   "helperDeployAllContracts": "Розгорніть всі залишені контракти в поточній мережі.",
   "confirmMainnetDeploy": "Ви перебуваєте в основній мережі, гра не має грошової вартості, вам не слід розгортати її в цій мережі.",
-  "submitLevelFooter": "Розгорніть всі рівні (deployAllContracts() в консолі), щоб додати поточну мережу в наш <a href='https://github.com/OpenZeppelin/ethernaut'>репозиторій Github</a> як нову підтримувану мережу.",
+  "submitLevelFooter": "Розгорніть всі рівні (deployAllContracts() в консолі), щоб додати поточну мережу в наш <a href='https://github.com/afrijaldz/ethernaut'>репозиторій Github</a> як нову підтримувану мережу.",
   "submitGameFooter": "Чудово! Вся гра розгорнута в цій мережі. Натисніть тут, щоб висунути питання на GitHub і відправити його нам :)",
   "nextLevel": "Наступний рівень",
   "uLevels": "Рівні",

@@ -149,7 +149,7 @@ class Level extends React.Component {
               {strings.levelNotTranslated}{" "}
               <a
                 className="level-page__touch-link"
-                href="https://github.com/openzeppelin/ethernaut#adding-new-languages"
+                href="https://github.com/afrijaldz/ethernaut/blob/master/CONTRIBUTING.md#translations-and-additional-languages"
               >
                 {strings.contributeTranslation}
               </a>

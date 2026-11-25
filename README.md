@@ -28,7 +28,7 @@ In order to install, build, and run Ethernaut locally, follow these instructions
 1. Clone the repo and install dependencies:
 
     ```bash
-    git clone git@github.com:OpenZeppelin/ethernaut.git
+    git clone git@github.com:afrijaldz/ethernaut.git
     cd ethernaut
     pnpm install
     ```
