@@ -1,45 +1,58 @@
-import { useToast } from "../utils/Toast";
 import Tooltip from "../utils/Tooltip";
 
-function LeaderTile(props) { 
-    const { rank, leader, onAliasEdit, currentUser } = props;
-    const { toast, Toast } = useToast()
+function LeaderTile(props) {
+  const { rank, leader, onAliasEdit, currentUser, toast } = props;
+  const { player, score, totalNumberOfLevelsCompleted, alias } = leader;
 
-    let { player, score, totalNumberOfLevelsCompleted, alias } = leader;
+  const handleClick = () => {
+    navigator.clipboard.writeText(player);
+    toast("Address copied");
+  };
 
-
-    const handleClick = () => { 
-        navigator.clipboard.writeText(player);
-        toast("Address copied")
-    }    
-
-    return (
-        <>
-            {Toast}
-            <div className='leaderboard-tile'>
-                <div className="leaderboard-rank">{rank}</div>
-                <div className="leaderboard-player">
-                    {
-                        alias ?
-                            <div>{alias}</div> :
-                            <Tooltip content={player}>
-                                <div onClick={handleClick}>{player.split("").slice(0, 18).join("")}...</div>
-                            </Tooltip>
-                    }
-                </div>
-                <div className="leaderboard-levels-solved">
-                    {totalNumberOfLevelsCompleted}
-                </div>
-                <div className="leaderboard-score">{score.toFixed(2)}</div>
-                <div onClick={onAliasEdit} className='leaderboard-alias-edit'>
-                    {
-                        currentUser.toLowerCase() === player.toLowerCase() && <i className="leaderboard-edit-icon fa-solid fa-pen-to-square"></i>
-                    }
-                </div>
-            </div>
-             
-        </>
-    )
+  return (
+    <tr className="leaderboard-player" role="row">
+      <td role="cell">
+        <span className="leaderboard-player__label">Rank</span>
+        {rank}
+      </td>
+      <td role="cell">
+        <span className="leaderboard-player__label">Player</span>
+        <div className="leaderboard-player__identity">
+          {alias ? (
+            <span>{alias}</span>
+          ) : (
+            <Tooltip content={player}>
+              <button
+                type="button"
+                className="leaderboard-address"
+                onClick={handleClick}
+              >
+                <span className="leaderboard-address__text">{player}</span>
+              </button>
+            </Tooltip>
+          )}
+          {currentUser?.toLowerCase() === player.toLowerCase() && (
+            <button
+              type="button"
+              className="ui-button ui-button--secondary"
+              aria-label="Edit alias"
+              onClick={onAliasEdit}
+            >
+              <i className="fa-solid fa-pen-to-square" aria-hidden="true"></i>
+            </button>
+          )}
+        </div>
+      </td>
+      <td role="cell">
+        <span className="leaderboard-player__label">Levels solved</span>
+        {totalNumberOfLevelsCompleted}
+      </td>
+      <td role="cell">
+        <span className="leaderboard-player__label">Score</span>
+        {score.toFixed(2)}
+      </td>
+    </tr>
+  );
 }
 
 export default LeaderTile;

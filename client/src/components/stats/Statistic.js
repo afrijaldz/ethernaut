@@ -5,11 +5,11 @@ export default function Statistic({
     heading,
     value = 0
 }) {
-  return <section className="statisticscomponent">
-    <h5 className="statisticscomponent__header">
+  return <section className="ui-card">
+    <h2 className="stats-statistic__title">
         {heading}
-    </h5>
-    <p className="statisticscomponent__content">
+    </h2>
+    <p className="stats-statistic__value">
         {formatNumberWithComma(value)}
     </p>
   </section>;

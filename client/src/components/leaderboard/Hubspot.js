@@ -27,14 +27,12 @@ class HubspotForm extends React.Component{
 
   onFormReady = (form) => { 
     const spans = form.querySelectorAll("span");
-    const legends = form.querySelectorAll(".hs-field-desc");
     const buttons = form.querySelectorAll(".leaderboard-alias-submit-button");
     const inputs = form.querySelectorAll("input");
 
 
     const emailElement = spans[0]
     const usernameElement = spans[2]
-    const label = legends[1]
     const addressInput = inputs[2]
     const ethernautAddressLabel = spans[4]
     const checkboxLabel = spans[5]
@@ -44,22 +42,25 @@ class HubspotForm extends React.Component{
 
     const textColor = styles.getPropertyValue('--color-text');
     const accentColor = styles.getPropertyValue('--color-accent');
+    const touchTarget = styles.getPropertyValue('--touch-target');
     const onAccentColor = styles.getPropertyValue('--color-on-accent');
 
     emailElement.style.color = textColor;
     usernameElement.style.color = textColor;
     ethernautAddressLabel.style.color = textColor;
     checkboxLabel.style.color = textColor;
-    
-    label.style.color = textColor;
-    label.style.opacity = 0.7;
 
     buttons[0].style.backgroundColor = accentColor;
     buttons[0].style.border = "none";
     buttons[0].style.color = onAccentColor;
-    buttons[0].style.padding = '8px';
-    buttons[0].style.borderRadius = '5px';
+    buttons[0].style.minHeight = touchTarget;
+    buttons[0].style.padding = '8px 16px';
+    buttons[0].style.borderRadius = styles.getPropertyValue('--radius-control');
     buttons[0].style.cursor = 'pointer';
+
+    for (const input of [inputs[0], inputs[1], addressInput]) {
+      input.style.minHeight = touchTarget;
+    }
 
     addressInput.style.pointerEvents = 'none';
     setNativeValue(addressInput, this.props.currentUser);
@@ -94,13 +95,7 @@ class HubspotForm extends React.Component{
     const outerElement = document.querySelector('#hubspotForm')
     const element = document.createElement('div')
     element.innerHTML = "Thanks for submitting the form."
-    element.style.position = 'relative'
-    element.style.fontSize = '17px'
     outerElement.insertAdjacentElement('afterbegin', element)
-
-    // change the height of modal
-    const modal = document.querySelector('.leaderboard-modal-body')
-    modal.style.height = '150px'
   }
 
   render() {

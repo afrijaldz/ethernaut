@@ -1,11 +1,10 @@
-import "../styles/leaderboard.css";
 import LeaderList from "../components/leaderboard/LeaderList";
-import Headers from "../components/leaderboard/Headers";
 import { useEffect, useState, useCallback } from "react";
 import ReactPaginate from "react-paginate";
 import Search from "../components/leaderboard/Search";
 import { getNetworkNamefromId } from "../utils/ethutil";
 import { NETWORKS } from "client/src/constants";
+import { loadTranslations } from "../utils/translations";
 import axios from "axios";
 import { ALIAS_PATH, getLeaderboardPath } from "client/src/constants";
 
@@ -27,10 +26,19 @@ fetchAliases();
 function Leaderboard() {
   const [offset, setOffset] = useState(0);
   const [playersWithRank, setPlayersWithRank] = useState([]);
-  const [searchResult, setSearchResult] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState("");
   const [currentNetworkName, setCurrentNetworkName] = useState("");
 
+  const isKeywordMatching = (player) => {
+    const keyword = searchKeyword.toLowerCase();
+    return (
+      player.player.toLowerCase().includes(keyword) ||
+      (player.alias && player.alias.toLowerCase().includes(keyword))
+    );
+  };
+
+  const strings = loadTranslations(localStorage.getItem("lang"));
+  const searchResult = playersWithRank.filter(isKeywordMatching);
   const pageCount = Math.ceil(searchResult.length / playersPerPage);
   const endOffset = offset + playersPerPage;
   const currentItems = searchResult.slice(offset, endOffset);
@@ -50,10 +58,12 @@ function Leaderboard() {
 
   // During the initial render
   useEffect(() => {
+    if (!window.ethereum) return;
     initateCurrentlySelectedChain();
   }, [initateCurrentlySelectedChain]);
 
   useEffect(() => {
+    if (!window.ethereum) return;
     window.ethereum.on("networkChanged", handleNetworkChange);
     return () => {
       window.ethereum.removeListener("networkChanged", handleNetworkChange);
@@ -61,6 +71,8 @@ function Leaderboard() {
   }, [handleNetworkChange]);
 
   const fetchAndUpdate = useCallback(async () => {
+    setPlayersWithRank([]);
+    setOffset(0);
     try {
       if (!currentNetworkName) {
         return;
@@ -76,7 +88,6 @@ function Leaderboard() {
         .filter(isScoreNonZero)
         .map(assignAlias);
       setPlayersWithRank(playersWithRank);
-      setSearchResult(playersWithRank);
     } catch (err) {
       console.log("Failed to fetch leaderboard");
     }
@@ -101,47 +112,25 @@ function Leaderboard() {
     setOffset(newOffset);
   };
 
-  const isKeywordMatching = (keyword) => (player) => {
-    keyword = keyword.toLowerCase();
-    return (
-      player.player.toLowerCase().includes(keyword) ||
-      player.alias.toLowerCase().includes(keyword)
-    );
-  };
-
-  const updateSearchResult = (keyword) => {
-    if (keyword === "") {
-      setSearchResult(playersWithRank);
-      return;
-    }
+  const handleKeywordChange = (keyword) => {
     setSearchKeyword(keyword);
-    const result = playersWithRank.filter(isKeywordMatching(keyword));
-    setSearchResult(result);
     setOffset(0);
   };
 
   return (
-    <main className="main-wrapper">
-      <div className="boxes leaderboard-body">
-        <div className="leaderboard-heading">
-          <div className="leaderboard-title">Leaderboard</div>
-          <Search
-            searchKeyword={searchKeyword}
-            onKeywordChange={updateSearchResult}
-          />
-        </div>
-        <Headers />
-        <div className="leaderboard-list-container">
-          <LeaderList players={currentItems} />
-        </div>
-        <div className="leaderboard-outer-container">
-          <ReactPaginate
-            onPageChange={handlePageClick}
-            pageCount={pageCount}
-            {...reactPaginateProps}
-          />
-        </div>
-      </div>
+    <main className="leaderboard-page">
+      <h1>{strings.leaderboard}</h1>
+      <Search
+        searchKeyword={searchKeyword}
+        onKeywordChange={handleKeywordChange}
+      />
+      <LeaderList players={currentItems} />
+      <ReactPaginate
+        onPageChange={handlePageClick}
+        pageCount={pageCount}
+        forcePage={offset / playersPerPage}
+        {...reactPaginateProps}
+      />
     </main>
   );
 }
@@ -150,13 +139,15 @@ const reactPaginateProps = {
   pageRangeDisplayed: 5,
   renderOnZeroPageCount: null,
   breakLabel: "...",
-  nextLabel: <i className="fa-sharp fa-solid fa-arrow-right"></i>,
-  previousLabel: <i className="fa-sharp fa-solid fa-arrow-left"></i>,
-  containerClassName: "leaderboard-pagination-container",
-  pageLinkClassName: "leaderboard-pagination-page-item",
-  activeLinkClassName: "leaderboard-pagination-selected-page-item",
-  nextLinkClassName: "leaderboard-button-link",
-  previousLinkClassName: "leaderboard-button-link",
+  nextLabel: "→",
+  previousLabel: "←",
+  containerClassName: "leaderboard-pagination",
+  pageLinkClassName: "ui-button ui-button--secondary",
+  activeLinkClassName: "leaderboard-pagination__link--active",
+  nextLinkClassName: "ui-button ui-button--secondary",
+  previousLinkClassName: "ui-button ui-button--secondary",
+  breakLinkClassName: "ui-button ui-button--secondary",
+  disabledLinkClassName: "leaderboard-pagination__link--disabled",
 };
 
 const assignRank = (item, index) => {

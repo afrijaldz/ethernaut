@@ -3,6 +3,7 @@ import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 import * as actions from '../actions';
 import { getLevelsSolvedByPlayer, checkIfPlayerExist, getTotalCompleted, getTotalFailures, getTotalCreated, getTotalPlayers } from '../utils/statsContract'
+import { loadTranslations } from '../utils/translations'
 import { validateAddress } from '../utils/ethutil'
 import Statistic from '../components/stats/Statistic';
 import StatisticPanel from '../components/stats/Panel';
@@ -100,52 +101,50 @@ class Stats extends React.Component {
   }
 
   render() {
-      return <div className="stats-page main-wrapper">
-      <div className='stats-header'>
-        <Statistic heading="Total number of players" value={this.state.totalPlayers} />
-        <Statistic heading="Total number of instances created" value={this.state.totalCreated} />
-        <Statistic heading="Total number of instances solved" value={this.state.totalCompleted} />
-        <Statistic heading="Total number of instances failed" value={this.state.totalFailures} />
-      </div>
-       <div>
-        <form>
-           <div>
-             <input
-               type="text"
-               className="ui-input"
-               aria-label="Player address"
-               placeholder="Player address"
-               onChange={async(evt) => {
-                 evt.preventDefault();
-                 await this.updatePlayerStats(evt.target.value);
-               }}
-               onKeyDown={async(evt) => {
-                if(evt.key === "Enter") evt.preventDefault();
-               }}
-             />
-           </div>
-        </form>
+    const strings = loadTranslations(this.state.lang);
 
-        <div className="stats-content">
-          <StatisticPanel show={this.state.solvedLevels.length} title="Levels Completed">
-            <div className="player-stats-results">
-                {
-                  this.state.solvedLevels.map(
-                    (level) => (
-                      <div key={level.name}>
-                        <span>{level.name}</span>
-                        <span>{level.difficultyCircles}</span>
-                      </div>
-                    )
-                  )
-                }
-            </div>
-          </StatisticPanel>
+    return (
+      <main className="stats-page">
+        <h1>{strings.stats}</h1>
+        <div className="stats-grid">
+          <Statistic heading="Total number of players" value={this.state.totalPlayers} />
+          <Statistic heading="Total number of instances created" value={this.state.totalCreated} />
+          <Statistic heading="Total number of instances solved" value={this.state.totalCompleted} />
+          <Statistic heading="Total number of instances failed" value={this.state.totalFailures} />
         </div>
-       </div>
-     </div> 
-
-}}
+        <form className="stats-search">
+          <label htmlFor="stats-player-address">Player address</label>
+          <input
+            id="stats-player-address"
+            type="text"
+            className="ui-input"
+            onChange={async(evt) => {
+              evt.preventDefault();
+              await this.updatePlayerStats(evt.target.value);
+            }}
+            onKeyDown={async(evt) => {
+              if(evt.key === "Enter") evt.preventDefault();
+            }}
+          />
+        </form>
+        <StatisticPanel show={this.state.solvedLevels.length} title="Levels Completed">
+          <ul className="stats-levels">
+            {
+              this.state.solvedLevels.map(
+                (level) => (
+                  <li key={level.name} className="stats-levels__row">
+                    <span>{level.name}</span>
+                    <span className="stats-levels__difficulty">{level.difficultyCircles}</span>
+                  </li>
+                )
+              )
+            }
+          </ul>
+        </StatisticPanel>
+      </main>
+    );
+  }
+}
 
 function mapStateToProps(state) {
   return {
