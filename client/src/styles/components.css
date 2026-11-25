@@ -329,3 +329,48 @@
   padding: var(--space-4);
   overflow-x: auto;
 }
+
+/* Toast */
+
+.ui-toast {
+  position: fixed;
+  inset-block-start: var(--space-4);
+  inset-inline: var(--space-4);
+  z-index: 40;
+  width: fit-content;
+  max-width: 560px;
+  margin-inline: auto;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-control);
+  background-color: var(--color-text);
+  color: var(--color-bg);
+  font-size: var(--text-sm);
+  overflow-wrap: anywhere;
+  opacity: 0;
+  transition: opacity var(--duration);
+  pointer-events: none;
+}
+
+.ui-toast--visible {
+  opacity: 1;
+}
+
+/* Tooltip */
+
+.ui-tooltip-container {
+  min-width: 0;
+}
+
+.ui-tooltip {
+  position: fixed;
+  z-index: 20;
+  width: max-content;
+  max-width: 288px;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-control);
+  background-color: var(--color-text);
+  color: var(--color-bg);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  overflow-wrap: anywhere;
+}

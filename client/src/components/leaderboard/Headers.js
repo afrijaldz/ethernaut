@@ -1,13 +1,15 @@
-function Headers() { 
-    return (
-        <div className='leaderboard-tile'>
-            <div className="leaderboard-rank leaderboard-header">Rank</div>
-            <div className="leaderboard-player leaderboard-header">Player</div>
-            <div  className="leaderboard-levels-solved leaderboard-header">Levels solved</div>
-            <div className="leaderboard-score leaderboard-header">Score</div>
-            <div className='leaderboard-alias-edit'></div>
-        </div>
-    )
+// The roles keep the table semantics when the CSS shows the rows as cards.
+function Headers() {
+  return (
+    <thead>
+      <tr role="row">
+        <th role="columnheader" scope="col">Rank</th>
+        <th role="columnheader" scope="col">Player</th>
+        <th role="columnheader" scope="col">Levels solved</th>
+        <th role="columnheader" scope="col">Score</th>
+      </tr>
+    </thead>
+  );
 }
 
 export default Headers;

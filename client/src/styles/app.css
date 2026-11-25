@@ -5,36 +5,13 @@
 @import "./home.css";
 @import "./level.css";
 @import "./stats.css";
+@import "./leaderboard.css";
 
 /* Shared by the pages */
-
-.main-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-}
-
-.boxes {
-  width: 100%;
-  max-width: var(--width-reading);
-  margin-block-end: var(--space-6);
-  padding: var(--space-4);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-card);
-  background-color: var(--color-surface);
-}
 
 .level-tile {
   border-radius: var(--radius-control);
   background-color: var(--color-art);
-}
-
-.tooltip-container {
-  padding: var(--space-1) var(--space-3);
-  border-radius: var(--radius-control);
-  background-color: var(--color-text);
-  color: var(--color-bg);
 }
 
 /* Help */

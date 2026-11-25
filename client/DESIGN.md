@@ -77,6 +77,8 @@ with a 2px offset on `:focus-visible`; on menu items the offset is -2px because 
 | Dialog | `ui-dialog-backdrop`, `ui-dialog`, `ui-dialog__icon`, `ui-dialog__title`, `ui-dialog__close`, `ui-dialog__actions` |
 | Alert | `ui-alert`, `ui-alert--success`, `ui-alert--warning`, `ui-alert--danger` |
 | Table | `ui-table-wrapper` (horizontal scroll), `ui-table` |
+| Toast | `ui-toast`, `ui-toast--visible` (`useToast`) |
+| Tooltip | `ui-tooltip-container`, `ui-tooltip` (`Tooltip`) |
 | Prose | `ui-prose` |
 | Code block | `ui-code` on `<pre>`; the syntax theme is dark in both themes |
 
@@ -84,14 +86,21 @@ A modifier class is used together with its base class. `ui-menu__item` shows its
 `aria-expanded` (+ or −), from `aria-checked` or `aria-current="true"` (a check mark), and from
 `aria-current="page"` (an accent bar and bold text, for the page that is open).
 
+A toast is at the top of the viewport, above dialogs, with a `--space-4` margin at both sides.
+A tooltip shows on hover and focus, and closes with Escape. Its position is fixed, so no parent
+clips it. `Tooltip` sets the position: it is at most 288px wide, stays 16px from the sides, and
+opens below its trigger in the top half of the viewport and above it in the bottom half.
+
 ## Pages
 
-The home, level, help, and not-found pages each have one `main` and one `h1`.
+Each page has one `main` and one `h1`.
 
 | Page | Layout |
 | --- | --- |
 | Home | Title and play button (`home-intro`), level cards (`level-grid`), description (`ui-prose`). The play button is the only primary button in the page content, and is full width below 640px. |
 | Level | `level-page`: a column of `--width-reading`. Level selector (`level-selector`), art on the plate, description card, source code, actions (`level-actions`), author card (`level-author`). |
+| Leaderboard | `leaderboard-page`: search, `leaderboard-table`, `leaderboard-pagination`. |
+| Stats | `stats-page`: totals (`stats-grid`, 1 column and 2 from 640px), address search, completed levels (`stats-levels`). |
 | Help | `help-page`: a column of `--width-reading`. Each `section` has one `h2`, a rule above it, and prose. |
 | Not found | `page-not-found-container`: centered text and a link to the home page. |
 
@@ -106,6 +115,12 @@ and the difficulty does not. A completed level has a success badge.
 
 `level-actions` has one primary button: next or submit when it is shown, otherwise the instance
 button. The buttons are stacked and full width below 640px, and in a row from 640px.
+
+Each player of the leaderboard is one table row. Below 640px the row is a card and each value has a
+visible label (`leaderboard-player__label`). From 640px the table header replaces the labels. The
+roles in the markup keep the table semantics in both layouts. An address (`leaderboard-address`)
+is mono, is cut to 20 characters by CSS, has the full address in a tooltip, and is copied on
+click. Without players the page shows `leaderboard-empty`.
 
 ## Shell
 
