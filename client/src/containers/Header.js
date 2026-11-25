@@ -268,7 +268,7 @@ class Header extends React.Component {
                   ))}
                   <a
                     className="ui-menu__item"
-                    href="https://github.com/openzeppelin/ethernaut#modify-or-add-new-languages"
+                    href="https://github.com/afrijaldz/ethernaut/blob/master/CONTRIBUTING.md#translations-and-additional-languages"
                   >
                     {strings.contributeTranslation}
                   </a>
