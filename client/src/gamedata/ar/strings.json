@@ -126,6 +126,12 @@
   "PageNotFoundTitle": "خطأ 404 - الصفحة غير موجودة",
   "PageNotFoundText": "عفوًا! لا يمكن العثور على الصفحة التي تبحث عنها.",
   "leaderboard": "لوحة المتصدرين",
+  "leaderboardSearch": "ابحث عن عنوان اللاعب",
+  "leaderboardLoading": "جارٍ تحميل لوحة المتصدرين...",
+  "leaderboardError": "تعذّرت قراءة لوحة المتصدرين من Base Sepolia.",
+  "leaderboardEmpty": "لا يوجد لاعبون لعرضهم.",
+  "retry": "إعادة المحاولة",
+  "you": "أنت",
   "darkTheme": "المظهر الداكن",
   "close": "إغلاق"
 }

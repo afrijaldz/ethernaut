@@ -126,6 +126,12 @@
   "PageNotFoundTitle": "404 Error - Page Not Found",
   "PageNotFoundText": "Oops! The page you are looking for could not be found.",
   "leaderboard": "Leaderboard",
+  "leaderboardSearch": "Search player address",
+  "leaderboardLoading": "Loading the leaderboard...",
+  "leaderboardError": "The leaderboard could not be read from Base Sepolia.",
+  "leaderboardEmpty": "There are no players to show.",
+  "retry": "Retry",
+  "you": "You",
   "darkTheme": "Dark theme",
   "close": "Close"
 }

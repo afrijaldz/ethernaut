@@ -126,6 +126,12 @@
   "PageNotFoundTitle": "Ошибка 404 - Страница не найдена",
   "PageNotFoundText": "Ой! Страница, которую вы ищете, не может быть найдена.",
   "leaderboard": "Таблица лидеров",
+  "leaderboardSearch": "Поиск по адресу игрока",
+  "leaderboardLoading": "Загрузка таблицы лидеров...",
+  "leaderboardError": "Не удалось прочитать таблицу лидеров из Base Sepolia.",
+  "leaderboardEmpty": "Нет игроков для отображения.",
+  "retry": "Повторить",
+  "you": "Вы",
   "darkTheme": "Тёмная тема",
   "close": "Закрыть"
 }

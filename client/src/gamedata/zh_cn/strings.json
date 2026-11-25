@@ -126,6 +126,12 @@
   "PageNotFoundTitle": "404错误 - 页面未找到",
   "PageNotFoundText": "哎呀！您要访问的页面未找到。",
   "leaderboard": "排行榜",
+  "leaderboardSearch": "搜索玩家地址",
+  "leaderboardLoading": "正在加载排行榜...",
+  "leaderboardError": "无法从 Base Sepolia 读取排行榜。",
+  "leaderboardEmpty": "没有可显示的玩家。",
+  "retry": "重试",
+  "you": "你",
   "darkTheme": "深色主题",
   "close": "关闭"
 }

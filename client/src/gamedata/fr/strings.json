@@ -126,6 +126,12 @@
   "PageNotFoundTitle": "Erreur 404 - Page introuvable",
   "PageNotFoundText": "Oups ! La page que vous recherchez est introuvable.",
   "leaderboard": "Classement",
+  "leaderboardSearch": "Rechercher l'adresse d'un joueur",
+  "leaderboardLoading": "Chargement du classement...",
+  "leaderboardError": "Impossible de lire le classement depuis Base Sepolia.",
+  "leaderboardEmpty": "Aucun joueur à afficher.",
+  "retry": "Réessayer",
+  "you": "Vous",
   "darkTheme": "Thème sombre",
   "close": "Fermer"
 }

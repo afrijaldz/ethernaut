@@ -6,8 +6,6 @@
   "dependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@truffle/contract": "4.6.31",
-    "axios": "^1.2.4",
-    "bad-words": "^3.0.4",
     "bootstrap": "^5.0.0",
     "cross-env": "7.0.3",
     "devtools-detect": "^4.0.0",

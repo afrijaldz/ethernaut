@@ -126,6 +126,12 @@
   "PageNotFoundTitle": "404 Error - Sayfa Bulunamadı",
   "PageNotFoundText": "Tüh! Aradığın sayfa bulunamadı.",
   "leaderboard": "Lider Tablosu",
+  "leaderboardSearch": "Oyuncu adresi ara",
+  "leaderboardLoading": "Lider tablosu yükleniyor...",
+  "leaderboardError": "Lider tablosu Base Sepolia üzerinden okunamadı.",
+  "leaderboardEmpty": "Gösterilecek oyuncu yok.",
+  "retry": "Tekrar dene",
+  "you": "Sen",
   "darkTheme": "Koyu tema",
   "close": "Kapat"
 }

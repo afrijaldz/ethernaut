@@ -1,45 +1,33 @@
 import LeaderList from "../components/leaderboard/LeaderList";
-import { useEffect, useState, useCallback } from "react";
-import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
 import ReactPaginate from "react-paginate";
 import Search from "../components/leaderboard/Search";
-import { getNetworkNamefromId } from "../utils/ethutil";
-import { getProvider } from "../utils/wallet";
-import { NETWORKS } from "client/src/constants";
+import { NETWORKS_INGAME } from "../constants";
 import { loadTranslations } from "../utils/translations";
-import axios from "axios";
-import { ALIAS_PATH, getLeaderboardPath } from "client/src/constants";
+import { createRpcProvider, fetchPlayers, rankPlayers } from "../utils/leaderboard";
+import gamedata from "../gamedata/gamedata.json";
+import deployData from "../gamedata/deploy.base-sepolia.json";
 
 const playersPerPage = 20;
 
-let aliases = {};
+const STATUS = { LOADING: "loading", FAILED: "failed", LOADED: "loaded" };
 
-const fetchAliases = async () => {
-  try {
-    const response = await axios.get(ALIAS_PATH);
-    aliases = response.data;
-  } catch (err) {
-    console.log("Failed to fetch aliases");
-  }
-};
+const levels = gamedata.levels.map((level) => ({
+  address: deployData[level.deployId],
+  difficulty: Number(level.difficulty),
+}));
 
-fetchAliases();
+const provider = createRpcProvider(NETWORKS_INGAME.BASE_SEPOLIA.rpcUrl);
 
 function Leaderboard() {
   const [offset, setOffset] = useState(0);
+  const [status, setStatus] = useState(STATUS.LOADING);
+  const [attempt, setAttempt] = useState(0);
   const [playersWithRank, setPlayersWithRank] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState("");
-  const [currentNetworkName, setCurrentNetworkName] = useState("");
 
-  const web3 = useSelector((state) => state.network.web3);
-
-  const isKeywordMatching = (player) => {
-    const keyword = searchKeyword.toLowerCase();
-    return (
-      player.player.toLowerCase().includes(keyword) ||
-      (player.alias && player.alias.toLowerCase().includes(keyword))
-    );
-  };
+  const isKeywordMatching = (player) =>
+    player.player.toLowerCase().includes(searchKeyword.toLowerCase());
 
   const strings = loadTranslations(localStorage.getItem("lang"));
   const searchResult = playersWithRank.filter(isKeywordMatching);
@@ -47,61 +35,24 @@ function Leaderboard() {
   const endOffset = offset + playersPerPage;
   const currentItems = searchResult.slice(offset, endOffset);
 
-  const handleNetworkChange = useCallback(async (networkId) => {
-    if (!networkId) {
-      return;
-    }
-    const networkName = getNetworkNamefromId(Number(networkId));
-    setCurrentNetworkName(networkName);
-  }, []);
-
-  // When a wallet is connected
   useEffect(() => {
-    if (!web3) return;
-    const provider = getProvider();
-    provider.request({ method: "eth_chainId" }).then(handleNetworkChange);
-    provider.on("chainChanged", handleNetworkChange);
+    let isCancelled = false;
+    setStatus(STATUS.LOADING);
+    fetchPlayers(provider, deployData.proxyStats, levels)
+      .then((players) => {
+        if (isCancelled) return;
+        setPlayersWithRank(rankPlayers(players, levels));
+        setStatus(STATUS.LOADED);
+      })
+      .catch((err) => {
+        if (isCancelled) return;
+        console.error("Failed to read the leaderboard", err);
+        setStatus(STATUS.FAILED);
+      });
     return () => {
-      provider.removeListener("chainChanged", handleNetworkChange);
+      isCancelled = true;
     };
-  }, [web3, handleNetworkChange]);
-
-  const fetchAndUpdate = useCallback(async () => {
-    setPlayersWithRank([]);
-    setOffset(0);
-    try {
-      if (!currentNetworkName) {
-        return;
-      }
-      const leaderboardNetworkName =
-        getLeaderboardNetworkNameFromNetworkName(currentNetworkName);
-      const response = await axios.get(
-        getLeaderboardPath(leaderboardNetworkName)
-      );
-      const result = response.data;
-      const playersWithRank = result
-        .map(assignRank)
-        .filter(isScoreNonZero)
-        .map(assignAlias);
-      setPlayersWithRank(playersWithRank);
-    } catch (err) {
-      console.log("Failed to fetch leaderboard");
-    }
-  }, [currentNetworkName]);
-
-  // When network changes
-  useEffect(() => {
-    fetchAndUpdate();
-  }, [fetchAndUpdate]);
-
-  const getLeaderboardNetworkNameFromNetworkName = (networkName) => {
-    const networks = Object.entries(NETWORKS);
-    const network = networks.find(
-      (network) => network[1]?.name === networkName
-    );
-    const leaderboardNetworkName = network[0].toLowerCase().split("_")[0];
-    return capitaliseFirstLetter(leaderboardNetworkName);
-  };
+  }, [attempt]);
 
   const handlePageClick = (event) => {
     const newOffset = (event.selected * playersPerPage) % searchResult.length;
@@ -116,17 +67,38 @@ function Leaderboard() {
   return (
     <main className="leaderboard-page">
       <h1>{strings.leaderboard}</h1>
-      <Search
-        searchKeyword={searchKeyword}
-        onKeywordChange={handleKeywordChange}
-      />
-      <LeaderList players={currentItems} />
-      <ReactPaginate
-        onPageChange={handlePageClick}
-        pageCount={pageCount}
-        forcePage={offset / playersPerPage}
-        {...reactPaginateProps}
-      />
+      {status === STATUS.LOADING && (
+        <p className="ui-card leaderboard-message" role="status">
+          {strings.leaderboardLoading}
+        </p>
+      )}
+      {status === STATUS.FAILED && (
+        <div className="ui-alert ui-alert--danger leaderboard-error" role="alert">
+          <p>{strings.leaderboardError}</p>
+          <button
+            type="button"
+            className="ui-button ui-button--secondary"
+            onClick={() => setAttempt(attempt + 1)}
+          >
+            {strings.retry}
+          </button>
+        </div>
+      )}
+      {status === STATUS.LOADED && (
+        <>
+          <Search
+            searchKeyword={searchKeyword}
+            onKeywordChange={handleKeywordChange}
+          />
+          <LeaderList players={currentItems} />
+          <ReactPaginate
+            onPageChange={handlePageClick}
+            pageCount={pageCount}
+            forcePage={offset / playersPerPage}
+            {...reactPaginateProps}
+          />
+        </>
+      )}
     </main>
   );
 }
@@ -144,30 +116,6 @@ const reactPaginateProps = {
   previousLinkClassName: "ui-button ui-button--secondary",
   breakLinkClassName: "ui-button ui-button--secondary",
   disabledLinkClassName: "leaderboard-pagination__link--disabled",
-};
-
-const assignRank = (item, index) => {
-  return {
-    ...item,
-    rank: index + 1,
-  };
-};
-
-const assignAlias = (player) => {
-  const alias = aliases[player.player.toLowerCase()];
-  if (!alias) return player;
-  return {
-    ...player,
-    alias: alias,
-  };
-};
-
-const isScoreNonZero = (player) => {
-  return player.score !== 0;
-};
-
-const capitaliseFirstLetter = (string) => {
-  return string.charAt(0).toUpperCase() + string.slice(1);
 };
 
 export default Leaderboard;

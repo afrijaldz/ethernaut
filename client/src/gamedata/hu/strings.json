@@ -126,6 +126,12 @@
   "PageNotFoundTitle": "404 Hiba - Az oldal nem található",
   "PageNotFoundText": "Hoppá! A keresett oldal nem található.",
   "leaderboard": "Ranglista",
+  "leaderboardSearch": "Játékos címének keresése",
+  "leaderboardLoading": "A ranglista betöltése...",
+  "leaderboardError": "A ranglistát nem sikerült beolvasni a Base Sepolia hálózatról.",
+  "leaderboardEmpty": "Nincs megjeleníthető játékos.",
+  "retry": "Újra",
+  "you": "Te",
   "darkTheme": "Sötét téma",
   "close": "Bezárás"
 }

@@ -126,6 +126,12 @@
   "PageNotFoundTitle": "404エラー - ページが見つかりません",
   "PageNotFoundText": "おっと！お探しのページが見つかりませんでした。",
   "leaderboard": "リーダーボード",
+  "leaderboardSearch": "プレーヤーのアドレスを検索",
+  "leaderboardLoading": "リーダーボードを読み込み中...",
+  "leaderboardError": "Base Sepoliaからリーダーボードを読み込めませんでした。",
+  "leaderboardEmpty": "表示するプレーヤーがいません。",
+  "retry": "再試行",
+  "you": "あなた",
   "darkTheme": "ダークテーマ",
   "close": "閉じる"
 }
