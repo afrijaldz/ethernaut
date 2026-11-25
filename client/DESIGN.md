@@ -135,7 +135,7 @@ with a retry button.
 | Loading indicator | `progress-bar-wrapper` |
 | Footer | `site-footer`, `site-footer__inner` |
 
-`index.js` renders the header, the page, and the footer once, for all routes. The shell is a
+`index.jsx` renders the header, the page, and the footer once, for all routes. The shell is a
 column of at least `100dvh`. The footer is in normal flow: at the bottom on short pages, after
 the content on long pages.
 

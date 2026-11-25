@@ -1,7 +1,7 @@
+import "dotenv/config";
 import prompt from "prompt";
 import colors from "colors";
 import Web3 from "web3";
-import { ethers } from "ethers";
 import fs from "fs";
 import * as ethutil from "../src/utils/ethutil.js";
 import * as constants from "../src/constants.js";
@@ -267,7 +267,6 @@ function initWeb3() {
         constants.ACTIVE_NETWORK.privKey
       );
     }
-    //web3 = new ethers.providers.Web3Provider(provider)
     web3 = new Web3(provider);
     ethutil.setWeb3(web3);
 

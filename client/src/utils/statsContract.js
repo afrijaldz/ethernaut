@@ -1,5 +1,6 @@
 import { getTruffleContract } from './ethutil';
 import { getDeployData } from './deploycontract';
+import { loadContractJson } from './contractjson';
 import Web3 from 'web3';
 import { getLevelDetailsByAddress } from './getlevelsdata';
 
@@ -163,7 +164,7 @@ const getProxyStatsContractAddressInNetwork = (networkId) => {
 }
 
 const getStatsContract = async (proxyStatsAddress, playerAddress) => {
-    const statsABI = require("../contracts/out/Statistics.sol/Statistics.json");
+    const statsABI = await loadContractJson("Statistics.sol", "Statistics");
     let statsContract;
     if (playerAddress) {
         statsContract = getTruffleContract(statsABI, { from: playerAddress });

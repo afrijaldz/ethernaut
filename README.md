@@ -70,6 +70,7 @@ In this case, replace point 5 with:
 
 ```bash
 pnpm test:contracts
+pnpm --dir client test
 ```
 
 ### Building

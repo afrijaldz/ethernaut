@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from '../router'
+import { Link } from 'react-router'
 import * as constants from '../constants';
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'

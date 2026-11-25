@@ -1,12 +1,15 @@
 import LeaderList from "../components/leaderboard/LeaderList";
 import { useEffect, useState } from "react";
-import ReactPaginate from "react-paginate";
+import reactPaginate from "react-paginate";
 import Search from "../components/leaderboard/Search";
 import { NETWORKS_INGAME } from "../constants";
 import { loadTranslations } from "../utils/translations";
 import { createRpcProvider, fetchPlayers, rankPlayers } from "../utils/leaderboard";
 import gamedata from "../gamedata/gamedata.json";
 import deployData from "../gamedata/deploy.base-sepolia.json";
+
+// react-paginate is CommonJS, so its default import is the whole `exports` object.
+const ReactPaginate = reactPaginate.default;
 
 const playersPerPage = 20;
 

@@ -8,12 +8,26 @@ import MarkdownComponent from "../components/common/Markdown";
 import * as actions from "../actions";
 import * as constants from "../constants";
 import { loadTranslations } from "../utils/translations";
-import { Link } from "../router";
+import { Link } from "react-router";
 import getlevelsdata from "../utils/getlevelsdata";
 import { withRouter } from "../hoc/withRouter";
 import { getLevelKey } from "../utils/contractutil";
 import { deployAndRegisterLevel } from "../utils/deploycontract";
 import { store } from "../store";
+
+const descriptionUrls = import.meta.glob("../gamedata/*/descriptions/levels/*.md", {
+  eager: true,
+  import: "default",
+  query: "?url",
+});
+const sourceUrls = import.meta.glob("../contracts/src/levels/*.sol", {
+  eager: true,
+  import: "default",
+  query: "?url",
+});
+
+const findDescription = (language, fileName) =>
+  descriptionUrls[`../gamedata/${language}/descriptions/levels/${fileName}`];
 
 class Level extends React.Component {
   constructor(props) {
@@ -106,34 +120,27 @@ class Level extends React.Component {
     let strings = loadTranslations(language);
     let isDescriptionMissingTranslation = false;
 
-    try {
-      description = require(`../gamedata/${language}/descriptions/levels/${level.description}`);
-    } catch (e) {
+    description = findDescription(language, level.description);
+    if (!description) {
       //FIX-ME: If language selected is english then "language" variable is null and not "en"
       if (language) isDescriptionMissingTranslation = true; // Only set it if language is not null (i.e. some language different from english)
-      description = require(`../gamedata/en/descriptions/levels/${level.description}`);
+      description = findDescription("en", level.description);
     }
     let completedDescription = null;
 
     let isCompleteDescriptionMissingTranslation = false;
     if (showCompletedDescription && level.completedDescription) {
-      try {
-        completedDescription = require(`../gamedata/${language}/descriptions/levels/${level.completedDescription}`);
-      } catch (e) {
+      completedDescription = findDescription(language, level.completedDescription);
+      if (!completedDescription) {
         isCompleteDescriptionMissingTranslation = true;
-        completedDescription = require(`../gamedata/en/descriptions/levels/${level.completedDescription}`);
+        completedDescription = findDescription("en", level.completedDescription);
       }
     }
 
     let poweredBy =
       level.poweredBy?.src && level.poweredBy?.href ? level.poweredBy : null;
 
-    let sourcesFile = null;
-    try {
-      sourcesFile = require(`../contracts/src/levels/${level.instanceContract}`);
-    } catch (e) {
-      console.log(e);
-    }
+    const sourcesFile = sourceUrls[`../contracts/src/levels/${level.instanceContract}`];
 
     const nextLevelId = findNextLevelId(this.props.level, this.props.levels);
 

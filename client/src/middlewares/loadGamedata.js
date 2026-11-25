@@ -1,5 +1,6 @@
 import * as actions from '../actions';
 import { loadTranslations } from '../utils/translations'
+import data from '../gamedata/gamedata.json'
 import { getDeployData } from '../utils/deploycontract'
 // import { store, history } from "./../store";
 let language = localStorage.getItem('lang')
@@ -11,7 +12,6 @@ const loadGameData = store => next => action => {
   try {
     const network_id = store.getState().network.networkId
     if (network_id) {
-      const data = require(`../gamedata/gamedata.json`)
       const deployData = getDeployData(network_id);
       const levelsIn = data.levels;
       const levelsOut = [];
@@ -24,7 +24,6 @@ const loadGameData = store => next => action => {
       action.ethernautAddress = deployData.ethernaut
       action.levels = levelsOut;
     } else {
-      const data = require(`../gamedata/gamedata.json`);
       const levelsIn = data.levels;
       const levelsOut = [];
       for (let i = 0; i < levelsIn.length; i++) {

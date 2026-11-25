@@ -2,9 +2,11 @@ import * as constants from "../constants";
 import { getWeb3, setWeb3, getTruffleContract, getNetworkFromId } from "./ethutil";
 import { getProvider } from "./wallet";
 import { newGithubIssueUrl } from "./github";
-import * as LocalFactoryABI from "../contracts/out/LocalFactory.sol/Factory.json";
+import { loadContractJson } from "./contractjson";
 import { deployAdminContracts, deployAndRegisterLevel } from "./deploycontract";
-var levels = require(`../gamedata/gamedata.json`).levels;
+import gamedata from "../gamedata/gamedata.json";
+
+const levels = gamedata.levels;
 
 
 // -- storage
@@ -59,7 +61,7 @@ export function getLevelKey(levelAddress) {
 
 export function fetchLevelABI(level) {
   const contractName = level.levelContract.split(".")[0];
-  return require(`../contracts/out/${level.levelContract}/${contractName}.json`);
+  return loadContractJson(level.levelContract, contractName);
 }
 
 // write windows finction to transfer ownership to a new user
@@ -72,7 +74,8 @@ window.transferOwnerShip = async function (newOwnerAddress) {
 
   // -- get the factory contract instance
   const { factory } = restoreContract(chainId);
-  const LocalFactory = await getTruffleContract(LocalFactoryABI.default, {
+  const factoryJson = await loadContractJson("LocalFactory.sol", "Factory");
+  const LocalFactory = await getTruffleContract(factoryJson, {
     from,
   });
 

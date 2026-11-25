@@ -153,14 +153,6 @@ export const validateAddress = (address) => {
   return true;
 }
 
-export const addressHasChecksum = (address) => {
-  if (!module.exports.isValidAddress(address)) return false;
-  const raw = address.replace('0x', '');
-  const allLowerCase = raw.toLowerCase() === raw;
-  const allUppercase = raw.toUpperCase() === raw;
-  return !(allLowerCase || allUppercase);
-}
-
 export const verifySignature = (json) => {
   try {
     const messageHash = ethjs.hashPersonalMessage(ethjs.toBuffer(json.msg));

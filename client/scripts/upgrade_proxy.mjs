@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import colors from 'colors';
 import Web3 from 'web3';
 import fs from 'fs';
