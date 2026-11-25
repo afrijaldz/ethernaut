@@ -126,6 +126,12 @@
   "PageNotFoundTitle": "404 Lỗi - Không tìm thấy trang",
   "PageNotFoundText": "Ối! Trang bạn đang tìm kiếm không thể được tìm thấy.",
   "leaderboard": "Bảng xếp hạng",
+  "leaderboardSearch": "Tìm địa chỉ người chơi",
+  "leaderboardLoading": "Đang tải bảng xếp hạng...",
+  "leaderboardError": "Không thể đọc bảng xếp hạng từ Base Sepolia.",
+  "leaderboardEmpty": "Không có người chơi nào để hiển thị.",
+  "retry": "Thử lại",
+  "you": "Bạn",
   "darkTheme": "Giao diện tối",
   "close": "Đóng"
 }

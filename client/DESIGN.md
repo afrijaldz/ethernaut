@@ -121,7 +121,9 @@ Each player of the leaderboard is one table row. Below 640px the row is a card a
 visible label (`leaderboard-player__label`). From 640px the table header replaces the labels. The
 roles in the markup keep the table semantics in both layouts. An address (`leaderboard-address`)
 is mono, is cut to 20 characters by CSS, has the full address in a tooltip, and is copied on
-click. Without players the page shows `leaderboard-empty`.
+click. The row of the connected player has a badge. While the data loads, and without players, the
+page shows a `leaderboard-message`. After a failed read it shows `leaderboard-error`, a danger alert
+with a retry button.
 
 ## Shell
 

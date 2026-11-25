@@ -190,8 +190,3 @@ export const getNetworkFromId = (networkId) => {
     if (network && network.id === networkId.toString())
       return network;
 }
-
-export const getNetworkNamefromId = (networkId) => {
-  const network = getNetworkFromId(networkId);
-  return network?.name
-}

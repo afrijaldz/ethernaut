@@ -126,6 +126,12 @@
   "PageNotFoundTitle": "Erro 404 - Página não encontrada",
   "PageNotFoundText": "Ops! A página que você está procurando não pôde ser encontrada.",
   "leaderboard": "Classificação",
+  "leaderboardSearch": "Buscar endereço do jogador",
+  "leaderboardLoading": "Carregando a classificação...",
+  "leaderboardError": "Não foi possível ler a classificação da Base Sepolia.",
+  "leaderboardEmpty": "Não há jogadores para mostrar.",
+  "retry": "Tentar novamente",
+  "you": "Você",
   "darkTheme": "Tema escuro",
   "close": "Fechar"
 }
