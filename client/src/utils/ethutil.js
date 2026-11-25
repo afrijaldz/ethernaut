@@ -4,9 +4,14 @@ import * as constants from "../constants.js";
 import { NETWORKS_INGAME } from '../constants.js'
 
 let web3;
+let connectedContract;
 
 export const setWeb3 = (_web3) => {
   web3 = _web3;
+  // Truffle adds listeners to the wallet provider on every setProvider call and never
+  // removes them. So only this contract calls it, and all others share its connection.
+  connectedContract = TruffleContract({ abi: [] });
+  connectedContract.setProvider(web3.currentProvider);
 }
 
 export const getWeb3 = () => web3;
@@ -20,7 +25,10 @@ export const getTruffleContract = (jsonABI, defaults = {}) => {
   if (!defaults.gasPrice) defaults.gasPrice = 2000000000;
   if (!defaults.gas) defaults.gas = 2000000;
   truffleContract.defaults(defaults);
-  truffleContract.setProvider(web3.currentProvider);
+  truffleContract.web3 = connectedContract.web3;
+  truffleContract.interfaceAdapter = connectedContract.interfaceAdapter;
+  truffleContract.currentProvider = connectedContract.currentProvider;
+  truffleContract.networkType = connectedContract.networkType;
   return truffleContract;
 }
 

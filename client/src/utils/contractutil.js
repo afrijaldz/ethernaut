@@ -36,9 +36,8 @@ export function isLevelDeployed(levelDeployId, chainId) {
 // -- Utils
 
 export function getWalletWeb3() {
-  const web3Instance = new constants.Web3(getProvider());
-  if (!getWeb3()) setWeb3(web3Instance);
-  return web3Instance;
+  if (!getWeb3()) setWeb3(new constants.Web3(getProvider()));
+  return getWeb3();
 }
 
 // check the localstorage of the object containing address saved in localstorage
